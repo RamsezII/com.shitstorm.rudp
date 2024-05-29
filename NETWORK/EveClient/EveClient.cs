@@ -2,7 +2,7 @@
 
 namespace _RUDP_
 {
-    public partial class EveClient : MonoBehaviour
+    public partial class EveClient
     {
         public enum EveCodes : byte
         {
