@@ -43,7 +43,7 @@ namespace _RUDP_
 
     public readonly struct RudpHeader
     {
-        public const byte PREFIXE_LENGTH = (byte)RudpHeaderI._last_;
+        public const byte HEADER_length = (byte)RudpHeaderI._last_;
 
         public readonly byte version;
         public readonly RudpHeaderM mask;
@@ -84,6 +84,22 @@ namespace _RUDP_
             buffer[1] = (byte)mask;
             buffer[2] = id;
             buffer[3] = attempt;
+        }
+
+        public static void Write(in byte[] buffer, in RudpHeaderM mask, in byte id, in byte attempt)
+        {
+            buffer[0] = Util.VERSION;
+            buffer[1] = (byte)mask;
+            buffer[2] = id;
+            buffer[3] = attempt;
+        }
+
+        public static void Write(in BinaryWriter writer, in RudpHeaderM mask, in byte id, in byte attempt)
+        {
+            writer.Write(Util.VERSION);
+            writer.Write((byte)mask);
+            writer.Write(id);
+            writer.Write(attempt);
         }
     }
 }

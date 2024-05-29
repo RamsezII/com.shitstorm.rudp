@@ -7,9 +7,10 @@ namespace _RUDP_
     {
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
-        public readonly MemoryStream stream;
-        readonly BinaryReader reader;
-        public readonly BinaryWriter writer;
+        public readonly MemoryStream stream_data;
+        public readonly BinaryReader reader_data;
+        public readonly BinaryWriter writer_data;
+        readonly RudpPaquet paquet;
 
         public byte last_recID = byte.MaxValue;
 
@@ -21,18 +22,19 @@ namespace _RUDP_
         {
             this.mask = mask;
             this.conn = conn;
-            stream = new();
-            reader = new(stream, RudpSocket.UTF8, true);
-            writer = new(stream, RudpSocket.UTF8, true);
+            stream_data = new();
+            reader_data = new(stream_data, RudpSocket.UTF8, true);
+            writer_data = new(stream_data, RudpSocket.UTF8, true);
+            paquet = new(this);
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public void Dispose()
         {
-            stream.Dispose();
-            reader.Dispose();
-            writer.Dispose();
+            stream_data.Dispose();
+            reader_data.Dispose();
+            writer_data.Dispose();
             paquet.Dispose();
         }
     }

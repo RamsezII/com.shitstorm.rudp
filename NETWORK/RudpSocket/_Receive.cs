@@ -55,7 +55,7 @@ namespace _RUDP_
 
                     recConn.lastReceive.Value = Util.TotalMilliseconds;
 
-                    if (reclength_u >= RudpHeader.PREFIXE_LENGTH)
+                    if (reclength_u >= RudpHeader.HEADER_length)
                     {
                         RudpHeader header = RudpHeader.FromReader(directReader);
                         if (!recConn.TryAcceptPaquet(header))
@@ -90,7 +90,7 @@ namespace _RUDP_
         void BeginReceive()
         {
             EndPoint receiveEnd = endIP_any;
-            try { BeginReceiveFrom(PAQUET_BUFFER, 0, BUFFER_SIZE, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
+            try { BeginReceiveFrom(PAQUET_BUFFER, 0, PAQUET_SIZE, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
             catch (Exception e) { Debug.LogException(e); }
         }
     }

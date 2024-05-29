@@ -3,10 +3,14 @@ using System.IO;
 
 namespace _RUDP_
 {
+    /// <summary>
+    /// buffer for the data to be sent in loop until acknowledgement is received
+    /// </summary>
     internal class RudpPaquet : IDisposable
     {
+        public readonly RudpChannel channel;
         public RudpHeader header;
-        public readonly byte[] buffer = new byte[RudpSocket.BUFFER_SIZE];
+        public readonly byte[] buffer = new byte[RudpSocket.PAQUET_SIZE];
         public readonly MemoryStream stream;
         public override string ToString() => $"{header} (size:{stream.Position})";
         public bool Pending => stream.Position > 0;
@@ -17,33 +21,37 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpPaquet()
+        public RudpPaquet(in RudpChannel channel)
         {
+            this.channel = channel;
             stream = new(buffer);
         }
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void NewData(in RudpHeaderM mask, in BinaryReader reader)
+        /// <summary>
+        /// pull the data to be sent
+        /// </summary>
+        public void PullData()
         {
             lastTime = 0;
             attempt = 0;
 
             lastID = ++lastID == 0 ? (byte)1 : lastID;
-            header = new(mask, lastID);
+            header = new(channel.mask, lastID);
 
-            stream.Position = RudpHeader.PREFIXE_LENGTH; 
-            
-            while (reader.BaseStream.Remaining() > 0)
+            stream.Position = RudpHeader.HEADER_length;
+
+            while (stream.Remaining() > 0)
             {
-                ushort length = reader.ReadUInt16();
-                if (length > stream.Length - stream.Position)
+                ushort length = channel.reader_data.ReadUInt16();
+                if (stream.Length + length > RudpSocket.PAQUET_SIZE)
                 {
-                    reader.BaseStream.Position -= sizeof(ushort);
+                    channel.reader_data.BaseStream.Position -= sizeof(ushort);
                     break;
                 }
                 else
-                    reader.BaseStream.CopyTo(stream, length);
+                    channel.reader_data.BaseStream.CopyTo(stream, length);
             }
         }
 

@@ -17,7 +17,7 @@ namespace _RUDP_
             lock (ACK_BUFFER)
             {
                 header.WriteToBuffer(ACK_BUFFER);
-                SendTo(ACK_BUFFER, 0, RudpHeader.PREFIXE_LENGTH, targetEnd);
+                SendTo(ACK_BUFFER, 0, RudpHeader.HEADER_length, targetEnd);
             }
         }
 
@@ -47,7 +47,7 @@ namespace _RUDP_
             }
 
             if (logEmptyPaquets || logAllPaquets && length > 0)
-                if (length >= RudpHeader.PREFIXE_LENGTH)
+                if (length >= RudpHeader.HEADER_length)
                     Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (header:{RudpHeader.FromBuffer(buffer)}, size:{length})".ToSubLog());
                 else
                     Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (size:{length})".ToSubLog());

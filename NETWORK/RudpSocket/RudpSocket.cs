@@ -11,13 +11,13 @@ namespace _RUDP_
     public partial class RudpSocket : Socket, IDisposable
     {
         public const ushort
-            BUFFER_SIZE = 1472,
-            DATA_SIZE = BUFFER_SIZE - RudpHeader.PREFIXE_LENGTH;
+            PAQUET_SIZE = 1472,
+            DATA_SIZE = PAQUET_SIZE - RudpHeader.HEADER_length;
 
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
-        public readonly byte[] PAQUET_BUFFER = new byte[BUFFER_SIZE];
-        readonly byte[] ACK_BUFFER = new byte[RudpHeader.PREFIXE_LENGTH];
+        public readonly byte[] PAQUET_BUFFER = new byte[PAQUET_SIZE];
+        readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
         public readonly ushort localPort;
         readonly EndPoint endIP_any;

@@ -4,10 +4,6 @@ namespace _RUDP_
 {
     public partial class RudpChannel
     {
-        readonly RudpPaquet paquet = new();
-
-        //----------------------------------------------------------------------------------------------------------
-
         void TrySendPaquet()
         {
             lock (paquet)
