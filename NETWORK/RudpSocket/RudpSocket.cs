@@ -3,12 +3,19 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using UnityEngine;
 
 namespace _RUDP_
 {
     public partial class RudpSocket : Socket, IDisposable
     {
+        public const ushort
+            BUFFER_SIZE = 1472,
+            DATA_SIZE = BUFFER_SIZE - RudpHeader.PREFIXE_LENGTH;
+
+        public static readonly Encoding UTF8 = Encoding.UTF8;
+
         public readonly byte[] PAQUET_BUFFER = new byte[BUFFER_SIZE];
         readonly byte[] ACK_BUFFER = new byte[RudpHeader.PREFIXE_LENGTH];
 
