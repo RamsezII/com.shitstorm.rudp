@@ -46,7 +46,10 @@ namespace _RUDP_
 
             if (header.mask.HasFlag(RudpHeaderM.Direct))
                 if (socket.HasNext())
-                    socket.onDirectRead.Value?.Invoke(this, header.mask, socket.directReader);
+                    if (socket.onDirectRead == null)
+                        Debug.LogWarning($"{this} Received direct paquet but no {nameof(socket.onDirectRead)} is set");
+                    else
+                        socket.onDirectRead?.Invoke(this, header.mask, socket.directReader);
 
             if (socket.HasNext())
                 lock (socket.bufferStream)

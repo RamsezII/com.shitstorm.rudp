@@ -10,6 +10,13 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        public void QueryPublicIP()
+        {
+            eveConn.keepAlive = true;
+            eveConn.socket.selfConn.publicEnd = null;
+            eveConn.channel_direct.EnqueueData(writer => writer.Write((byte)EveCodes.GetPublicEnd));
+        }
+
         void OnPublicEndAck()
         {
             lock (eveConn.socket.selfConn)

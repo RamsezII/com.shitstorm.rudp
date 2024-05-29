@@ -14,7 +14,7 @@ namespace _RUDP_
                 return;
             }
 
-            eveClient.Update();
+            eveClient.OnUpdate();
 
             if (connections.Count > 0)
             {

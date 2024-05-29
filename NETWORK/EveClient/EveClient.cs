@@ -2,11 +2,12 @@
 
 namespace _RUDP_
 {
-    public partial class EveClient
+    public partial class EveClient : MonoBehaviour
     {
         public enum EveCodes : byte
         {
             _none_,
+            Test,
             GetPublicEnd,
             ListHosts,
             AddHost,
@@ -26,16 +27,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void QueryPublicIP()
-        {
-            eveConn.keepAlive = true;
-            eveConn.socket.selfConn.publicEnd = null;
-            eveConn.channel_direct.EnqueueData(writer => writer.Write((byte)EveCodes.GetPublicEnd));
-        }
-
-        //----------------------------------------------------------------------------------------------------------
-
-        public void Update()
+        public void OnUpdate()
         {
             if (Time.unscaledTime > lastAddRequest + 2)
                 if (hostState.Value > 0)

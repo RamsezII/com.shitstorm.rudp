@@ -43,7 +43,7 @@ namespace _RUDP_
             bufferStream = new();
             bufferReader = new(bufferStream, UTF8, true);
 
-            this.onDirectRead.Value = onDirectRead;
+            this.onDirectRead = onDirectRead;
 
             ExclusiveAddressUse = false;
             if (port != 0)

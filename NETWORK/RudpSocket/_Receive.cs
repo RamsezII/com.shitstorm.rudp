@@ -20,7 +20,7 @@ namespace _RUDP_
         public readonly BinaryReader directReader, bufferReader;
         public bool HasNext() => directStream.Position < reclength_u;
 
-        public readonly ThreadSafe<Action<RudpConnection, RudpHeaderM, BinaryReader>> onDirectRead = new();
+        public readonly Action<RudpConnection, RudpHeaderM, BinaryReader> onDirectRead;
 
         //----------------------------------------------------------------------------------------------------------
 
