@@ -10,22 +10,27 @@ namespace _RUDP_
         public readonly MemoryStream stream_data;
         public readonly BinaryReader reader_data;
         public readonly BinaryWriter writer_data;
-        readonly RudpPaquet paquet;
 
-        public byte last_recID = byte.MaxValue;
+        public readonly byte[] buffer_paquet;
+        public readonly MemoryStream stream_paquet;
+        public bool Pending => stream_paquet.Position > 0;
 
+        public double lastSend;
+        public byte id, attempt;
         public override string ToString() => $"{conn}[{mask}]";
 
         //----------------------------------------------------------------------------------------------------------
 
         public RudpChannel(in RudpConnection conn, in RudpHeaderM mask)
         {
-            this.mask = mask;
             this.conn = conn;
+            this.mask = mask;
+
             stream_data = new();
             reader_data = new(stream_data, RudpSocket.UTF8, true);
             writer_data = new(stream_data, RudpSocket.UTF8, true);
-            paquet = new(this);
+
+            buffer_paquet = new byte[RudpSocket.PAQUET_SIZE];
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -35,7 +40,7 @@ namespace _RUDP_
             stream_data.Dispose();
             reader_data.Dispose();
             writer_data.Dispose();
-            paquet.Dispose();
+            stream_paquet.Dispose();
         }
     }
 }

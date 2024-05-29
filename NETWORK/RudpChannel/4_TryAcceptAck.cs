@@ -10,12 +10,13 @@ namespace _RUDP_
 
         public bool TryAcceptAck(in RudpHeader header)
         {
-            lock (paquet)
-                if (paquet.Pending)
+            lock (stream_paquet)
+                if (Pending)
                 {
-                    if (header.id == paquet.header.id)
+                    if (header.id == id)
                     {
-                        paquet.stream.Position = 0;
+                        stream_paquet.Position = 0;
+                        lastSend = 0;
                         TryPushDataIntoPaquet();
                         return true;
                     }

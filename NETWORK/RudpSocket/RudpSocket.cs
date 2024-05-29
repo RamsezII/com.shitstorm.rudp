@@ -17,7 +17,7 @@ namespace _RUDP_
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
         public readonly byte[] PAQUET_BUFFER = new byte[PAQUET_SIZE];
-        readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
+        public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
         public readonly ushort localPort;
         readonly EndPoint endIP_any;

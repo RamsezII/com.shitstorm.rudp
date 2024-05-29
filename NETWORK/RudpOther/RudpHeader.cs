@@ -15,9 +15,9 @@ namespace _RUDP_
     enum RudpHeaderB : byte
     {
         eve,
+        direct,
         reliable,
         ack,
-        direct,
         _last_,
     }
 
@@ -25,20 +25,16 @@ namespace _RUDP_
     public enum RudpHeaderM : byte
     {
         Eve = 1 << RudpHeaderB.eve,
+        Direct = 1 << RudpHeaderB.direct,
         Reliable = 1 << RudpHeaderB.reliable,
         Ack = 1 << RudpHeaderB.ack,
-        Direct = 1 << RudpHeaderB.direct,
 
         EveAck = Eve | Ack,
 
-        /// <summary>usage: File Transfer</summary>
-        ReliableDirect = Reliable | Direct,
-        /// <summary>usage: States</summary>
-        ReliableBuffered = Reliable,
-        /// <summary>usage: Audio Stream</summary>
-        UnreliableDirect = Direct,
-        /// <summary>usage: Flux</summary>
-        UnreliableBuffered = 0,
+        Files = Reliable | Direct,
+        Audio = Direct,
+        States = Reliable,
+        Flux = 0,
     }
 
     public readonly struct RudpHeader
@@ -52,7 +48,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpHeader(in RudpHeaderM mask, in byte id) : this(Util.VERSION, mask, id, 0)
+        public RudpHeader(in RudpHeaderM mask, in byte id, in byte attempt) : this(Util.VERSION, mask, id, attempt)
         {
         }
 
@@ -67,16 +63,7 @@ namespace _RUDP_
         //----------------------------------------------------------------------------------------------------------
 
         public static RudpHeader FromBuffer(in byte[] buffer) => new(buffer[0], (RudpHeaderM)buffer[1], buffer[2], buffer[3]);
-
         public static RudpHeader FromReader(in BinaryReader reader) => new(reader.ReadByte(), (RudpHeaderM)reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-
-        public void Write(in BinaryWriter writer)
-        {
-            writer.Write(version);
-            writer.Write((byte)mask);
-            writer.Write(id);
-            writer.Write(attempt);
-        }
 
         public void WriteToBuffer(in byte[] buffer)
         {
@@ -92,14 +79,6 @@ namespace _RUDP_
             buffer[1] = (byte)mask;
             buffer[2] = id;
             buffer[3] = attempt;
-        }
-
-        public static void Write(in BinaryWriter writer, in RudpHeaderM mask, in byte id, in byte attempt)
-        {
-            writer.Write(Util.VERSION);
-            writer.Write((byte)mask);
-            writer.Write(id);
-            writer.Write(attempt);
         }
     }
 }

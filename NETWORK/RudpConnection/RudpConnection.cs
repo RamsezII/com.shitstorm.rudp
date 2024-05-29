@@ -31,8 +31,8 @@ namespace _RUDP_
             this.socket = socket;
             this.endPoint = endPoint;
 
-            channel_direct = new(this, RudpHeaderM.ReliableDirect);
-            channel_mainthread = new(this, RudpHeaderM.ReliableBuffered);
+            channel_direct = new(this, RudpHeaderM.Files);
+            channel_mainthread = new(this, RudpHeaderM.States);
 
             keepAlive = true;
         }

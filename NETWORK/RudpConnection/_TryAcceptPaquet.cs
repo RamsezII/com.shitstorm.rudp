@@ -25,17 +25,17 @@ namespace _RUDP_
             {
                 bool redundant = false;
                 lock (channel)
-                    if (header.id == channel.last_recID)
+                    if (header.id == channel.id)
                         redundant = true;
-                    else if (header.id == channel.last_recID + 1)
+                    else if (header.id == channel.id + 1)
+                    {
                         if (header.id < byte.MaxValue)
-                            channel.last_recID = header.id;
-                        else
-                            channel.last_recID = 0;
+                            channel.id = header.id;
+                    }
                     else
                         return false;
 
-                socket.SendAckTo(new(channel.mask | RudpHeaderM.Ack, header.id), endPoint);
+                socket.SendAckTo(new(channel.mask | RudpHeaderM.Ack, header.id, header.attempt), endPoint);
 
                 if (redundant || !socket.HasNext())
                     return true;
