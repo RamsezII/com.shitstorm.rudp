@@ -48,7 +48,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpHeader(in RudpHeaderM mask, in byte id, in byte attempt) : this(Util.VERSION, mask, id, attempt)
+        public RudpHeader(in RudpHeaderM mask, in byte id, in byte attempt) : this(Util_net.VERSION, mask, id, attempt)
         {
         }
 
@@ -75,7 +75,7 @@ namespace _RUDP_
 
         public static void Write(in byte[] buffer, in RudpHeaderM mask, in byte id, in byte attempt)
         {
-            buffer[0] = Util.VERSION;
+            buffer[0] = Util_net.VERSION;
             buffer[1] = (byte)mask;
             buffer[2] = id;
             buffer[3] = attempt;

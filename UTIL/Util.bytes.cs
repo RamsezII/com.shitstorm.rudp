@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public static partial class Util
+    public static partial class Util_net
     {
         public static void WriteBool(this BinaryWriter writer, in bool value) => writer.Write((byte)(value ? 1 : 0));
         public static bool ReadBool(this BinaryReader reader) => reader.ReadByte() != 0;

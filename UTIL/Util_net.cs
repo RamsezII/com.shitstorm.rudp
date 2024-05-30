@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace _RUDP_
 {
-    public static partial class Util
+    public static partial class Util_net
     {
         public const byte VERSION = 0;
         public const string DOMAIN_3VE = "www.shitstorm.ovh";

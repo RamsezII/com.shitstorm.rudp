@@ -25,7 +25,7 @@ namespace _RUDP_
                         _ => 900,
                     };
 
-                    double time = Util.TotalMilliseconds;
+                    double time = Util_net.TotalMilliseconds;
                     if (time - lastSend < delay)
                         return;
                     lastSend = time;

@@ -40,7 +40,7 @@ namespace _RUDP_
             {
                 lock (PAQUET_BUFFER)
                 {
-                    lastReceive = Util.TotalMilliseconds;
+                    lastReceive = Util_net.TotalMilliseconds;
                     ++receive_count;
                     EndPoint remoteEnd = endIP_any;
                     directStream.Position = 0;
@@ -53,7 +53,7 @@ namespace _RUDP_
                     if (newConn)
                         Debug.Log($"incoming connection: {recConn}".ToSubLog());
 
-                    recConn.lastReceive.Value = Util.TotalMilliseconds;
+                    recConn.lastReceive.Value = Util_net.TotalMilliseconds;
 
                     if (reclength_u >= RudpHeader.HEADER_length)
                     {

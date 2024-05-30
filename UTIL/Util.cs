@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace _RUDP_
 {
-    public static partial class Util
+    public static partial class Util_net
     {
         public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
         static readonly Stopwatch stopwatch = new();
@@ -11,7 +11,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
         
-        static Util()
+        static Util_net()
         {
             stopwatch.Start();
             InitNet();

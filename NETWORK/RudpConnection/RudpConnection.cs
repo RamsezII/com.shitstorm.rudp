@@ -46,18 +46,18 @@ namespace _RUDP_
 
             if (keepAlive)
             {
-                double time = Util.TotalMilliseconds;
+                double time = Util_net.TotalMilliseconds;
                 if (time > lastSend.Value + 5000)
                 {
                     lastSend.Value = time;
-                    socket.Send(Util.EMPTY_BUFFER);
+                    socket.Send(Util_net.EMPTY_BUFFER);
                 }
             }
         }
 
         public void Send(in byte[] buffer, in ushort offset, in ushort length)
         {
-            lastSend.Value = Util.TotalMilliseconds;
+            lastSend.Value = Util_net.TotalMilliseconds;
             socket.SendTo(buffer, offset, length, endPoint);
         }
 
