@@ -1,5 +1,4 @@
 using _RUDP_;
-using System.Diagnostics;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -26,16 +25,12 @@ public static partial class Util_rudp
 
     public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
 
-    static readonly Stopwatch stopwatch = new();
-    public static double TotalMilliseconds => stopwatch.Elapsed.TotalMilliseconds;
-
     //----------------------------------------------------------------------------------------------------------
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
         netSingletons.Clear();
-        stopwatch.Start();
         using Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Connect(new IPEndPoint(IPAddress.Parse("8.8.8.8"), 1234));
         localIP = ((IPEndPoint)socket.LocalEndPoint).Address;

@@ -14,7 +14,6 @@ namespace _RUDP_
 
     enum RudpHeaderB : byte
     {
-        eve,
         direct,
         reliable,
         ack,
@@ -24,12 +23,9 @@ namespace _RUDP_
     [Flags]
     public enum RudpHeaderM : byte
     {
-        Eve = 1 << RudpHeaderB.eve,
         Direct = 1 << RudpHeaderB.direct,
         Reliable = 1 << RudpHeaderB.reliable,
         Ack = 1 << RudpHeaderB.ack,
-
-        EveAck = Eve | Ack,
 
         Files = Reliable | Direct,
         Audio = Direct,

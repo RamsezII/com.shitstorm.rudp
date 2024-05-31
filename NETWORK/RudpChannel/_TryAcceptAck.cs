@@ -22,17 +22,10 @@ namespace _RUDP_
                 {
                     if (header.id == id)
                     {
-                        if (mask == RudpHeaderM.States)
-                            states_stream.OnCleanAfterAck((ushort)paquet.Length);
-
-                        if (mask == RudpHeaderM.Eve)
-                            eve_buffer.Flush();
-
+                        states_stream?.OnCleanAfterAck((ushort)paquet.Length);
                         paquet = null;
-
                         if (onAck != null && !onAck.MoveNext())
                             onAck = null;
-
                         Push();
                         return true;
                     }

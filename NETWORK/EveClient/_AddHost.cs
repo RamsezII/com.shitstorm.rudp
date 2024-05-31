@@ -39,12 +39,9 @@ namespace _RUDP_
                 if (hostState._value != HostStates.Hosting)
                     hostState._value = HostStates.Adding;
 
-            eveConn.channel_eve.eve_buffer.TryWrite(writer =>
-            {
-                writer.Write((byte)EveCodes.AddHost);
-                writer.Write(publicHash);
-                writer.WriteText(hostName);
-            });
+            eveWriter.Write((byte)EveCodes.AddHost);
+            eveWriter.Write(publicHash);
+            eveWriter.WriteText(hostName);
         }
 
         void OnAddHostAck()

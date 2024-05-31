@@ -7,7 +7,6 @@ namespace _RUDP_
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
         public readonly RudpStream states_stream;
-        public readonly RudpBuffer eve_buffer;
 
         public byte[] paquet;
         public bool IsPending => paquet != null && paquet.Length > 0;
@@ -22,16 +21,8 @@ namespace _RUDP_
         {
             this.conn = conn;
             this.mask = mask;
-
-            switch (mask)
-            {
-                case RudpHeaderM.States:
-                    states_stream = new();
-                    break;
-                case RudpHeaderM.Eve:
-                    eve_buffer = new();
-                    break;
-            }
+            if (mask == RudpHeaderM.States)
+                states_stream = new();
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -47,26 +38,11 @@ namespace _RUDP_
         {
             lock (this)
             {
-                if (!IsPending)
-                    switch (mask)
-                    {
-                        case RudpHeaderM.States:
-                            if (states_stream.HasData)
-                            {
-                                paquet = states_stream.GetPaquetBuffer();
-                                NextPaquet();
-                            }
-                            break;
-
-                        case RudpHeaderM.Eve:
-                            if (eve_buffer.HasData)
-                            {
-                                paquet = eve_buffer.GetPaquetBuffer();
-                                NextPaquet();
-                            }
-                            break;
-                    }
-
+                if (!IsPending && states_stream != null && states_stream.HasData)
+                {
+                    paquet = states_stream.GetPaquetBuffer();
+                    NextPaquet();
+                }
                 if (IsPending)
                     TrySend();
             }
@@ -78,7 +54,6 @@ namespace _RUDP_
         {
             base.OnDispose();
             states_stream?.Dispose();
-            eve_buffer?.Dispose();
             onAck = null;
         }
     }

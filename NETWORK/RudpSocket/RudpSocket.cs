@@ -75,6 +75,7 @@ namespace _RUDP_
             directReader.Dispose();
             bufferStream.Dispose();
             bufferReader.Dispose();
+            eveClient.Dispose();
 
             if (connections.Count > 0)
             {

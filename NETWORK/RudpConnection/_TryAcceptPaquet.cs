@@ -12,8 +12,6 @@ namespace _RUDP_
                 channel = channel_files;
             else if (header.mask.HasFlag(channel_states.mask))
                 channel = channel_states;
-            else if (header.mask.HasFlag(channel_eve.mask))
-                channel = channel_eve;
 
             if (Util_rudp.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.reclength_u})".ToSubLog());
@@ -42,9 +40,6 @@ namespace _RUDP_
                 if (redundant || !socket.HasNext())
                     return true;
             }
-
-            if (header.mask.HasFlag(RudpHeaderM.Eve))
-                return socket.eveClient.TryAcceptEvePaquet(header);
 
             if (header.mask.HasFlag(RudpHeaderM.Direct))
                 if (socket.HasNext())

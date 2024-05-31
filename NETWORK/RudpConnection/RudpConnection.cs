@@ -17,11 +17,10 @@ namespace _RUDP_
             channel_files,
             channel_states,
             channel_flux,
-            channel_audio,
-            channel_eve;
+            channel_audio;
 
         public bool keepAlive;
-
+        public bool IsAlive => lastReceive._value < Util.TotalMilliseconds;
         public override string ToString() => $"conn({socket.endIP_LAN}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
@@ -35,20 +34,18 @@ namespace _RUDP_
             channel_states = new(this, RudpHeaderM.States);
             channel_flux = new(this, RudpHeaderM.Flux);
             channel_audio = new(this, RudpHeaderM.Audio);
-            channel_eve = new(this, RudpHeaderM.Eve);
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public void Push()
         {
-            channel_eve.Push();
             channel_files.Push();
             channel_states.Push();
 
             if (keepAlive)
             {
-                double time = Util_rudp.TotalMilliseconds;
+                double time = Util.TotalMilliseconds;
                 lock (lastSend)
                     if (time > lastSend._value + 5000)
                     {
@@ -60,7 +57,7 @@ namespace _RUDP_
 
         public void Send(in byte[] buffer, in ushort offset, in ushort length)
         {
-            lastSend.Value = Util_rudp.TotalMilliseconds;
+            lastSend.Value = Util.TotalMilliseconds;
             socket.SendTo(buffer, offset, length, endPoint);
         }
 
@@ -73,7 +70,6 @@ namespace _RUDP_
             channel_states.Dispose();
             channel_flux.Dispose();
             channel_audio.Dispose();
-            channel_eve.Dispose();
         }
     }
 }

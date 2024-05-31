@@ -40,7 +40,7 @@ namespace _RUDP_
             {
                 lock (PAQUET_BUFFER)
                 {
-                    lastReceive = Util_rudp.TotalMilliseconds;
+                    lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
                     EndPoint remoteEnd = endIP_any;
                     directStream.Position = 0;
@@ -50,24 +50,29 @@ namespace _RUDP_
                     recEnd_u = (IPEndPoint)remoteEnd;
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
-                    if (newConn)
+                    if (recConn == eveClient.eveConn)
+                        eveClient.TryAcceptEvePaquet();
+                    else
                     {
-                        Debug.Log($"incoming connection: {recConn}".ToSubLog());
-                        recConn.keepAlive = true;
-                    }
+                        if (newConn)
+                        {
+                            Debug.Log($"incoming connection: {recConn}".ToSubLog());
+                            recConn.keepAlive = true;
+                        }
 
-                    recConn.lastReceive.Value = Util_rudp.TotalMilliseconds;
+                        recConn.lastReceive.Value = Util.TotalMilliseconds;
 
-                    if (reclength_u >= RudpHeader.HEADER_length)
-                    {
-                        RudpHeader header = RudpHeader.FromReader(directReader);
-                        if (!recConn.TryAcceptPaquet(header))
-                            Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
+                        if (reclength_u >= RudpHeader.HEADER_length)
+                        {
+                            RudpHeader header = RudpHeader.FromReader(directReader);
+                            if (!recConn.TryAcceptPaquet(header))
+                                Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
+                        }
+                        else if (Util_rudp.logEmptyPaquets)
+                            Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
+                        else if (reclength_u > 0)
+                            Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");
                     }
-                    else if (Util_rudp.logEmptyPaquets)
-                        Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
-                    else if (reclength_u > 0)
-                        Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");
 
                     recEnd_u = null;
                     recConn = null;

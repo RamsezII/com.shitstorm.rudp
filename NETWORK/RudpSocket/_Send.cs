@@ -41,7 +41,7 @@ namespace _RUDP_
 
             lock (this)
             {
-                lastSend = Util_rudp.TotalMilliseconds;
+                lastSend = Util.TotalMilliseconds;
                 ++send_count;
                 send_size += length;
             }

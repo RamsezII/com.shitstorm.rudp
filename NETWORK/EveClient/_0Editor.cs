@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,18 +6,25 @@ namespace _RUDP_
 {
     public partial class EveClient
     {
-        [MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(EveCodes_python))]
-        static void EveCodes_python()
+        [MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LogPython))]
+        static void LogPython()
         {
-            StringBuilder log = new();
+            System.Text.StringBuilder log = new();
 
             log.AppendLine($"class {nameof(EveCodes)}(enum.Enum):");
-            for (EveCodes i = 1 + EveCodes._none_; i < EveCodes._last_; i++)
-                log.AppendLine($"\t{i} = {(int)i}");
+            for (EveCodes code = 0; code < EveCodes._last_; code++)
+                if (code > EveCodes._none_)
+                    log.AppendLine($"    {code} = {(int)code}");
 
-            string message = log.ToString();
-            message.WriteToClipboard();
-            Debug.Log(message);
+            log.AppendLine($"VERSION = {VERSION}");
+            log.AppendLine($"PORT_RUDP = {Util_rudp.PORT_RUDP}");
+            log.AppendLine($"HEADER_SIZE = {(int)HeaderI._last_}");
+            log.AppendLine($"PAQUET_SIZE = {Util_rudp.PAQUET_SIZE}");
+            log.AppendLine($"DATA_SIZE = {Util_rudp.PAQUET_SIZE - HEADER_LENGTH}");
+
+            string _log = log.ToString();
+            _log.WriteToClipboard();
+            Debug.Log(_log);
         }
     }
 }

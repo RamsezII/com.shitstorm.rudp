@@ -21,11 +21,8 @@ namespace _RUDP_
 
         void QueryHostsList()
         {
-            eveConn.channel_eve.eve_buffer.TryWrite(writer =>
-            {
-                writer.Write((byte)EveCodes.ListHosts);
-                writer.Write(hostsOffset.Value);
-            });
+            eveWriter.Write((byte)EveCodes.ListHosts);
+            eveWriter.Write(hostsOffset.Value);
         }
 
         void OnListAck()
