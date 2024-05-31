@@ -36,8 +36,6 @@ namespace _RUDP_
             channel_flux = new(this, RudpHeaderM.Flux);
             channel_audio = new(this, RudpHeaderM.Audio);
             channel_eve = new(this, RudpHeaderM.Eve);
-
-            keepAlive = true;
         }
 
         //----------------------------------------------------------------------------------------------------------

@@ -51,7 +51,10 @@ namespace _RUDP_
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
                     if (newConn)
+                    {
                         Debug.Log($"incoming connection: {recConn}".ToSubLog());
+                        recConn.keepAlive = true;
+                    }
 
                     recConn.lastReceive.Value = Util_rudp.TotalMilliseconds;
 
