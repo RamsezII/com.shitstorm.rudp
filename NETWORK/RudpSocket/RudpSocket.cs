@@ -21,10 +21,6 @@ namespace _RUDP_
 
         public readonly ThreadSafe<bool> disposed = new();
 
-        public static bool
-            logEmptyPaquets = false,
-            logAllPaquets = false;
-
         public readonly RudpConnection selfConn;
         public readonly EveClient eveClient;
 

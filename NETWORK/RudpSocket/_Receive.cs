@@ -62,9 +62,9 @@ namespace _RUDP_
                     {
                         RudpHeader header = RudpHeader.FromReader(directReader);
                         if (!recConn.TryAcceptPaquet(header))
-                            Debug.LogError($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
+                            Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
                     }
-                    else if (logEmptyPaquets)
+                    else if (Util_rudp.logEmptyPaquets)
                         Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
                     else if (reclength_u > 0)
                         Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");

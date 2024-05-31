@@ -46,7 +46,7 @@ namespace _RUDP_
                 send_size += length;
             }
 
-            if (logEmptyPaquets || logAllPaquets && length > 0)
+            if (Util_rudp.logEmptyPaquets || Util_rudp.logAllPaquets && length > 0)
                 if (length >= RudpHeader.HEADER_length)
                     Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (header:{RudpHeader.FromBuffer(buffer)}, size:{length})".ToSubLog());
                 else

@@ -1,13 +1,19 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace _RUDP_
 {
     partial class RudpChannel
     {
-        public Action<RudpHeader> onAck;
+        IEnumerator onAck;
 
         //----------------------------------------------------------------------------------------------------------
+
+        public void SetOnAck(IEnumerator onAck)
+        {
+            this.onAck = onAck;
+            onAck.MoveNext();
+        }
 
         public bool TryAcceptAck(in RudpHeader header)
         {
@@ -17,17 +23,17 @@ namespace _RUDP_
                     if (header.id == id)
                     {
                         if (mask == RudpHeaderM.States)
-                        {
                             states_stream.OnCleanAfterAck((ushort)paquet.Length);
-                            Push();
-                        }
-                        else if (mask != RudpHeaderM.Eve)
+
+                        if (mask == RudpHeaderM.Eve)
                             eve_buffer.Flush();
 
                         paquet = null;
-                        onAck?.Invoke(header);
-                        onAck = null;
 
+                        if (onAck != null && !onAck.MoveNext())
+                            onAck = null;
+
+                        Push();
                         return true;
                     }
                     else if (Util_rudp.logIncidents)

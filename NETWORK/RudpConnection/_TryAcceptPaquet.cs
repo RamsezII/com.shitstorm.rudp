@@ -12,8 +12,10 @@ namespace _RUDP_
                 channel = channel_files;
             else if (header.mask.HasFlag(channel_states.mask))
                 channel = channel_states;
+            else if (header.mask.HasFlag(channel_eve.mask))
+                channel = channel_eve;
 
-            if (RudpSocket.logAllPaquets)
+            if (Util_rudp.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.reclength_u})".ToSubLog());
 
             if (header.mask.HasFlag(RudpHeaderM.Ack))

@@ -7,11 +7,11 @@ namespace _RUDP_
 {
     public class RudpBuffer : Disposable
     {
-        public readonly byte[] buffer;
-        public readonly MemoryStream stream;
-        public readonly BinaryWriter writer_raw;
-        public readonly GZipStream gzip;
-        public readonly BinaryWriter writer_gzip;
+        readonly byte[] buffer;
+        readonly MemoryStream stream;
+        readonly BinaryWriter writer_raw;
+        readonly GZipStream gzip;
+        readonly BinaryWriter writer_gzip;
         public bool HasData => stream.Position > RudpHeader.HEADER_length;
 
         //----------------------------------------------------------------------------------------------------------

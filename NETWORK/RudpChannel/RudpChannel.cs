@@ -48,24 +48,24 @@ namespace _RUDP_
             lock (this)
             {
                 if (!IsPending)
-                {
                     switch (mask)
                     {
                         case RudpHeaderM.States:
                             if (states_stream.HasData)
+                            {
                                 paquet = states_stream.GetPaquetBuffer();
+                                NextPaquet();
+                            }
                             break;
 
                         case RudpHeaderM.Eve:
                             if (eve_buffer.HasData)
+                            {
                                 paquet = eve_buffer.GetPaquetBuffer();
+                                NextPaquet();
+                            }
                             break;
-
-                        default:
-                            return;
                     }
-                    NextPaquet();
-                }
 
                 if (IsPending)
                     TrySend();
