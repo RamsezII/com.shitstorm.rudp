@@ -16,6 +16,7 @@ namespace _RUDP_
         }
 
         public readonly RudpConnection eveConn;
+        public readonly RudpChannel channel;
         public override string ToString() => $"{nameof(EveClient)} {eveConn?.ToString() ?? "null"}";
 
         //----------------------------------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ namespace _RUDP_
         public EveClient(in RudpConnection eveConn)
         {
             this.eveConn = eveConn;
+            channel = new(this.eveConn, RudpHeaderM.Eve);
         }
 
         //----------------------------------------------------------------------------------------------------------
