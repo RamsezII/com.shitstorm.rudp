@@ -21,7 +21,7 @@ namespace _RUDP_
 
         void QueryHostsList()
         {
-            eveConn.channel_direct.EnqueueData(writer =>
+            eveConn.channel_eve.eve_buffer.TryWrite(writer =>
             {
                 writer.Write((byte)EveCodes.ListHosts);
                 writer.Write(hostsOffset.Value);

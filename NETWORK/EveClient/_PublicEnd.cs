@@ -14,7 +14,7 @@ namespace _RUDP_
         {
             eveConn.keepAlive = true;
             eveConn.socket.selfConn.publicEnd = null;
-            eveConn.channel_direct.EnqueueData(writer => writer.Write((byte)EveCodes.GetPublicEnd));
+            eveConn.channel_eve.eve_buffer.TryWrite(writer => writer.Write((byte)EveCodes.GetPublicEnd));
         }
 
         void OnPublicEndAck()

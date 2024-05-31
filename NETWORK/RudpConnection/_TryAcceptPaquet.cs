@@ -8,10 +8,10 @@ namespace _RUDP_
         public bool TryAcceptPaquet(in RudpHeader header)
         {
             RudpChannel channel = null;
-            if (header.mask.HasFlag(channel_direct.mask))
-                channel = channel_direct;
-            else if (header.mask.HasFlag(channel_mainthread.mask))
-                channel = channel_mainthread;
+            if (header.mask.HasFlag(channel_files.mask))
+                channel = channel_files;
+            else if (header.mask.HasFlag(channel_states.mask))
+                channel = channel_states;
 
             if (RudpSocket.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.reclength_u})".ToSubLog());
@@ -35,7 +35,7 @@ namespace _RUDP_
                     else
                         return false;
 
-                socket.SendAckTo(new(channel.mask | RudpHeaderM.Ack, header.id, header.attempt), endPoint);
+                socket.SendAckTo(new(header.id, channel.mask | RudpHeaderM.Ack, header.attempt), endPoint);
 
                 if (redundant || !socket.HasNext())
                     return true;

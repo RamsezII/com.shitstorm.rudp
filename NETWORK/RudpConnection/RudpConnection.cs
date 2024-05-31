@@ -16,13 +16,16 @@ namespace _RUDP_
             lastSend = new(),
             lastReceive = new();
 
-        public override string ToString() => $"conn({socket.endIP_LAN}->{endPoint})";
+        public readonly RudpChannel
+            channel_files,
+            channel_states,
+            channel_flux,
+            channel_audio,
+            channel_eve;
 
         public bool keepAlive;
 
-        public RudpChannel
-            channel_direct,
-            channel_mainthread;
+        public override string ToString() => $"conn({socket.endIP_LAN}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -31,8 +34,11 @@ namespace _RUDP_
             this.socket = socket;
             this.endPoint = endPoint;
 
-            channel_direct = new(this, RudpHeaderM.Files);
-            channel_mainthread = new(this, RudpHeaderM.States);
+            channel_files = new(this, RudpHeaderM.Files);
+            channel_states = new(this, RudpHeaderM.States);
+            channel_flux = new(this, RudpHeaderM.Flux);
+            channel_audio = new(this, RudpHeaderM.Audio);
+            channel_eve = new(this, RudpHeaderM.Eve);
 
             keepAlive = true;
         }
@@ -41,8 +47,8 @@ namespace _RUDP_
 
         public void OnNetworkPush()
         {
-            channel_direct.TryPushDataIntoPaquet();
-            channel_mainthread.TryPushDataIntoPaquet();
+            channel_files.Push();
+            channel_states.Push();
 
             if (keepAlive)
             {
@@ -69,8 +75,11 @@ namespace _RUDP_
                 return;
             disposed.Value = true;
 
-            channel_direct.Dispose();
-            channel_mainthread.Dispose();
+            channel_files.Dispose();
+            channel_states.Dispose();
+            channel_flux.Dispose();
+            channel_audio.Dispose();
+            channel_eve.Dispose();
         }
     }
 }

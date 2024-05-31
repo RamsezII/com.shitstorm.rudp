@@ -13,6 +13,8 @@ namespace _RUDP_
         public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_RUDP);
         public static IPAddress localIP;
 
+        public const bool logIncidents = true;
+
         //----------------------------------------------------------------------------------------------------------
 
         static void InitNet()

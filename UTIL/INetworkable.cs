@@ -14,13 +14,13 @@ namespace _RUDP_
 
 public static partial class Util_rudp
 {
-    public static readonly Dictionary<int, INetworkable> networkables = new();
+    public static readonly Dictionary<int, INetworkable> netSingletons = new();
 
     //----------------------------------------------------------------------------------------------------------
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        networkables.Clear();
+        netSingletons.Clear();
     }
 }

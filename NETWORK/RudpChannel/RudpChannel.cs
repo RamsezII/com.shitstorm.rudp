@@ -1,5 +1,5 @@
+using _UTIL_;
 using System;
-using System.IO;
 
 namespace _RUDP_
 {
@@ -7,17 +7,16 @@ namespace _RUDP_
     {
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
-        public readonly MemoryStream stream_data;
-        public readonly BinaryReader reader_data;
-        public readonly BinaryWriter writer_data;
+        public readonly RudpStream states_stream;
+        public readonly RudpBuffer eve_buffer;
 
-        public readonly byte[] buffer_paquet;
-        public readonly MemoryStream stream_paquet;
-        public bool Pending => stream_paquet.Position > 0;
+        public byte[] paquet;
+        public bool IsPending => paquet != null && paquet.Length > 0;
 
         public double lastSend;
         public byte id, attempt;
         public override string ToString() => $"{conn}[{mask}]";
+        readonly ThreadSafe<bool> disposed = new();
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -26,21 +25,69 @@ namespace _RUDP_
             this.conn = conn;
             this.mask = mask;
 
-            stream_data = new();
-            reader_data = new(stream_data, RudpSocket.UTF8, true);
-            writer_data = new(stream_data, RudpSocket.UTF8, true);
+            switch (mask)
+            {
+                case RudpHeaderM.States:
+                    states_stream = new();
+                    break;
+                case RudpHeaderM.Eve:
+                    eve_buffer = new();
+                    break;
+            }
+        }
 
-            buffer_paquet = new byte[RudpSocket.PAQUET_SIZE];
+        //----------------------------------------------------------------------------------------------------------
+
+        void NextPaquet()
+        {
+            lastSend = 0;
+            attempt = 0;
+            id = ++id == 0 ? (byte)1 : id;
+        }
+
+        public void Push()
+        {
+            lock (this)
+                if (IsPending)
+                    if (mask.HasFlag(RudpHeaderM.Reliable))
+                        TrySendReliable();
+                    else
+                        SendUnreliable();
+                else
+                    switch (mask)
+                    {
+                        case RudpHeaderM.States:
+                            if (states_stream.HasData)
+                            {
+                                paquet = states_stream.GetPaquetBuffer();
+                                NextPaquet();
+                                TrySendReliable();
+                            }
+                            break;
+
+                        case RudpHeaderM.Eve:
+                            if (eve_buffer.HasData)
+                            {
+                                paquet = eve_buffer.GetPaquetBuffer();
+                                SendUnreliable();
+                            }
+                            break;
+                    }
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public void Dispose()
         {
-            stream_data.Dispose();
-            reader_data.Dispose();
-            writer_data.Dispose();
-            stream_paquet.Dispose();
+            lock (disposed)
+            {
+                if (disposed._value)
+                    return;
+                disposed._value = true;
+            }
+            states_stream?.Dispose();
+            eve_buffer?.Dispose();
+            onAck = null;
         }
     }
 }

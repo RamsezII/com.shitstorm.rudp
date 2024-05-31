@@ -41,14 +41,14 @@ namespace _RUDP_
     {
         public const byte HEADER_length = (byte)RudpHeaderI._last_;
 
-        public readonly byte version;
         public readonly RudpHeaderM mask;
+        public readonly byte version;
         public readonly byte id, attempt;
         public override string ToString() => $"{{ve:{version} ma:{{{mask}}} id:{id} at:{attempt}}}";
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpHeader(in RudpHeaderM mask, in byte id, in byte attempt) : this(Util_net.VERSION, mask, id, attempt)
+        public RudpHeader(in byte id, in RudpHeaderM mask, in byte attempt) : this(Util_net.VERSION, mask, id, attempt)
         {
         }
 
@@ -67,18 +67,18 @@ namespace _RUDP_
 
         public void WriteToBuffer(in byte[] buffer)
         {
-            buffer[0] = version;
-            buffer[1] = (byte)mask;
-            buffer[2] = id;
-            buffer[3] = attempt;
+            buffer[(int)RudpHeaderI.Version] = version;
+            buffer[(int)RudpHeaderI.Mask] = (byte)mask;
+            buffer[(int)RudpHeaderI.ID] = id;
+            buffer[(int)RudpHeaderI.Attempt] = attempt;
         }
 
         public static void Write(in byte[] buffer, in RudpHeaderM mask, in byte id, in byte attempt)
         {
-            buffer[0] = Util_net.VERSION;
-            buffer[1] = (byte)mask;
-            buffer[2] = id;
-            buffer[3] = attempt;
+            buffer[(int)RudpHeaderI.Version] = Util_net.VERSION;
+            buffer[(int)RudpHeaderI.Mask] = (byte)mask;
+            buffer[(int)RudpHeaderI.ID] = id;
+            buffer[(int)RudpHeaderI.Attempt] = attempt;
         }
     }
 }
