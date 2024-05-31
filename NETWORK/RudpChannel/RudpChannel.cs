@@ -46,31 +46,30 @@ namespace _RUDP_
         public void Push()
         {
             lock (this)
-                if (IsPending)
-                    if (mask.HasFlag(RudpHeaderM.Reliable))
-                        TrySendReliable();
-                    else
-                        SendUnreliable();
-                else
+            {
+                if (!IsPending)
+                {
                     switch (mask)
                     {
                         case RudpHeaderM.States:
                             if (states_stream.HasData)
-                            {
                                 paquet = states_stream.GetPaquetBuffer();
-                                NextPaquet();
-                                TrySendReliable();
-                            }
                             break;
 
                         case RudpHeaderM.Eve:
                             if (eve_buffer.HasData)
-                            {
                                 paquet = eve_buffer.GetPaquetBuffer();
-                                SendUnreliable();
-                            }
                             break;
+
+                        default:
+                            return;
                     }
+                    NextPaquet();
+                }
+
+                if (IsPending)
+                    TrySend();
+            }
         }
 
         //----------------------------------------------------------------------------------------------------------

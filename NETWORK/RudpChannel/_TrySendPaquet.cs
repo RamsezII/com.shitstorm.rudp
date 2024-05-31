@@ -4,13 +4,13 @@ namespace _RUDP_
 {
     partial class RudpChannel
     {
-        void TrySendReliable()
+        void TrySend()
         {
             lock (this)
             {
                 if (attempt >= byte.MaxValue)
                 {
-                    Debug.LogWarning($"{this} {nameof(TrySendReliable)} attempt overflow for paquet: {this}.{id}".ToSubLog());
+                    Debug.LogWarning($"{this} {nameof(TrySend)} attempt overflow for paquet: {this}.{id}".ToSubLog());
                     return;
                 }
 

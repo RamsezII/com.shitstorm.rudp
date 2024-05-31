@@ -2,6 +2,9 @@
 {
     public partial class EveClient
     {
+        public void Test()
+        {
 
+        }
     }
 }

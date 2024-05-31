@@ -44,18 +44,19 @@ namespace _RUDP_
 
         public void Push()
         {
-            channel_states.Push();
-            channel_files.Push();
             channel_eve.Push();
+            channel_files.Push();
+            channel_states.Push();
 
             if (keepAlive)
             {
                 double time = Util_rudp.TotalMilliseconds;
-                if (time > lastSend.Value + 5000)
-                {
-                    lastSend.Value = time;
-                    socket.Send(Util_rudp.EMPTY_BUFFER);
-                }
+                lock (lastSend)
+                    if (time > lastSend._value + 5000)
+                    {
+                        lastSend._value = time;
+                        socket.SendTo(Util_rudp.EMPTY_BUFFER, 0, 0, endPoint);
+                    }
             }
         }
 

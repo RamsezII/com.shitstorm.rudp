@@ -23,9 +23,11 @@ namespace _RUDP_
                         }
                         else if (mask != RudpHeaderM.Eve)
                             eve_buffer.Flush();
+
+                        paquet = null;
                         onAck?.Invoke(header);
                         onAck = null;
-                        paquet = null;
+
                         return true;
                     }
                     else if (Util_rudp.logIncidents)

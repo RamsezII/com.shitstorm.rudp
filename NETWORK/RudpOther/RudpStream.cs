@@ -13,7 +13,7 @@ namespace _RUDP_
     {
         public enum Compressions { None, Gzip }
 
-        public readonly MemoryStream stream;
+        readonly MemoryStream stream;
         readonly GZipStream gzip;
         readonly BinaryWriter writer_raw, writer_gzip;
         readonly BinaryReader reader_raw;
@@ -37,10 +37,6 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        /// <summary>
-        /// add data, prefixed by its length, to the stream.
-        /// </summary>
-        /// <param name="gzip">gzip the data</param>
         public void Write(in Action<BinaryWriter> onWriter, in Compressions compression = 0)
         {
             lock (this)
@@ -81,8 +77,8 @@ namespace _RUDP_
             {
                 byte[] buffer = stream.GetBuffer();
                 stream.Position = 0;
-                Buffer.BlockCopy(buffer, paquetLength + RudpHeader.HEADER_length, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquetLength - RudpHeader.HEADER_length);
-                stream.SetLength(stream.Length - paquetLength);
+                Buffer.BlockCopy(buffer, paquetLength, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquetLength - RudpHeader.HEADER_length);
+                stream.SetLength(stream.Length - paquetLength + RudpHeader.HEADER_length);
                 stream.Position = stream.Length;
             }
         }
