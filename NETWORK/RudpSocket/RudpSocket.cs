@@ -10,13 +10,9 @@ namespace _RUDP_
 {
     public partial class RudpSocket : Socket, IDisposable
     {
-        public const ushort
-            PAQUET_SIZE = 1472,
-            DATA_SIZE = PAQUET_SIZE - RudpHeader.HEADER_length;
-
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
-        public readonly byte[] PAQUET_BUFFER = new byte[PAQUET_SIZE];
+        public readonly byte[] PAQUET_BUFFER = new byte[Util_rudp.PAQUET_SIZE];
         public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
         public readonly ushort localPort;
@@ -49,18 +45,18 @@ namespace _RUDP_
             if (port != 0)
                 Bind(new IPEndPoint(IPAddress.Any, port));
 
-            SendTo(PAQUET_BUFFER, 0, 0, SocketFlags.None, Util_net.END_LOOPBACK);
+            SendTo(PAQUET_BUFFER, 0, 0, SocketFlags.None, Util_rudp.END_LOOPBACK);
             endIP_any = LocalEndPoint;
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
-            endIP_LAN = new(Util_net.localIP, localPort);
+            endIP_LAN = new(Util_rudp.localIP, localPort);
             Debug.Log($"opened UDP: {this}".ToSubLog());
 
             selfConn = ToConnection((IPEndPoint)endIP_any);
             lock (connections)
                 connections[endIP_loopback] = connections[endIP_LAN] = selfConn;
 
-            eveClient = new(ToConnection(Util_net.END_RUDP));
+            eveClient = new(ToConnection(Util_rudp.END_RUDP));
 
             BeginReceive();
         }

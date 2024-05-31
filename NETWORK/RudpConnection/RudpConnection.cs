@@ -1,16 +1,13 @@
 using _UTIL_;
-using System;
 using System.Net;
 
 namespace _RUDP_
 {
-    public partial class RudpConnection : IDisposable
+    public partial class RudpConnection : Disposable
     {
         public readonly RudpSocket socket;
         public readonly IPEndPoint endPoint;
         public IPEndPoint localEnd, publicEnd;
-
-        public readonly ThreadSafe<bool> disposed = new();
 
         public readonly ThreadSafe<double>
             lastSend = new(),
@@ -45,36 +42,34 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void OnNetworkPush()
+        public void Push()
         {
-            channel_files.Push();
             channel_states.Push();
+            channel_files.Push();
+            channel_eve.Push();
 
             if (keepAlive)
             {
-                double time = Util_net.TotalMilliseconds;
+                double time = Util_rudp.TotalMilliseconds;
                 if (time > lastSend.Value + 5000)
                 {
                     lastSend.Value = time;
-                    socket.Send(Util_net.EMPTY_BUFFER);
+                    socket.Send(Util_rudp.EMPTY_BUFFER);
                 }
             }
         }
 
         public void Send(in byte[] buffer, in ushort offset, in ushort length)
         {
-            lastSend.Value = Util_net.TotalMilliseconds;
+            lastSend.Value = Util_rudp.TotalMilliseconds;
             socket.SendTo(buffer, offset, length, endPoint);
         }
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void Dispose()
+        protected override void OnDispose()
         {
-            if (disposed.Value)
-                return;
-            disposed.Value = true;
-
+            base.OnDispose();
             channel_files.Dispose();
             channel_states.Dispose();
             channel_flux.Dispose();

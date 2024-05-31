@@ -28,10 +28,10 @@ namespace _RUDP_
                         paquet = null;
                         return true;
                     }
-                    else if (Util_net.logIncidents)
+                    else if (Util_rudp.logIncidents)
                         Debug.LogWarning($"{this} Received ACK for unknown paquet: {header}");
                 }
-                else if (Util_net.logIncidents)
+                else if (Util_rudp.logIncidents)
                 {
                     Debug.LogWarning($"{this} Received unexpected ACK: {header}");
                     return false;

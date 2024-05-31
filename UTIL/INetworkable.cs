@@ -1,7 +1,6 @@
 ﻿using _RUDP_;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 namespace _RUDP_
 {
@@ -15,12 +14,4 @@ namespace _RUDP_
 public static partial class Util_rudp
 {
     public static readonly Dictionary<int, INetworkable> netSingletons = new();
-
-    //----------------------------------------------------------------------------------------------------------
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void Init()
-    {
-        netSingletons.Clear();
-    }
 }

@@ -1,9 +1,8 @@
 using _UTIL_;
-using System;
 
 namespace _RUDP_
 {
-    public partial class RudpChannel : IDisposable
+    public partial class RudpChannel : Disposable
     {
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
@@ -16,7 +15,6 @@ namespace _RUDP_
         public double lastSend;
         public byte id, attempt;
         public override string ToString() => $"{conn}[{mask}]";
-        readonly ThreadSafe<bool> disposed = new();
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -77,14 +75,9 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void Dispose()
+        protected override void OnDispose()
         {
-            lock (disposed)
-            {
-                if (disposed._value)
-                    return;
-                disposed._value = true;
-            }
+            base.OnDispose();
             states_stream?.Dispose();
             eve_buffer?.Dispose();
             onAck = null;

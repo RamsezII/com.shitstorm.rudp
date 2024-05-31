@@ -18,7 +18,7 @@ namespace _RUDP_
 
         public RudpBuffer()
         {
-            buffer = new byte[RudpSocket.PAQUET_SIZE];
+            buffer = new byte[Util_rudp.PAQUET_SIZE];
             stream = new(buffer);
             writer_raw = new(stream, RudpSocket.UTF8, false);
             gzip = new(stream, CompressionLevel.Fastest, true);

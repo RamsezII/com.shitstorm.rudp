@@ -6,11 +6,11 @@ namespace _RUDP_
 {
     public partial class RudpSocket
     {
-        public void Update()
+        public void Push()
         {
             if (disposed.Value)
             {
-                Debug.LogWarning($"{this} {nameof(Update)}: Disposed socket");
+                Debug.LogWarning($"{this} {nameof(Push)}: Disposed socket");
                 return;
             }
 
@@ -25,11 +25,11 @@ namespace _RUDP_
                         lock (pair.Value.disposed)
                             if (pair.Value.disposed._value)
                                 if (removeKeys == null)
-                                    removeKeys = new HashSet<IPEndPoint> { pair.Key };
+                                    removeKeys = new() { pair.Key };
                                 else
                                     removeKeys.Add(pair.Key);
                             else
-                                pair.Value.OnNetworkPush();
+                                pair.Value.Push();
 
                 if (removeKeys != null)
                     foreach (IPEndPoint connector in removeKeys)

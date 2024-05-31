@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    static class Util_python
+    static class Util_eve
     {
         [MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(HeaderCodes_python))]
         static void HeaderCodes_python()
