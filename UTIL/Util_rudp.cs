@@ -17,7 +17,7 @@ public static partial class Util_rudp
     public static readonly bool
         logIncidents = true,
         logEmptyPaquets = false,
-        logAllPaquets = false;
+        logAllPaquets = true;
 
     public const ushort
         PAQUET_SIZE = 1472,

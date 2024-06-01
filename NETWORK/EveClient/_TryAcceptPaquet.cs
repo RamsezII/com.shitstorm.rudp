@@ -1,23 +1,15 @@
 ﻿using _UTIL_;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace _RUDP_
 {
     public partial class EveClient
     {
-        public enum EveCodes : byte
-        {
-            _none_,
-            Test,
-            GetPublicEnd,
-            ListHosts,
-            AddHost,
-            JoinHost,
-            _last_,
-        }
-
+        public static readonly IEnumerable<EveCodes> EEveCodes = Enumerable.Range(0, (int)EveCodes._last_).Select(i => (EveCodes)i);
         public readonly ThreadSafe<Func<EveCodes, BinaryReader, bool>> onEvePaquet = new();
 
         //----------------------------------------------------------------------------------------------------------
@@ -37,6 +29,14 @@ namespace _RUDP_
 
             EveCodes code = (EveCodes)eveConn.socket.directReader.ReadByte();
 
+            lock (this)
+                if (armedCode != EveCodes._none_)
+                {
+                    if (armedCode != code)
+                        return;
+                    armedCode = EveCodes._none_;
+                }
+
             switch (code)
             {
                 case EveCodes.GetPublicEnd:
@@ -51,15 +51,23 @@ namespace _RUDP_
                     OnAddHostAck();
                     break;
 
+#if UNITY_EDITOR
+                case EveCodes.Test:
+                    Debug.Log($"{eveConn} Received test eve code");
+                    break;
+#endif
+
                 default:
-                    lock (onEvePaquet)
-                        if (onEvePaquet._value != null)
-                            if (onEvePaquet._value(code, eveConn.socket.directReader))
-                                onEvePaquet._value = null;
-                            else
-                                Debug.LogWarning($"{eveConn} Received unknown eve code: {code}");
+                    Debug.LogWarning($"{eveConn} Received unimplemented eve code: \"{code}\"");
                     break;
             }
+
+            lock (onEvePaquet)
+                if (onEvePaquet._value != null)
+                    if (onEvePaquet._value(code, eveConn.socket.directReader))
+                        onEvePaquet._value = null;
+                    else
+                        Debug.LogWarning($"{eveConn} Received unexpected eve code: {code}");
         }
     }
 }

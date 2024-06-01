@@ -1,35 +1,23 @@
-﻿using _UTIL_;
-using System.Net;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _RUDP_
 {
     public partial class EveClient
     {
-        public static readonly ThreadSafe<IPAddress> publicIP = new();
-
-        //----------------------------------------------------------------------------------------------------------
-
         public void QueryPublicIP()
         {
-            eveConn.keepAlive = true;
+            lock (this)
+                armedCode = EveCodes.GetPublicEnd;
+
             eveConn.socket.selfConn.publicEnd = null;
+            Debug.Log($"{this} Querying public IP...".ToSubLog());
             eveWriter.Write((byte)EveCodes.GetPublicEnd);
         }
 
         void OnPublicEndAck()
         {
-            lock (eveConn.socket.selfConn)
-            {
-                IPEndPoint current = eveConn.socket.selfConn.publicEnd;
-                IPEndPoint value = eveConn.socket.directReader.ReadIPEndPoint();
-                publicIP.Value = value.Address;
-
-                if (current == null || !current.Equals(value))
-                    Debug.Log($"{this} Public IP: {value.ToString().Bold()}");
-
-                eveConn.socket.selfConn.publicEnd = value;
-            }
+            eveConn.socket.selfConn.publicEnd = socketReader.ReadIPEndPoint();
+            Debug.Log($"{this} Public IP: {eveConn.socket.selfConn.publicEnd.ToString().Bold()}");
         }
     }
 }

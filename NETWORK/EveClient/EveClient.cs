@@ -16,10 +16,18 @@ namespace _RUDP_
             VERSION = 1,
             HEADER_LENGTH = (byte)HeaderI._last_;
 
+        public static readonly bool
+            logEvePaquets = true;
+
+        [SerializeField] EveCodes armedCode;
+
         public readonly RudpConnection eveConn;
         public readonly BinaryReader socketReader;
 
-        bool pending;
+        readonly byte[] eveBuffer;
+        readonly MemoryStream eveStream;
+        readonly BinaryWriter eveWriter;
+
         public byte[] GetPaquetBuffer() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"{nameof(EveClient)} {eveConn}";
 
@@ -50,10 +58,8 @@ namespace _RUDP_
 
         public void Push()
         {
-            if (pending)
-                if (eveStream.Position <= HEADER_LENGTH)
-                    pending = false;
-                else
+            lock (eveStream)
+                if (eveStream.Position > HEADER_LENGTH)
                     lock (eveConn.lastSend)
                         if (Util.TotalMilliseconds > eveConn.lastSend._value + 350)
                             eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
