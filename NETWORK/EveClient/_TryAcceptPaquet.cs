@@ -1,7 +1,4 @@
-﻿using _UTIL_;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,7 +7,6 @@ namespace _RUDP_
     public partial class EveClient
     {
         public static readonly IEnumerable<EveCodes> EEveCodes = Enumerable.Range(0, (int)EveCodes._last_).Select(i => (EveCodes)i);
-        public readonly ThreadSafe<Func<EveCodes, BinaryReader, bool>> onEvePaquet = new();
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -28,14 +24,6 @@ namespace _RUDP_
             eveStream.Position = HEADER_LENGTH;
 
             EveCodes code = (EveCodes)eveConn.socket.recPaquetReader.ReadByte();
-
-            lock (this)
-                if (armedCode != EveCodes._none_)
-                {
-                    if (armedCode != code)
-                        return;
-                    armedCode = EveCodes._none_;
-                }
 
             switch (code)
             {
@@ -62,12 +50,18 @@ namespace _RUDP_
                     break;
             }
 
-            lock (onEvePaquet)
-                if (onEvePaquet._value != null)
-                    if (onEvePaquet._value(code, eveConn.socket.recPaquetReader))
-                        onEvePaquet._value = null;
-                    else
-                        Debug.LogWarning($"{eveConn} Received unexpected eve code: {code}");
+            lock (this)
+                if (armedCode != EveCodes._none_)
+                {
+                    if (armedCode != code)
+                        return;
+                    if (user != null)
+                    {
+                        user.OnEveOperation(code, true, socketReader);
+                        user = null;
+                    }
+                    armedCode = EveCodes._none_;
+                }
         }
     }
 }

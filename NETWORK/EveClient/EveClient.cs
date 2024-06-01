@@ -6,6 +6,11 @@ namespace _RUDP_
 {
     public partial class EveClient : IDisposable
     {
+        public interface IUser
+        {
+            void OnEveOperation(in EveCodes code, in bool success, in BinaryReader reader);
+        }
+
         enum HeaderI : byte
         {
             version,
@@ -20,6 +25,7 @@ namespace _RUDP_
             logEvePaquets = true;
 
         [SerializeField] EveCodes armedCode;
+        [SerializeField] IUser user;
 
         public readonly RudpConnection eveConn;
         public readonly BinaryReader socketReader;
@@ -27,7 +33,6 @@ namespace _RUDP_
         readonly byte[] eveBuffer;
         readonly MemoryStream eveStream;
         readonly BinaryWriter eveWriter;
-
         public byte[] GetPaquetBuffer() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"{nameof(EveClient)} {eveConn}";
 
@@ -56,6 +61,36 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        public void StartOperation(in IUser user, in EveCodes code)
+        {
+            lock (this)
+            {
+                this.user = user;
+                armedCode = code;
+
+                lock (eveStream)
+                {
+                    eveStream.Position = HEADER_LENGTH;
+                    eveWriter.Write((byte)code);
+
+                    switch (code)
+                    {
+                        case EveCodes.GetPublicEnd:
+                            break;
+                        case EveCodes.ListHosts:
+                            break;
+                        case EveCodes.AddHost:
+                            WriteAddHostRequest();
+                            break;
+                        case EveCodes.JoinHost:
+                            break;
+                        case EveCodes.Test:
+                            break;
+                    }
+                }
+            }
+        }
+
         public void Push()
         {
             lock (eveStream)
@@ -63,10 +98,6 @@ namespace _RUDP_
                     lock (eveConn.lastSend)
                         if (Util.TotalMilliseconds > eveConn.lastSend._value + 350)
                             eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-
-            if (Time.unscaledTime > lastAddRequest + 2)
-                if (hostState.Value > 0)
-                    MaintainHost();
         }
 
         //----------------------------------------------------------------------------------------------------------

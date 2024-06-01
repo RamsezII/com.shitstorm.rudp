@@ -5,7 +5,7 @@ namespace _RUDP_
 {
     public partial class EveClient
     {
-        public enum HostStates : byte
+        enum HostStates : byte
         {
             None,
             Adding,
@@ -23,35 +23,62 @@ namespace _RUDP_
             _last_,
         }
 
-        public readonly ThreadSafe<HostStates> hostState = new();
-        public HostCodes hostCode;
+        readonly ThreadSafe<HostStates> hostState = new();
+        public static readonly int gameHash = Application.productName.GetHashCode();
         public string hostName;
         public int publicHash;
-        float lastAddRequest;
 
         //----------------------------------------------------------------------------------------------------------
 
-        void MaintainHost()
+        void WriteAddHostRequest()
         {
-            lastAddRequest = Time.unscaledTime;
-
             lock (hostState)
-                if (hostState._value != HostStates.Hosting)
-                    hostState._value = HostStates.Adding;
-
-            eveWriter.Write((byte)EveCodes.AddHost);
-            eveWriter.Write(publicHash);
-            eveWriter.WriteText(hostName);
+            {
+                eveWriter.Write((byte)EveCodes.AddHost);
+                eveWriter.Write(gameHash);
+                eveWriter.WriteText(hostName);
+                eveWriter.Write(publicHash);
+            }
         }
 
         void OnAddHostAck()
         {
-            hostCode = (HostCodes)eveConn.socket.recPaquetReader.ReadByte();
-            hostState.Value = hostCode switch
+            Debug.Log($"----- Received AddHostAck -----");
+            lock (hostState)
             {
-                HostCodes.Added or HostCodes.Maintained => HostStates.Hosting,
-                _ => HostStates.None,
-            };
+                HostCodes code = (HostCodes)socketReader.ReadByte();
+                switch (code)
+                {
+                    case HostCodes.Added:
+                        hostState._value = HostStates.Hosting;
+                        Debug.Log($"Host added: {hostName}");
+                        break;
+
+                    case HostCodes.Exists:
+                        hostState._value = HostStates.Hosting;
+                        Debug.Log($"Host exists: {hostName}");
+                        break;
+
+                    case HostCodes.Maintained:
+                        hostState._value = HostStates.Hosting;
+                        Debug.Log($"Host maintained: {hostName}");
+                        break;
+
+                    case HostCodes.NotFound:
+                        hostState._value = HostStates.Adding;
+                        Debug.Log($"Host not found: {hostName}");
+                        break;
+
+                    case HostCodes.Removed:
+                        hostState._value = HostStates.Adding;
+                        Debug.Log($"Host removed: {hostName}");
+                        break;
+
+                    default:
+                        Debug.LogWarning($"Received unimplemented host code: \"{code}\"");
+                        break;
+                }
+            }
         }
     }
 }
