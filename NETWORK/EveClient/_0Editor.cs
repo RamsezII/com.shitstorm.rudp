@@ -18,7 +18,7 @@ namespace _RUDP_
 
             log.AppendLine($"VERSION = {VERSION}");
             log.AppendLine($"PORT_RUDP = {Util_rudp.PORT_RUDP}");
-            log.AppendLine($"HEADER_SIZE = {(int)HeaderI._last_}");
+            log.AppendLine($"HEADER_SIZE = {HEADER_LENGTH}");
             log.AppendLine($"PAQUET_SIZE = {Util_rudp.PAQUET_SIZE}");
             log.AppendLine($"DATA_SIZE = {Util_rudp.PAQUET_SIZE - HEADER_LENGTH}");
 

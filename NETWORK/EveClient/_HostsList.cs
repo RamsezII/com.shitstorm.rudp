@@ -13,14 +13,19 @@ namespace _RUDP_
 
         void OnListAck()
         {
-            ushort hostsCount = socketReader.ReadUInt16();
-            while (socket.HasNext())
-            {
-                string hostName = socketReader.ReadText();
-                hostsList.Add(hostName);
-                ++hostsOffset;
-                Debug.Log($"Received host: \"{hostName}\"");
-            }
+            ushort
+                recOff = socketReader.ReadUInt16(),
+                hostsCount = socketReader.ReadUInt16();
+
+            if (recOff == hostsOffset)
+                while (socket.HasNext())
+                {
+                    string hostName = socketReader.ReadText();
+                    hostsList.Add(hostName);
+                    ++hostsOffset;
+                    Debug.Log($"Received host: \"{hostName}\"");
+                }
+
             if (hostsOffset < hostsCount)
             {
                 eveWriter.Write((byte)EveCodes.ListHosts);

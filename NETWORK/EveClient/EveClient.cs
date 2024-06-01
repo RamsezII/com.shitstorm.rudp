@@ -12,15 +12,9 @@ namespace _RUDP_
             void OnEveOperation(in EveCodes code, in bool success, in BinaryReader reader);
         }
 
-        enum HeaderI : byte
-        {
-            version,
-            _last_
-        }
-
         public const byte
             VERSION = 1,
-            HEADER_LENGTH = (byte)HeaderI._last_;
+            HEADER_LENGTH = 1;
 
         public static readonly bool
             logEvePaquets = true;
@@ -49,17 +43,7 @@ namespace _RUDP_
             eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
             eveStream = new(eveBuffer);
             eveWriter = new(eveStream, RudpSocket.UTF8, false);
-
-            for (HeaderI code = 0; code < HeaderI._last_; code++)
-                switch (code)
-                {
-                    case HeaderI.version:
-                        eveWriter.Write(VERSION);
-                        break;
-                    default:
-                        eveWriter.Write((byte)0);
-                        break;
-                }
+            eveWriter.Write(VERSION);
         }
 
         //----------------------------------------------------------------------------------------------------------
