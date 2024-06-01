@@ -16,11 +16,9 @@ namespace _RUDP_
         public IPEndPoint recEnd_u;
         public ushort reclength_u;
 
-        public readonly MemoryStream directStream, bufferStream;
-        public readonly BinaryReader directReader, bufferReader;
-        public bool HasNext() => directStream.Position < reclength_u;
-
-        public readonly Action<RudpConnection, RudpHeaderM, BinaryReader> onDirectRead;
+        public readonly MemoryStream recPaquetStream, recDataStream;
+        public readonly BinaryReader recPaquetReader, recDataReader;
+        public bool HasNext() => recPaquetStream.Position < reclength_u;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -43,7 +41,7 @@ namespace _RUDP_
                     lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
                     EndPoint remoteEnd = endIP_any;
-                    directStream.Position = 0;
+                    recPaquetStream.Position = 0;
                     reclength_u = (ushort)EndReceiveFrom(aResult, ref remoteEnd);
                     receive_size += reclength_u;
 
@@ -51,7 +49,11 @@ namespace _RUDP_
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
                     if (recConn == eveClient.eveConn)
+                    {
+                        if (Util_rudp.logAllPaquets)
+                            Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
                         eveClient.TryAcceptEvePaquet();
+                    }
                     else
                     {
                         if (newConn)
@@ -64,7 +66,7 @@ namespace _RUDP_
 
                         if (reclength_u >= RudpHeader.HEADER_length)
                         {
-                            RudpHeader header = RudpHeader.FromReader(directReader);
+                            RudpHeader header = RudpHeader.FromReader(recPaquetReader);
                             if (!recConn.TryAcceptPaquet(header))
                                 Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
                         }
@@ -72,6 +74,8 @@ namespace _RUDP_
                             Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
                         else if (reclength_u > 0)
                             Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");
+                        else if (Util_rudp.logAllPaquets)
+                            Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
                     }
 
                     recEnd_u = null;

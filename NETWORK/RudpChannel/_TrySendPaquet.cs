@@ -10,7 +10,7 @@ namespace _RUDP_
             {
                 if (attempt >= byte.MaxValue)
                 {
-                    Debug.LogWarning($"{this} {nameof(TrySend)} attempt overflow for paquet: {this}.{id}".ToSubLog());
+                    Debug.LogWarning($"{this} {nameof(TrySend)} attempt overflow for paquet: {this}.{sendID}".ToSubLog());
                     return;
                 }
 
@@ -50,7 +50,7 @@ namespace _RUDP_
         {
             lock (paquet)
             {
-                RudpHeader.Write(paquet, mask, id, attempt);
+                RudpHeader.Write(paquet, mask, sendID, attempt);
                 conn.Send(paquet, 0, (ushort)paquet.Length);
             }
         }

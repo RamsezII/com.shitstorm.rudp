@@ -46,7 +46,7 @@ namespace _RUDP_
 
         void OnAddHostAck()
         {
-            hostCode = (HostCodes)eveConn.socket.directReader.ReadByte();
+            hostCode = (HostCodes)eveConn.socket.recPaquetReader.ReadByte();
             hostState.Value = hostCode switch
             {
                 HostCodes.Added or HostCodes.Maintained => HostStates.Hosting,

@@ -27,7 +27,7 @@ namespace _RUDP_
 
         void OnListAck()
         {
-            bool remaining = eveConn.socket.directReader.ReadBool();
+            bool remaining = eveConn.socket.recPaquetReader.ReadBool();
             if (!remaining)
                 hostsListReady.Value = true;
             else
@@ -36,7 +36,7 @@ namespace _RUDP_
                 {
                     ++hostsOffset.Value;
                     lock (hostsList)
-                        hostsList.Add(eveConn.socket.directReader.ReadText());
+                        hostsList.Add(eveConn.socket.recPaquetReader.ReadText());
                 }
                 QueryHostsList();
             }

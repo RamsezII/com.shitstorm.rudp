@@ -20,7 +20,7 @@ namespace _RUDP_
             lock (this)
                 if (paquet != null && paquet.Length > 0)
                 {
-                    if (header.id == id)
+                    if (header.id == sendID)
                     {
                         states_stream?.OnCleanAfterAck((ushort)paquet.Length);
                         paquet = null;

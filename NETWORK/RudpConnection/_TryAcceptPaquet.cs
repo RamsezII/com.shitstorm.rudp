@@ -25,13 +25,10 @@ namespace _RUDP_
             {
                 bool redundant = false;
                 lock (channel)
-                    if (header.id == channel.id)
+                    if (header.id == channel.recID)
                         redundant = true;
-                    else if (header.id == channel.id + 1)
-                    {
-                        if (header.id < byte.MaxValue)
-                            channel.id = header.id;
-                    }
+                    else if (header.id == channel.recID + 1)
+                        ++channel.recID;
                     else
                         return false;
 
@@ -41,30 +38,30 @@ namespace _RUDP_
                     return true;
             }
 
-            if (header.mask.HasFlag(RudpHeaderM.Direct))
+            if (header.mask == RudpHeaderM.Files)
                 if (socket.HasNext())
-                    if (socket.onDirectRead == null)
-                        Debug.LogWarning($"{this} Received direct paquet but no {nameof(socket.onDirectRead)} is set");
-                    else
-                        socket.onDirectRead?.Invoke(this, header.mask, socket.directReader);
+                    if (eReceiveFile == null)
+                        Debug.LogError($"{this} Received FTP paquet but no fileReceiver is set");
+                    else if (!eReceiveFile.MoveNext())
+                        eReceiveFile = null;
 
             if (socket.HasNext())
-                lock (socket.bufferStream)
+                lock (socket.recDataStream)
                 {
-                    if (socket.bufferStream.Position > 0)
+                    if (socket.recDataStream.Position > 0)
                     {
-                        int hole = (int)socket.bufferStream.Position;
-                        int remaining = (int)socket.bufferStream.Length - hole;
+                        int hole = (int)socket.recDataStream.Position;
+                        int remaining = (int)socket.recDataStream.Length - hole;
 
-                        byte[] buffer = socket.bufferStream.GetBuffer();
+                        byte[] buffer = socket.recDataStream.GetBuffer();
                         Buffer.BlockCopy(buffer, hole, buffer, 0, remaining);
-                        socket.bufferStream.Position = 0;
-                        socket.bufferStream.SetLength(remaining);
+                        socket.recDataStream.Position = 0;
+                        socket.recDataStream.SetLength(remaining);
                     }
 
-                    socket.bufferStream.Position = socket.bufferStream.Length;
-                    socket.directStream.WriteTo(socket.bufferStream);
-                    socket.bufferStream.Position = 0;
+                    socket.recDataStream.Position = socket.recDataStream.Length;
+                    socket.recPaquetStream.WriteTo(socket.recDataStream);
+                    socket.recDataStream.Position = 0;
                 }
             return true;
         }

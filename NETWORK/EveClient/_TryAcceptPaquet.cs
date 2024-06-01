@@ -27,7 +27,7 @@ namespace _RUDP_
 
             eveStream.Position = HEADER_LENGTH;
 
-            EveCodes code = (EveCodes)eveConn.socket.directReader.ReadByte();
+            EveCodes code = (EveCodes)eveConn.socket.recPaquetReader.ReadByte();
 
             lock (this)
                 if (armedCode != EveCodes._none_)
@@ -64,7 +64,7 @@ namespace _RUDP_
 
             lock (onEvePaquet)
                 if (onEvePaquet._value != null)
-                    if (onEvePaquet._value(code, eveConn.socket.directReader))
+                    if (onEvePaquet._value(code, eveConn.socket.recPaquetReader))
                         onEvePaquet._value = null;
                     else
                         Debug.LogWarning($"{eveConn} Received unexpected eve code: {code}");

@@ -12,7 +12,8 @@ namespace _RUDP_
         public bool IsPending => paquet != null && paquet.Length > 0;
 
         public double lastSend;
-        public byte id, attempt;
+        byte sendID, attempt;
+        public byte recID;
         public override string ToString() => $"{conn}[{mask}]";
 
         //----------------------------------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ namespace _RUDP_
         {
             lastSend = 0;
             attempt = 0;
-            id = ++id == 0 ? (byte)1 : id;
+            sendID = ++sendID == 0 ? (byte)1 : sendID;
         }
 
         public void Push()

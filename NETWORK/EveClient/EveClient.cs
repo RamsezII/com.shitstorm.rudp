@@ -36,7 +36,7 @@ namespace _RUDP_
         public EveClient(in RudpConnection eveConn)
         {
             this.eveConn = eveConn;
-            socketReader = eveConn.socket.directReader;
+            socketReader = eveConn.socket.recPaquetReader;
 
             eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
             eveStream = new(eveBuffer);

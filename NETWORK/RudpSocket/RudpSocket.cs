@@ -1,6 +1,5 @@
 using _UTIL_;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -28,14 +27,12 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpSocket(in Action<RudpConnection, RudpHeaderM, BinaryReader> onDirectRead, in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+        public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
-            directStream = new(PAQUET_BUFFER);
-            directReader = new(directStream, UTF8, true);
-            bufferStream = new();
-            bufferReader = new(bufferStream, UTF8, true);
-
-            this.onDirectRead = onDirectRead;
+            recPaquetStream = new(PAQUET_BUFFER);
+            recPaquetReader = new(recPaquetStream, UTF8, false);
+            recDataStream = new();
+            recDataReader = new(recDataStream, UTF8, false);
 
             ExclusiveAddressUse = false;
             if (port != 0)
@@ -71,10 +68,10 @@ namespace _RUDP_
             base.Dispose();
             Close();
 
-            directStream.Dispose();
-            directReader.Dispose();
-            bufferStream.Dispose();
-            bufferReader.Dispose();
+            recPaquetStream.Dispose();
+            recPaquetReader.Dispose();
+            recDataStream.Dispose();
+            recDataReader.Dispose();
             eveClient.Dispose();
 
             if (connections.Count > 0)
