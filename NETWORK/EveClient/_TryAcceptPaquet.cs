@@ -12,56 +12,59 @@ namespace _RUDP_
 
         public void TryAcceptEvePaquet()
         {
-            byte version = socketReader.ReadByte();
-
-            if (version != VERSION)
+            lock (eveStream)
             {
-                Debug.LogError($"{eveConn} Received wrong eve version: {version}");
-                eveConn.socket.Dispose();
-                return;
-            }
+                eveStream.Position = HEADER_LENGTH;
 
-            eveStream.Position = HEADER_LENGTH;
+                byte version = socketReader.ReadByte();
 
-            EveCodes code = (EveCodes)eveConn.socket.recPaquetReader.ReadByte();
+                if (version != VERSION)
+                {
+                    Debug.LogError($"{eveConn} Received wrong eve version: {version}");
+                    eveConn.socket.Dispose();
+                    return;
+                }
 
-            switch (code)
-            {
-                case EveCodes.GetPublicEnd:
-                    OnPublicEndAck();
-                    break;
+                EveCodes code = (EveCodes)eveConn.socket.recPaquetReader.ReadByte();
 
-                case EveCodes.ListHosts:
-                    OnListAck();
-                    break;
+                switch (code)
+                {
+                    case EveCodes.GetPublicEnd:
+                        OnPublicEndAck();
+                        break;
 
-                case EveCodes.AddHost:
-                    OnAddHostAck();
-                    break;
+                    case EveCodes.ListHosts:
+                        OnListAck();
+                        break;
+
+                    case EveCodes.AddHost:
+                        OnAddHostAck();
+                        break;
 
 #if UNITY_EDITOR
-                case EveCodes.Test:
-                    Debug.Log($"{eveConn} Received test eve code");
-                    break;
+                    case EveCodes.Test:
+                        Debug.Log($"{eveConn} Received test eve code");
+                        break;
 #endif
 
-                default:
-                    Debug.LogWarning($"{eveConn} Received unimplemented eve code: \"{code}\"");
-                    break;
-            }
-
-            lock (this)
-                if (armedCode != EveCodes._none_)
-                {
-                    if (armedCode != code)
-                        return;
-                    if (user != null)
-                    {
-                        user.OnEveOperation(code, true, socketReader);
-                        user = null;
-                    }
-                    armedCode = EveCodes._none_;
+                    default:
+                        Debug.LogWarning($"{eveConn} Received unimplemented eve code: \"{code}\"");
+                        break;
                 }
+
+                lock (this)
+                    if (armedCode != EveCodes._none_)
+                    {
+                        if (armedCode != code)
+                            return;
+                        if (user != null)
+                        {
+                            user.OnEveOperation(code, true, socketReader);
+                            user = null;
+                        }
+                        armedCode = EveCodes._none_;
+                    }
+            }
         }
     }
 }

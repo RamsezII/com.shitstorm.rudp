@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
+    [Serializable]
     public partial class RudpSocket : Socket, IDisposable
     {
         public static readonly Encoding UTF8 = Encoding.UTF8;
@@ -21,7 +22,7 @@ namespace _RUDP_
         public readonly ThreadSafe<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
-        public readonly EveClient eveClient;
+        public EveClient eveClient;
 
         public override string ToString() => $"(socket {endIP_LAN})";
 

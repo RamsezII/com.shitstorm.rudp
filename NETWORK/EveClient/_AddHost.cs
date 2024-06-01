@@ -19,7 +19,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        void WriteAddHostRequest()
+        void OnWriteRequest_AddHost()
         {
             lock (hostState)
             {

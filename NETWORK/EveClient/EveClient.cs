@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
+    [Serializable]
     public partial class EveClient : IDisposable
     {
         public interface IUser
@@ -27,6 +28,7 @@ namespace _RUDP_
         [SerializeField] EveCodes armedCode;
         [SerializeField] IUser user;
 
+        public readonly RudpSocket socket;
         public readonly RudpConnection eveConn;
         public readonly BinaryReader socketReader;
 
@@ -41,6 +43,7 @@ namespace _RUDP_
         public EveClient(in RudpConnection eveConn)
         {
             this.eveConn = eveConn;
+            socket = eveConn.socket;
             socketReader = eveConn.socket.recPaquetReader;
 
             eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
@@ -78,9 +81,15 @@ namespace _RUDP_
                         case EveCodes.GetPublicEnd:
                             break;
                         case EveCodes.ListHosts:
+                            lock (hostsLock)
+                            {
+                                hostsOffset = 0;
+                                hostsList.Clear();
+                                eveWriter.Write(hostsOffset);
+                            }
                             break;
                         case EveCodes.AddHost:
-                            WriteAddHostRequest();
+                            OnWriteRequest_AddHost();
                             break;
                         case EveCodes.JoinHost:
                             break;
@@ -91,12 +100,12 @@ namespace _RUDP_
             }
         }
 
-        public void Push()
+        public void Push(in bool dontwait = false)
         {
             lock (eveStream)
                 if (eveStream.Position > HEADER_LENGTH)
                     lock (eveConn.lastSend)
-                        if (Util.TotalMilliseconds > eveConn.lastSend._value + 350)
+                        if (dontwait || Util.TotalMilliseconds > eveConn.lastSend._value + 1000)
                             eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
         }
 

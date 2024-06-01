@@ -1,44 +1,31 @@
-﻿using _UTIL_;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace _RUDP_
 {
     public partial class EveClient
     {
-        readonly ThreadSafe<ushort> hostsOffset = new();
-        public static readonly List<string> hostsList = new();
-        public static readonly ThreadSafe<bool> hostsListReady = new();
+        readonly object hostsLock = new();
+        public List<string> hostsList = new();
+        [SerializeField] ushort hostsOffset;
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void RebuildHostsList()
-        {
-            hostsOffset.Value = 0;
-            hostsListReady.Value = false;
-            hostsList.Clear();
-            QueryHostsList();
-        }
-
-        void QueryHostsList()
-        {
-            eveWriter.Write((byte)EveCodes.ListHosts);
-            eveWriter.Write(hostsOffset.Value);
-        }
-
         void OnListAck()
         {
-            bool remaining = eveConn.socket.recPaquetReader.ReadBool();
-            if (!remaining)
-                hostsListReady.Value = true;
-            else
+            ushort hostsCount = socketReader.ReadUInt16();
+            while (socket.HasNext())
             {
-                while (eveConn.socket.HasNext())
-                {
-                    ++hostsOffset.Value;
-                    lock (hostsList)
-                        hostsList.Add(eveConn.socket.recPaquetReader.ReadText());
-                }
-                QueryHostsList();
+                string hostName = socketReader.ReadText();
+                hostsList.Add(hostName);
+                ++hostsOffset;
+                Debug.Log($"Received host: \"{hostName}\"");
+            }
+            if (hostsOffset < hostsCount)
+            {
+                eveWriter.Write((byte)EveCodes.ListHosts);
+                eveWriter.Write(hostsOffset);
+                Push(true);
             }
         }
     }
