@@ -60,7 +60,7 @@ namespace _RUDP_
                     }
 
                     socket.recDataStream.Position = socket.recDataStream.Length;
-                    socket.recPaquetStream.WriteTo(socket.recDataStream);
+                    socket.recStream_u.WriteTo(socket.recDataStream);
                     socket.recDataStream.Position = 0;
                 }
             return true;

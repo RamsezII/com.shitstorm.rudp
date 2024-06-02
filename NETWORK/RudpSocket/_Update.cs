@@ -14,8 +14,6 @@ namespace _RUDP_
                 return;
             }
 
-            eveComm.Push();
-
             if (connections.Count > 0)
             {
                 HashSet<IPEndPoint> removeKeys = null;

@@ -16,9 +16,9 @@ namespace _RUDP_
         public IPEndPoint recEnd_u;
         public ushort reclength_u;
 
-        public readonly MemoryStream recPaquetStream, recDataStream;
-        public readonly BinaryReader recPaquetReader, recDataReader;
-        public bool HasNext() => recPaquetStream.Position < reclength_u;
+        public readonly MemoryStream recStream_u, recDataStream;
+        public readonly BinaryReader recReader_u, recDataReader;
+        public bool HasNext() => recStream_u.Position < reclength_u;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ namespace _RUDP_
                     lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
                     EndPoint remoteEnd = endIP_any;
-                    recPaquetStream.Position = 0;
+                    recStream_u.Position = 0;
                     reclength_u = (ushort)EndReceiveFrom(aResult, ref remoteEnd);
                     receive_size += reclength_u;
 
@@ -66,7 +66,7 @@ namespace _RUDP_
 
                         if (reclength_u >= RudpHeader.HEADER_length)
                         {
-                            RudpHeader header = RudpHeader.FromReader(recPaquetReader);
+                            RudpHeader header = RudpHeader.FromReader(recReader_u);
                             if (!recConn.TryAcceptPaquet(header))
                                 Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
                         }

@@ -30,8 +30,8 @@ namespace _RUDP_
 
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
-            recPaquetStream = new(PAQUET_BUFFER);
-            recPaquetReader = new(recPaquetStream, UTF8, false);
+            recStream_u = new(PAQUET_BUFFER);
+            recReader_u = new(recStream_u, UTF8, false);
             recDataStream = new();
             recDataReader = new(recDataStream, UTF8, false);
 
@@ -69,8 +69,8 @@ namespace _RUDP_
             base.Dispose();
             Close();
 
-            recPaquetStream.Dispose();
-            recPaquetReader.Dispose();
+            recStream_u.Dispose();
+            recReader_u.Dispose();
             recDataStream.Dispose();
             recDataReader.Dispose();
             eveComm.Dispose();
