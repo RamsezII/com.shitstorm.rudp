@@ -29,6 +29,10 @@ namespace _RUDP_
                             else
                                 pair.Value.Push();
 
+                lock (eveComm.eveConn.disposed)
+                    if (!eveComm.eveConn.disposed._value)
+                        eveComm.Push();
+
                 if (removeKeys != null)
                     foreach (IPEndPoint connector in removeKeys)
                         lock (connections)

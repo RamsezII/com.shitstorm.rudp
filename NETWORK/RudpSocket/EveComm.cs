@@ -20,7 +20,8 @@ namespace _RUDP_
         readonly MemoryStream eveStream;
         readonly BinaryWriter eveWriter;
 
-        [SerializeField] byte id;
+        [SerializeField] byte id, attempt;
+        [SerializeField] float lastSend;
 
         public Action onEveAck;
 
@@ -32,6 +33,7 @@ namespace _RUDP_
         public EveComm(in RudpConnection eveConn)
         {
             this.eveConn = eveConn;
+
             eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
             eveStream = new(eveBuffer);
             eveWriter = new(eveStream, RudpSocket.UTF8, false);
@@ -41,36 +43,44 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void WriteAndSend(in Action<BinaryWriter> onWriter)
-        {
-            lock (eveStream)
-            {
-                eveBuffer[1] = id++;
-                eveStream.Position = HEADER_LENGTH;
-                onWriter(eveWriter);
-                eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-            }
-        }
-
-        public bool SendPaquetIfData()
+        public void Push()
         {
             lock (eveStream)
                 if (eveStream.Position > HEADER_LENGTH)
-                {
-                    eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-                    return true;
-                }
-            return false;
+                    lock (this)
+                        if (Time.unscaledTime > lastSend + 1)
+                        {
+                            lastSend = Time.unscaledTime;
+                            eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
+                        }
+        }
+
+        public void WriteNewPaquet(in Action<BinaryWriter> onWriter)
+        {
+            lock (eveStream)
+            {
+                eveStream.Position = HEADER_LENGTH;
+                eveBuffer[1] = id++;
+                onWriter(eveWriter);
+                lastSend = 0;
+            }
         }
 
         public bool TryAcceptEvePaquet()
         {
+            lock (this)
+                lastSend = 0;
+
+            byte version = eveConn.socket.recReader_u.ReadByte();
+            byte id = eveConn.socket.recReader_u.ReadByte();
+
             lock (eveStream)
             {
-                if (eveStream.Position <= HEADER_LENGTH || eveBuffer[1] != eveConn.socket.PAQUET_BUFFER[1])
+                if (eveStream.Position <= HEADER_LENGTH || eveBuffer[1] != id)
                     return false;
                 eveStream.Position = HEADER_LENGTH;
             }
+
             onEveAck();
             return true;
         }
