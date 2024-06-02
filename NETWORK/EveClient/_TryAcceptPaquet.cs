@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public partial class EveClient
+    public partial class EveComm
     {
         public static readonly IEnumerable<EveCodes> EEveCodes = Enumerable.Range(0, (int)EveCodes._last_).Select(i => (EveCodes)i);
 

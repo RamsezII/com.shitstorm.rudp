@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public partial class EveClient
+    public partial class EveComm
     {
         [MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LogPython))]
         static void LogPython()

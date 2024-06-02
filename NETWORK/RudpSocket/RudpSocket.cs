@@ -22,7 +22,7 @@ namespace _RUDP_
         public readonly ThreadSafe<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
-        public EveClient eveClient;
+        public EveComm eveClient;
 
         public override string ToString() => $"(socket {endIP_LAN})";
 

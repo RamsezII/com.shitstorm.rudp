@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public partial class EveClient
+    public partial class EveComm
     {
         readonly object hostsLock = new();
         public List<string> hostsList = new();

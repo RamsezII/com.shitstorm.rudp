@@ -5,7 +5,7 @@ using UnityEngine;
 namespace _RUDP_
 {
     [Serializable]
-    public partial class EveClient : IDisposable
+    public partial class EveComm : IDisposable
     {
         public interface IUser
         {
@@ -30,11 +30,11 @@ namespace _RUDP_
         readonly MemoryStream eveStream;
         readonly BinaryWriter eveWriter;
         public byte[] GetPaquetBuffer() => eveBuffer[..(int)eveStream.Position];
-        public override string ToString() => $"{nameof(EveClient)} {eveConn}";
+        public override string ToString() => $"{nameof(EveComm)} {eveConn}";
 
         //----------------------------------------------------------------------------------------------------------
 
-        public EveClient(in RudpConnection eveConn)
+        public EveComm(in RudpConnection eveConn)
         {
             this.eveConn = eveConn;
             socket = eveConn.socket;

@@ -2,7 +2,7 @@
 
 namespace _RUDP_
 {
-    public partial class EveClient
+    public partial class EveComm
     {
         public void QueryPublicIP()
         {
