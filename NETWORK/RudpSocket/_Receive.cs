@@ -48,11 +48,11 @@ namespace _RUDP_
                     recEnd_u = (IPEndPoint)remoteEnd;
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
-                    if (recConn == eveClient.eveConn)
+                    if (recConn == eveComm.eveConn)
                     {
                         if (Util_rudp.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
-                        eveClient.TryAcceptEvePaquet();
+                        eveComm.TryAcceptEvePaquet();
                     }
                     else
                     {

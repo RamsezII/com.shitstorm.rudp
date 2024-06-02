@@ -22,7 +22,7 @@ namespace _RUDP_
         public readonly ThreadSafe<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
-        public EveComm eveClient;
+        public EveComm eveComm;
 
         public override string ToString() => $"(socket {endIP_LAN})";
 
@@ -50,7 +50,7 @@ namespace _RUDP_
             lock (connections)
                 connections[endIP_loopback] = connections[endIP_LAN] = selfConn;
 
-            eveClient = new(ToConnection(Util_rudp.END_RUDP));
+            eveComm = new(ToConnection(Util_rudp.END_RUDP));
 
             BeginReceive();
         }
@@ -73,7 +73,7 @@ namespace _RUDP_
             recPaquetReader.Dispose();
             recDataStream.Dispose();
             recDataReader.Dispose();
-            eveClient.Dispose();
+            eveComm.Dispose();
 
             if (connections.Count > 0)
             {
