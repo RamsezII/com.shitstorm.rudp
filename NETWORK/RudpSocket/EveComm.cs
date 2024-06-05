@@ -23,7 +23,7 @@ namespace _RUDP_
         [SerializeField] byte id, attempt;
         [SerializeField] float lastSend;
 
-        public Action onEveAck;
+        public Action onEveAck, onEvePaquet;
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"{nameof(EveComm)} {eveConn}";
@@ -60,7 +60,7 @@ namespace _RUDP_
             lock (eveStream)
             {
                 eveStream.Position = HEADER_LENGTH;
-                eveBuffer[1] = id++;
+                eveBuffer[1] = ++id == 0 ? (byte)1 : id;
                 onWriter(eveWriter);
                 lastSend = 0;
             }
@@ -73,6 +73,12 @@ namespace _RUDP_
 
             byte version = eveConn.socket.recReader_u.ReadByte();
             byte id = eveConn.socket.recReader_u.ReadByte();
+
+            if (id == 0)
+            {
+                onEvePaquet();
+                return true;
+            }
 
             lock (eveStream)
             {
