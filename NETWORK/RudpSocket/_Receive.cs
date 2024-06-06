@@ -48,6 +48,13 @@ namespace _RUDP_
                     recEnd_u = (IPEndPoint)remoteEnd;
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
+                    lock (recConn.lastReceive)
+                    {
+                        if (recConn.lastReceive._value == 0)
+                            Debug.Log($"{this} holepunched to: {recConn}".ToSubLog());
+                        recConn.lastReceive._value = Util.TotalMilliseconds;
+                    }
+
                     if (recConn == eveComm.eveConn)
                     {
                         if (Util_rudp.logAllPaquets)
@@ -61,8 +68,6 @@ namespace _RUDP_
                             Debug.Log($"incoming connection: {recConn}".ToSubLog());
                             recConn.keepAlive = true;
                         }
-
-                        recConn.lastReceive.Value = Util.TotalMilliseconds;
 
                         if (reclength_u >= RudpHeader.HEADER_length)
                         {

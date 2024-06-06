@@ -48,7 +48,10 @@ namespace _RUDP_
 
             if (Util_rudp.logEmptyPaquets || Util_rudp.logAllPaquets && length > 0)
                 if (length >= RudpHeader.HEADER_length)
-                    Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (header:{RudpHeader.FromBuffer(buffer)}, size:{length})".ToSubLog());
+                    if (targetEnd.Equals(eveComm.eveConn.endPoint))
+                        Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
+                    else
+                        Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{RudpHeader.FromBuffer(buffer)}, size:{length})".ToSubLog());
                 else
                     Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (size:{length})".ToSubLog());
 

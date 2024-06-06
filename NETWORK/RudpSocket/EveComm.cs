@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _UTIL_;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -21,7 +22,8 @@ namespace _RUDP_
         readonly BinaryWriter eveWriter;
 
         [SerializeField] byte id, attempt;
-        [SerializeField] double lastSend;
+        public readonly ThreadSafe<double> lastSend = new();
+        [SerializeField] bool sendFlag;
 
         public Action onEveAck, onEvePaquet;
 
@@ -50,11 +52,13 @@ namespace _RUDP_
                     lock (this)
                     {
                         double time = Util.TotalMilliseconds;
-                        if (time > lastSend + 1000)
-                        {
-                            lastSend = time;
-                            eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-                        }
+                        lock (lastSend)
+                            if (sendFlag || time > lastSend._value + 1000)
+                            {
+                                sendFlag = false;
+                                lastSend._value = time;
+                                eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
+                            }
                     }
         }
 
@@ -65,17 +69,15 @@ namespace _RUDP_
                 eveStream.Position = HEADER_LENGTH;
                 eveBuffer[1] = ++id == 0 ? (byte)1 : id;
                 onWriter(eveWriter);
-                lastSend = 0;
+                lock (this)
+                    sendFlag = true;
             }
         }
 
         public bool TryAcceptEvePaquet()
         {
-            lock (this)
-            {
-                Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend).MillisecondsLog()}".ToSubLog());
-                lastSend = 0;
-            }
+            lock (lastSend)
+                Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend._value).MillisecondsLog()}".ToSubLog());
 
             byte version = eveConn.socket.recReader_u.ReadByte();
             byte id = eveConn.socket.recReader_u.ReadByte();

@@ -20,7 +20,9 @@ namespace _RUDP_
             channel_audio;
 
         public bool keepAlive;
-        public bool IsAlive => lastReceive._value < Util.TotalMilliseconds;
+
+        public bool IsAlive(in double delay) => lastReceive.Value + delay < Util.TotalMilliseconds;
+
         public override string ToString() => $"conn({socket.endIP_LAN}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
@@ -34,31 +36,6 @@ namespace _RUDP_
             channel_states = new(this, RudpHeaderM.States);
             channel_flux = new(this, RudpHeaderM.Flux);
             channel_audio = new(this, RudpHeaderM.Audio);
-        }
-
-        //----------------------------------------------------------------------------------------------------------
-
-        public void Push()
-        {
-            channel_files.Push();
-            channel_states.Push();
-
-            if (keepAlive)
-            {
-                double time = Util.TotalMilliseconds;
-                lock (lastSend)
-                    if (time > lastSend._value + 5000)
-                    {
-                        lastSend._value = time;
-                        socket.SendTo(Util_rudp.EMPTY_BUFFER, 0, 0, endPoint);
-                    }
-            }
-        }
-
-        public void Send(in byte[] buffer, in ushort offset, in ushort length)
-        {
-            lastSend.Value = Util.TotalMilliseconds;
-            socket.SendTo(buffer, offset, length, endPoint);
         }
 
         //----------------------------------------------------------------------------------------------------------
