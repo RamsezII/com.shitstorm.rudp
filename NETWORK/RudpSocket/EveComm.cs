@@ -21,7 +21,7 @@ namespace _RUDP_
         readonly BinaryWriter eveWriter;
 
         [SerializeField] byte id, attempt;
-        [SerializeField] float lastSend;
+        [SerializeField] double lastSend;
 
         public Action onEveAck, onEvePaquet;
 
@@ -48,11 +48,14 @@ namespace _RUDP_
             lock (eveStream)
                 if (eveStream.Position > HEADER_LENGTH)
                     lock (this)
-                        if (Time.unscaledTime > lastSend + 1)
+                    {
+                        double time = Util.TotalMilliseconds;
+                        if (time > lastSend + 1000)
                         {
-                            lastSend = Time.unscaledTime;
+                            lastSend = time;
                             eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
                         }
+                    }
         }
 
         public void WriteNewPaquet(in Action<BinaryWriter> onWriter)
@@ -69,7 +72,10 @@ namespace _RUDP_
         public bool TryAcceptEvePaquet()
         {
             lock (this)
+            {
+                Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend).MillisecondsLog()}".ToSubLog());
                 lastSend = 0;
+            }
 
             byte version = eveConn.socket.recReader_u.ReadByte();
             byte id = eveConn.socket.recReader_u.ReadByte();
