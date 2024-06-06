@@ -48,6 +48,11 @@ namespace _RUDP_
                     recEnd_u = (IPEndPoint)remoteEnd;
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
+                    if (Util_rudp.logAllPaquets)
+                        Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
+                    else if (Util_rudp.logEmptyPaquets && reclength_u == 0)
+                        Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
+
                     lock (recConn.lastReceive)
                     {
                         if (recConn.lastReceive._value == 0)
@@ -56,11 +61,7 @@ namespace _RUDP_
                     }
 
                     if (recConn == eveComm.eveConn)
-                    {
-                        if (Util_rudp.logAllPaquets)
-                            Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
                         eveComm.TryAcceptEvePaquet();
-                    }
                     else
                     {
                         if (newConn)
@@ -75,12 +76,9 @@ namespace _RUDP_
                             if (!recConn.TryAcceptPaquet(header))
                                 Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
                         }
-                        else if (Util_rudp.logEmptyPaquets)
-                            Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
-                        else if (reclength_u > 0)
+
+                        if (reclength_u > 0 && reclength_u < RudpHeader.HEADER_length)
                             Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");
-                        else if (Util_rudp.logAllPaquets)
-                            Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
                     }
 
                     recEnd_u = null;

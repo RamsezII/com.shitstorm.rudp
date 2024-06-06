@@ -16,7 +16,7 @@ public static partial class Util_rudp
 
     public static readonly bool
         logIncidents = true,
-        logEmptyPaquets = false,
+        logEmptyPaquets = true,
         logAllPaquets = true;
 
     public const ushort
