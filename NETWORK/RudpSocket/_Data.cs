@@ -6,8 +6,8 @@ namespace _RUDP_
     {
         public bool TryReadData(out BinaryReader reader, out ushort length)
         {
-            lock (recDataStream)
-                if (recDataStream.Position < 2)
+            lock (states_recStream)
+                if (states_recStream.Position < 2)
                 {
                     reader = null;
                     length = 0;
@@ -15,14 +15,14 @@ namespace _RUDP_
                 }
                 else
                 {
-                    length = recDataReader.ReadUInt16();
-                    if (recDataStream.Length < recDataStream.Position + length)
+                    length = states_recReader.ReadUInt16();
+                    if (states_recStream.Length < states_recStream.Position + length)
                     {
-                        recDataStream.Position -= 2;
+                        states_recStream.Position -= 2;
                         reader = null;
                         return false;
                     }
-                    reader = recDataReader;
+                    reader = states_recReader;
                     return true;
                 }
         }

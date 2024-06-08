@@ -1,5 +1,6 @@
 using _UTIL_;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,7 +13,7 @@ namespace _RUDP_
     {
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
-        public readonly byte[] PAQUET_BUFFER = new byte[Util_rudp.PAQUET_SIZE];
+        public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE];
         public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
         public readonly ushort localPort;
@@ -24,6 +25,10 @@ namespace _RUDP_
         public readonly RudpConnection selfConn;
         public EveComm eveComm;
 
+        public readonly MemoryStream recStream_u, states_recStream, flux_recStream;
+        public readonly BinaryReader recReader_u, states_recReader, flux_recReader;
+        public bool HasNext() => recStream_u.Position < recLength_u;
+
 #if UNITY_EDITOR
         [SerializeField] RudpConnection _selfConn;
 #endif
@@ -34,16 +39,18 @@ namespace _RUDP_
 
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
-            recStream_u = new(PAQUET_BUFFER);
+            recStream_u = new(recBuffer_u);
             recReader_u = new(recStream_u, UTF8, false);
-            recDataStream = new();
-            recDataReader = new(recDataStream, UTF8, false);
+            states_recStream = new();
+            states_recReader = new(states_recStream, UTF8, false);
+            flux_recStream = new();
+            flux_recReader = new(flux_recStream, UTF8, false);
 
             ExclusiveAddressUse = false;
             if (port != 0)
                 Bind(new IPEndPoint(IPAddress.Any, port));
 
-            SendTo(PAQUET_BUFFER, 0, 0, SocketFlags.None, Util_rudp.END_LOOPBACK);
+            SendTo(recBuffer_u, 0, 0, SocketFlags.None, Util_rudp.END_LOOPBACK);
             endIP_any = LocalEndPoint;
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
@@ -79,8 +86,10 @@ namespace _RUDP_
 
             recStream_u.Dispose();
             recReader_u.Dispose();
-            recDataStream.Dispose();
-            recDataReader.Dispose();
+            states_recStream.Dispose();
+            states_recReader.Dispose();
+            flux_recStream.Dispose();
+            flux_recReader.Dispose();
             eveComm.Dispose();
 
             if (connections.Count > 0)

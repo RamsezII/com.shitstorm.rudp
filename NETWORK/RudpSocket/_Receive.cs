@@ -1,6 +1,5 @@
 using _UTIL_;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -14,11 +13,7 @@ namespace _RUDP_
         readonly ThreadSafe<bool> skipNextSocketException = new(true);
 
         public IPEndPoint recEnd_u;
-        public ushort reclength_u;
-
-        public readonly MemoryStream recStream_u, recDataStream;
-        public readonly BinaryReader recReader_u, recDataReader;
-        public bool HasNext() => recStream_u.Position < reclength_u;
+        public ushort recLength_u;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -36,21 +31,21 @@ namespace _RUDP_
 
             try
             {
-                lock (PAQUET_BUFFER)
+                lock (recBuffer_u)
                 {
                     lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
                     EndPoint remoteEnd = endIP_any;
                     recStream_u.Position = 0;
-                    reclength_u = (ushort)EndReceiveFrom(aResult, ref remoteEnd);
-                    receive_size += reclength_u;
+                    recLength_u = (ushort)EndReceiveFrom(aResult, ref remoteEnd);
+                    receive_size += recLength_u;
 
                     recEnd_u = (IPEndPoint)remoteEnd;
                     RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
                     if (Util_rudp.logAllPaquets)
-                        Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{reclength_u})".ToSubLog());
-                    else if (Util_rudp.logEmptyPaquets && reclength_u == 0)
+                        Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
+                    else if (Util_rudp.logEmptyPaquets && recLength_u == 0)
                         Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
 
                     lock (recConn.lastReceive)
@@ -70,15 +65,15 @@ namespace _RUDP_
                             recConn.keepAlive = true;
                         }
 
-                        if (reclength_u >= RudpHeader.HEADER_length)
+                        if (recLength_u >= RudpHeader.HEADER_length)
                         {
                             RudpHeader header = RudpHeader.FromReader(recReader_u);
                             if (!recConn.TryAcceptPaquet(header))
-                                Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{reclength_u})");
+                                Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
                         }
 
-                        if (reclength_u > 0 && reclength_u < RudpHeader.HEADER_length)
-                            Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{reclength_u})");
+                        if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)
+                            Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
                     }
 
                     recEnd_u = null;
@@ -105,7 +100,7 @@ namespace _RUDP_
         void BeginReceive()
         {
             EndPoint receiveEnd = endIP_any;
-            try { BeginReceiveFrom(PAQUET_BUFFER, 0, Util_rudp.PAQUET_SIZE, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
+            try { BeginReceiveFrom(recBuffer_u, 0, Util_rudp.PAQUET_SIZE, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
             catch (Exception e) { Debug.LogException(e); }
         }
     }

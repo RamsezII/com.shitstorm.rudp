@@ -14,7 +14,7 @@ namespace _RUDP_
                 channel = channel_states;
 
             if (Util_rudp.logAllPaquets)
-                Debug.Log($"{this} Received paquet (header:{header}, size:{socket.reclength_u})".ToSubLog());
+                Debug.Log($"{this} Received paquet (header:{header}, size:{socket.recLength_u})".ToSubLog());
 
             if (header.mask.HasFlag(RudpHeaderM.Ack))
             {
@@ -46,23 +46,9 @@ namespace _RUDP_
                         eReceiveFile = null;
 
             if (socket.HasNext())
-                lock (socket.recDataStream)
-                {
-                    if (socket.recDataStream.Position > 0)
-                    {
-                        int hole = (int)socket.recDataStream.Position;
-                        int remaining = (int)socket.recDataStream.Length - hole;
+                lock (socket.states_recStream)
+                    socket.states_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
 
-                        byte[] buffer = socket.recDataStream.GetBuffer();
-                        Buffer.BlockCopy(buffer, hole, buffer, 0, remaining);
-                        socket.recDataStream.Position = 0;
-                        socket.recDataStream.SetLength(remaining);
-                    }
-
-                    socket.recDataStream.Position = socket.recDataStream.Length;
-                    socket.recStream_u.WriteTo(socket.recDataStream);
-                    socket.recDataStream.Position = 0;
-                }
             return true;
         }
     }
