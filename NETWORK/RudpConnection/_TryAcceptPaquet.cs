@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public partial class RudpConnection
+    partial class RudpConnection
     {
         public bool TryAcceptPaquet(in RudpHeader header)
         {

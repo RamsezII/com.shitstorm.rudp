@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _RUDP_
 {
-    public partial class RudpConnection
+    partial class RudpConnection
     {
         IEnumerator eSendFile;
         IEnumerator eReceiveFile;

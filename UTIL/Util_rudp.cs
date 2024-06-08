@@ -12,7 +12,7 @@ public static partial class Util_rudp
     public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
     public static readonly IPEndPoint END_RUDP = new(IP_3VE, PORT_RUDP);
     public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_RUDP);
-    public static IPAddress localIP;
+    public static IPAddress localIP, publicIP;
 
     public static readonly bool
         logIncidents = true,

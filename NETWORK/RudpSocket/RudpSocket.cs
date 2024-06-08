@@ -17,14 +17,18 @@ namespace _RUDP_
 
         public readonly ushort localPort;
         readonly EndPoint endIP_any;
-        public readonly IPEndPoint endIP_loopback, endIP_LAN;
+        public readonly IPEndPoint endIP_loopback;
 
         public readonly ThreadSafe<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
         public EveComm eveComm;
 
-        public override string ToString() => $"(socket {endIP_LAN})";
+#if UNITY_EDITOR
+        [SerializeField] RudpConnection _selfConn;
+#endif
+
+        public override string ToString() => $"(socket {selfConn.endPoint.Port})";
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -43,15 +47,19 @@ namespace _RUDP_
             endIP_any = LocalEndPoint;
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
-            endIP_LAN = new(Util_rudp.localIP, localPort);
-            Debug.Log($"opened UDP: {this}".ToSubLog());
 
             selfConn = ToConnection((IPEndPoint)endIP_any);
+            selfConn.localEnd = new(Util_rudp.localIP, localPort);
             lock (connections)
-                connections[endIP_loopback] = connections[endIP_LAN] = selfConn;
+                connections[endIP_loopback] = connections[selfConn.localEnd] = selfConn;
+
+#if UNITY_EDITOR
+            _selfConn = selfConn;
+#endif
 
             eveComm = new(ToConnection(Util_rudp.END_RUDP));
 
+            Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
         }
 

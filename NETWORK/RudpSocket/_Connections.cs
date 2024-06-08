@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net;
 
 namespace _RUDP_
@@ -31,6 +32,24 @@ namespace _RUDP_
                 }
                 return conn;
             }
+        }
+
+        public RudpConnection ReadConnection(in BinaryReader reader)
+        {
+            IPEndPoint
+                publicEnd = reader.ReadIPEndPoint(),
+                localEnd = reader.ReadIPEndPoint(),
+                endPoint;
+
+            if (publicEnd.Address.Equals(Util_rudp.publicIP))
+                if (localEnd.Address.Equals(Util_rudp.localIP))
+                    endPoint = new(IPAddress.Loopback, localEnd.Port);
+                else
+                    endPoint = localEnd;
+            else
+                endPoint = publicEnd;
+
+            return ToConnection(endPoint);
         }
     }
 }
