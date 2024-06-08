@@ -22,7 +22,7 @@ namespace _RUDP_
 
         public bool keepAlive;
         public bool IsAlive(in double delay) => lastReceive.Value + delay < Util.TotalMilliseconds;
-        public override string ToString() => $"conn({socket.selfConn.localEnd}->{endPoint})";
+        public override string ToString() => $"conn({socket}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
 
