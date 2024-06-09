@@ -12,6 +12,7 @@ namespace _RUDP_
     public class RudpStream : Disposable
     {
         public enum Compressions { None, Gzip }
+        const Compressions COMPRESSION = 0;
 
         readonly MemoryStream stream;
         readonly GZipStream gzip;
@@ -25,27 +26,26 @@ namespace _RUDP_
         {
             stream = new();
 
-            writer_raw = new(stream, RudpSocket.UTF8, false);
-            reader_raw = new(stream, RudpSocket.UTF8, false);
+            writer_raw = new(stream, Util_rudp.ENCODING, false);
+            reader_raw = new(stream, Util_rudp.ENCODING, false);
 
             gzip = new(stream, CompressionMode.Compress, true);
-            writer_gzip = new(gzip, RudpSocket.UTF8, false);
+            writer_gzip = new(gzip, Util_rudp.ENCODING, false);
 
             // header
-            writer_raw.Write((uint)0);
+            stream.WriteHeader();
         }
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void Write(in Action<BinaryWriter> onWriter, in Compressions compression = 0)
+        public void Write(in Action<BinaryWriter> onWriter)
         {
             lock (this)
             {
                 ushort pos1 = (ushort)stream.Position;
                 writer_raw.Write((ushort)0);
-                writer_raw.Write((byte)compression);
 
-                onWriter(compression switch
+                onWriter(COMPRESSION switch
                 {
                     Compressions.Gzip => writer_gzip,
                     _ => writer_raw
@@ -71,14 +71,14 @@ namespace _RUDP_
                 return stream.GetBuffer()[..(int)stream.Position];
         }
 
-        public void OnCleanAfterAck(in ushort paquetLength)
+        public void OnCleanAfterAck(in ushort offset)
         {
             lock (this)
             {
                 byte[] buffer = stream.GetBuffer();
                 stream.Position = 0;
-                Buffer.BlockCopy(buffer, paquetLength, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquetLength - RudpHeader.HEADER_length);
-                stream.SetLength(stream.Length - paquetLength + RudpHeader.HEADER_length);
+                Buffer.BlockCopy(buffer, offset, buffer, RudpHeader.HEADER_length, (int)stream.Length - offset);
+                stream.SetLength(stream.Length - offset + RudpHeader.HEADER_length);
                 stream.Position = stream.Length;
             }
         }

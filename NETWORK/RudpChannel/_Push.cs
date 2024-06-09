@@ -17,9 +17,7 @@ namespace _RUDP_
                                 this.paquet = states_stream.GetPaquetBuffer();
                                 NextPaquet();
                             }
-
-                            if (IsPending)
-                                TrySendReliable();
+                            TrySendReliable();
                         }
                         break;
 

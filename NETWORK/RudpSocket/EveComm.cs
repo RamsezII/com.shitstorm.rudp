@@ -15,7 +15,7 @@ namespace _RUDP_
         public static readonly bool
             logEvePaquets = true;
 
-        public readonly RudpConnection eveConn;
+        public readonly RudpConnection conn;
 
         readonly byte[] eveBuffer;
         readonly MemoryStream eveStream;
@@ -28,17 +28,17 @@ namespace _RUDP_
         public Action onEveAck, onEvePaquet;
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
-        public override string ToString() => $"{nameof(EveComm)} {eveConn}";
+        public override string ToString() => $"{nameof(EveComm)} {conn}";
 
         //----------------------------------------------------------------------------------------------------------
 
         public EveComm(in RudpConnection eveConn)
         {
-            this.eveConn = eveConn;
+            conn = eveConn;
 
             eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
             eveStream = new(eveBuffer);
-            eveWriter = new(eveStream, RudpSocket.UTF8, false);
+            eveWriter = new(eveStream, Util_rudp.ENCODING, false);
             eveWriter.Write(VERSION);
             eveWriter.Write(id);
         }
@@ -57,7 +57,7 @@ namespace _RUDP_
                             {
                                 sendFlag = false;
                                 lastSend._value = time;
-                                eveConn.Send(eveBuffer, 0, (ushort)eveStream.Position);
+                                conn.Send(eveBuffer, 0, (ushort)eveStream.Position);
                             }
                     }
         }
@@ -79,8 +79,8 @@ namespace _RUDP_
             lock (lastSend)
                 Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend._value).MillisecondsLog()}".ToSubLog());
 
-            byte version = eveConn.socket.recReader_u.ReadByte();
-            byte id = eveConn.socket.recReader_u.ReadByte();
+            byte version = conn.socket.recReader_u.ReadByte();
+            byte id = conn.socket.recReader_u.ReadByte();
 
             if (id == 0)
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _RUDP_
 {
@@ -53,16 +52,20 @@ namespace _RUDP_
                         eReceiveFile = null;
 
             if (socket.HasNext())
+            {
+                byte[] recData = socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u];
                 lock (socket.states_recStream)
                     switch (header.mask)
                     {
                         case RudpHeaderM.States:
-                            socket.states_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
+                            Debug.Log($"Received states paquet (size:{recData.Length})");
+                            socket.states_recStream.Write(recData);
                             break;
                         case RudpHeaderM.Flux:
-                            socket.flux_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
+                            socket.flux_recStream.Write(recData);
                             break;
                     }
+            }
 
             return true;
         }

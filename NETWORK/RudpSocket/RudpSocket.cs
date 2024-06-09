@@ -1,6 +1,8 @@
 using _UTIL_;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,9 +13,6 @@ namespace _RUDP_
     [Serializable]
     public partial class RudpSocket : Socket, IDisposable
     {
-        [Obsolete]
-        public static readonly Encoding UTF8 = Encoding.UTF8;
-
         public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE];
         public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
@@ -58,14 +57,17 @@ namespace _RUDP_
 
             selfConn = ToConnection((IPEndPoint)endIP_any);
             selfConn.localEnd = new(Util_rudp.localIP, localPort);
-            lock (connections)
-                connections[endIP_loopback] = connections[selfConn.localEnd] = selfConn;
+            lock (conns_dic)
+                conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;
 
 #if UNITY_EDITOR
             _selfConn = selfConn;
 #endif
 
             eveComm = new(ToConnection(Util_rudp.END_RUDP));
+
+
+            ebroadcast = conns_set.Where(conn => conn != selfConn && conn != eveComm.conn);
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
@@ -93,13 +95,17 @@ namespace _RUDP_
             flux_recReader.Dispose();
             eveComm.Dispose();
 
-            if (connections.Count > 0)
+            if (conns_set.Count > 0)
             {
-                foreach (RudpConnection conn in connections.Values)
+                foreach (RudpConnection conn in conns_set)
                     conn.Dispose();
-                lock (connections)
-                    connections.Clear();
+                lock (conns_set)
+                    conns_set.Clear();
             }
+
+            if (conns_dic.Count > 0)
+                lock (conns_dic)
+                    conns_dic.Clear();
         }
     }
 }

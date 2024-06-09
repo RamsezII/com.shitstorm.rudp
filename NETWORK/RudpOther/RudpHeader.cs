@@ -40,7 +40,7 @@ namespace _RUDP_
         public readonly RudpHeaderM mask;
         public readonly byte version;
         public readonly byte id, attempt;
-        public override string ToString() => $"{{ve:{version} ma:{{{mask}}} id:{id} at:{attempt}}}";
+        public override string ToString() => $"{{{nameof(version)}:{version}, {nameof(mask)}:{{{mask}}}, {nameof(id)}:{id}, {nameof(attempt)}:{attempt}}}";
 
         //----------------------------------------------------------------------------------------------------------
 

@@ -40,7 +40,6 @@ namespace _RUDP_
         {
             base.OnDispose();
             states_stream?.Dispose();
-            onAck = null;
         }
     }
 }

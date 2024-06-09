@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _RUDP_
 {
@@ -14,29 +12,19 @@ namespace _RUDP_
                 return;
             }
 
-            if (connections.Count > 0)
+            if (conns_set.Count > 0)
             {
-                HashSet<IPEndPoint> removeKeys = null;
+                foreach (RudpConnection conn in conns_set)
+                    lock (conn.disposed)
+                        if (conn.disposed._value)
+                            lock (conns_dic)
+                                conns_dic.Remove(conn.endPoint);
+                        else
+                            conn.Push();
 
-                lock (connections)
-                    foreach (var pair in connections)
-                        lock (pair.Value.disposed)
-                            if (pair.Value.disposed._value)
-                                if (removeKeys == null)
-                                    removeKeys = new() { pair.Key };
-                                else
-                                    removeKeys.Add(pair.Key);
-                            else
-                                pair.Value.Push();
-
-                lock (eveComm.eveConn.disposed)
-                    if (!eveComm.eveConn.disposed._value)
+                lock (eveComm.conn.disposed)
+                    if (!eveComm.conn.disposed._value)
                         eveComm.Push();
-
-                if (removeKeys != null)
-                    foreach (IPEndPoint connector in removeKeys)
-                        lock (connections)
-                            connections.Remove(connector);
             }
         }
     }

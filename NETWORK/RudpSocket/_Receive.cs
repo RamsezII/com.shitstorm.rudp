@@ -56,7 +56,7 @@ namespace _RUDP_
                         recConn.keepalive_attempt.Value = 10;
                     }
 
-                    if (recConn == eveComm.eveConn)
+                    if (recConn == eveComm.conn)
                         eveComm.TryAcceptEvePaquet();
                     else
                     {

@@ -6,27 +6,31 @@ namespace _RUDP_
 {
     public partial class RudpSocket
     {
-        public readonly Dictionary<IPEndPoint, RudpConnection> connections = new();
+        readonly Dictionary<IPEndPoint, RudpConnection> conns_dic = new();
+        readonly HashSet<RudpConnection> conns_set = new();
+        public readonly IEnumerable<RudpConnection> ebroadcast;
 
         //----------------------------------------------------------------------------------------------------------
 
         public RudpConnection ToConnection(in IPEndPoint remoteEnd) => ToConnection(remoteEnd, out _);
         public RudpConnection ToConnection(in IPEndPoint remoteEnd, out bool isnew)
         {
-            lock (connections)
+            lock (conns_dic)
             {
-                if (connections.TryGetValue(remoteEnd, out RudpConnection conn))
+                if (conns_dic.TryGetValue(remoteEnd, out RudpConnection conn))
                     isnew = false;
                 else
                 {
                     conn = new RudpConnection(this, remoteEnd);
-                    connections[remoteEnd] = conn;
+                    conns_dic[remoteEnd] = conn;
+                    lock (conns_set)
+                        conns_set.Add(conn);
 
                     if (remoteEnd.Address.Equals(IPAddress.Loopback))
-                        connections[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
+                        conns_dic[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
 
                     if (remoteEnd.Address.Equals(IPAddress.Any))
-                        connections[new IPEndPoint(IPAddress.Loopback, remoteEnd.Port)] = conn;
+                        conns_dic[new IPEndPoint(IPAddress.Loopback, remoteEnd.Port)] = conn;
 
                     isnew = true;
                 }

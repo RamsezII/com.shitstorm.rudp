@@ -1,20 +1,9 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _RUDP_
 {
     partial class RudpChannel
     {
-        IEnumerator onAck;
-
-        //----------------------------------------------------------------------------------------------------------
-
-        public void SetOnAck(IEnumerator onAck)
-        {
-            this.onAck = onAck;
-            onAck.MoveNext();
-        }
-
         public bool TryAcceptAck(in RudpHeader header)
         {
             lock (this)
@@ -22,10 +11,9 @@ namespace _RUDP_
                 {
                     if (header.id == sendID)
                     {
-                        states_stream?.OnCleanAfterAck((ushort)paquet.Length);
+                        if (mask == RudpHeaderM.States)
+                            states_stream.OnCleanAfterAck((ushort)paquet.Length);
                         paquet = null;
-                        if (onAck != null && !onAck.MoveNext())
-                            onAck = null;
                         Push();
                         return true;
                     }

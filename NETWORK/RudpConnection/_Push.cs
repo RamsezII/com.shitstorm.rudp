@@ -1,10 +1,14 @@
 ﻿using _UTIL_;
+using UnityEngine;
 
 namespace _RUDP_
 {
     partial class RudpConnection
     {
+        [Header("~@ Push @~")]
+        public bool keepAlive;
         public readonly ThreadSafe<byte> keepalive_attempt = new();
+        public bool IsAlive(in double delay) => lastReceive.Value + delay > Util.TotalMilliseconds;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -17,23 +21,24 @@ namespace _RUDP_
             {
                 double time = Util.TotalMilliseconds;
                 lock (lastSend)
-                {
-                    int freq = keepalive_attempt.Value switch
+                    lock (keepalive_attempt)
                     {
-                        0 => 50,
-                        1 => 500,
-                        2 => 1000,
-                        3 => 2500,
-                        _ => 5000,
-                    };
+                        int freq = keepalive_attempt._value switch
+                        {
+                            0 => 50,
+                            1 => 500,
+                            2 => 1000,
+                            3 => 2500,
+                            _ => 5000,
+                        };
 
-                    if (time > lastSend._value + freq)
-                    {
-                        ++keepalive_attempt.Value;
-                        lastSend._value = time;
-                        socket.SendTo(Util_rudp.EMPTY_BUFFER, 0, 0, endPoint);
+                        if (time > lastSend._value + freq)
+                        {
+                            if (keepalive_attempt._value < 10)
+                                ++keepalive_attempt._value;
+                            Send(Util_rudp.EMPTY_BUFFER, 0, 0);
+                        }
                     }
-                }
             }
         }
 
