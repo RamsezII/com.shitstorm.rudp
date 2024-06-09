@@ -11,6 +11,7 @@ namespace _RUDP_
     [Serializable]
     public partial class RudpSocket : Socket, IDisposable
     {
+        [Obsolete]
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
         public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE];
@@ -40,11 +41,11 @@ namespace _RUDP_
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
             recStream_u = new(recBuffer_u);
-            recReader_u = new(recStream_u, UTF8, false);
+            recReader_u = new(recStream_u, Util_rudp.ENCODING, false);
             states_recStream = new();
-            states_recReader = new(states_recStream, UTF8, false);
+            states_recReader = new(states_recStream, Util_rudp.ENCODING, false);
             flux_recStream = new();
-            flux_recReader = new(flux_recStream, UTF8, false);
+            flux_recReader = new(flux_recStream, Util_rudp.ENCODING, false);
 
             ExclusiveAddressUse = false;
             if (port != 0)

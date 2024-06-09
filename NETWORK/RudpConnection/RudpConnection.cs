@@ -21,7 +21,7 @@ namespace _RUDP_
             channel_audio;
 
         public bool keepAlive;
-        public bool IsAlive(in double delay) => lastReceive.Value + delay < Util.TotalMilliseconds;
+        public bool IsAlive(in double delay) => lastReceive.Value + delay > Util.TotalMilliseconds;
         public override string ToString() => $"conn({socket}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------

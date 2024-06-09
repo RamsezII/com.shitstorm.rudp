@@ -1,7 +1,13 @@
-﻿namespace _RUDP_
+﻿using _UTIL_;
+
+namespace _RUDP_
 {
     partial class RudpConnection
     {
+        public readonly ThreadSafe<byte> keepalive_attempt = new();
+
+        //----------------------------------------------------------------------------------------------------------
+
         public void Push()
         {
             channel_files.Push();
@@ -11,11 +17,23 @@
             {
                 double time = Util.TotalMilliseconds;
                 lock (lastSend)
-                    if (time > lastSend._value + 5000)
+                {
+                    int freq = keepalive_attempt.Value switch
                     {
+                        0 => 50,
+                        1 => 500,
+                        2 => 1000,
+                        3 => 2500,
+                        _ => 5000,
+                    };
+
+                    if (time > lastSend._value + freq)
+                    {
+                        ++keepalive_attempt.Value;
                         lastSend._value = time;
                         socket.SendTo(Util_rudp.EMPTY_BUFFER, 0, 0, endPoint);
                     }
+                }
             }
         }
 

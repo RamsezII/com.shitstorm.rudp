@@ -51,8 +51,9 @@ namespace _RUDP_
                     lock (recConn.lastReceive)
                     {
                         if (recConn.lastReceive._value == 0)
-                            Debug.Log($"{this} holepunched to: {recConn}".ToSubLog());
+                            Debug.Log($"{this} connected to: {recConn}");
                         recConn.lastReceive._value = Util.TotalMilliseconds;
+                        recConn.keepalive_attempt.Value = 10;
                     }
 
                     if (recConn == eveComm.eveConn)

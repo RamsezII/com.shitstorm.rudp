@@ -7,9 +7,10 @@ namespace _RUDP_
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
         public readonly RudpStream states_stream;
+        public readonly RudpStreamFlux flux_stream;
 
         public byte[] paquet;
-        public bool IsPending => paquet != null && paquet.Length > 0;
+        public bool IsPending => paquet != null && paquet.Length > RudpHeader.HEADER_length;
 
         public double lastSend;
         byte sendID, attempt;
@@ -22,30 +23,14 @@ namespace _RUDP_
         {
             this.conn = conn;
             this.mask = mask;
-            if (mask == RudpHeaderM.States)
-                states_stream = new();
-        }
-
-        //----------------------------------------------------------------------------------------------------------
-
-        void NextPaquet()
-        {
-            lastSend = 0;
-            attempt = 0;
-            sendID = ++sendID == 0 ? (byte)1 : sendID;
-        }
-
-        public void Push()
-        {
-            lock (this)
+            switch (mask)
             {
-                if (!IsPending && states_stream != null && states_stream.HasData)
-                {
-                    paquet = states_stream.GetPaquetBuffer();
-                    NextPaquet();
-                }
-                if (IsPending)
-                    TrySend();
+                case RudpHeaderM.States:
+                    states_stream = new();
+                    break;
+                case RudpHeaderM.Flux:
+                    flux_stream = new();
+                    break;
             }
         }
 

@@ -1,7 +1,9 @@
 using _RUDP_;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using UnityEngine;
 
 public static partial class Util_rudp
@@ -24,6 +26,7 @@ public static partial class Util_rudp
         DATA_SIZE = PAQUET_SIZE - RudpHeader.HEADER_length;
 
     public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
+    public static readonly Encoding ENCODING = Encoding.UTF8;
 
     //----------------------------------------------------------------------------------------------------------
 
@@ -39,4 +42,11 @@ public static partial class Util_rudp
     //----------------------------------------------------------------------------------------------------------
 
     public static bool CheckFlags(this RudpHeaderM mask, in RudpHeaderM flags, in RudpHeaderM ignore = 0) => (mask | ignore) == (flags | ignore);
+
+
+    public static void WriteHeader(this MemoryStream stream)
+    {
+        for (byte i = 0; i < RudpHeader.HEADER_length; i++)
+            stream.WriteByte(0);
+    }
 }

@@ -37,6 +37,13 @@ namespace _RUDP_
                 if (redundant || !socket.HasNext())
                     return true;
             }
+            else
+                // flux check
+                lock (channel)
+                    if (header.id < channel.recID && header.id - 25 > channel.recID)
+                        return false;
+                    else
+                        channel.recID = header.id;
 
             if (header.mask == RudpHeaderM.Files)
                 if (socket.HasNext())
@@ -47,7 +54,15 @@ namespace _RUDP_
 
             if (socket.HasNext())
                 lock (socket.states_recStream)
-                    socket.states_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
+                    switch (header.mask)
+                    {
+                        case RudpHeaderM.States:
+                            socket.states_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
+                            break;
+                        case RudpHeaderM.Flux:
+                            socket.flux_recStream.Write(socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u]);
+                            break;
+                    }
 
             return true;
         }
