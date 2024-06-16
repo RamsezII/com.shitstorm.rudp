@@ -2,7 +2,7 @@
 {
     partial class EveComm
     {
-        void NewHeader()
+        void NewPaquet()
         {
             sendFlag = true;
             eveStream.Position = HEADER_LENGTH;
@@ -11,19 +11,23 @@
 
         public void Push()
         {
-            lock (eveStream)
-                if (eveStream.Position > HEADER_LENGTH)
-                    lock (this)
-                    {
-                        double time = Util.TotalMilliseconds;
-                        lock (lastSend)
-                            if (sendFlag || time > lastSend._value + 1000)
-                            {
-                                sendFlag = false;
-                                lastSend._value = time;
-                                conn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-                            }
-                    }
+            lock (pushLock)
+                lock (eveStream)
+                    if (eveStream.Position > HEADER_LENGTH)
+                        lock (this)
+                        {
+                            double time = Util.TotalMilliseconds;
+                            lock (lastSend)
+                                if (sendFlag || time > lastSend._value + 1000)
+                                    SendPaquet();
+                        }
+        }
+
+        void SendPaquet()
+        {
+            sendFlag = false;
+            lastSend._value = Util.TotalMilliseconds;
+            conn.Send(eveBuffer, 0, (ushort)eveStream.Position);
         }
     }
 }

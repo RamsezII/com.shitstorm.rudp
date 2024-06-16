@@ -17,6 +17,7 @@ public static partial class Util_rudp
     public static IPAddress localIP, publicIP;
 
     public static readonly bool
+        logConnections = true,
         logIncidents = true,
         logEmptyPaquets = true,
         logAllPaquets = true;

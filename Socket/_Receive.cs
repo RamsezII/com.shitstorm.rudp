@@ -50,8 +50,8 @@ namespace _RUDP_
 
                     lock (recConn.lastReceive)
                     {
-                        if (recConn.lastReceive._value == 0)
-                            Debug.Log($"{this} connected to: {recConn}");
+                        if (Util_rudp.logConnections && recConn.lastReceive._value == 0)
+                            Debug.Log($"{this} connected to: {recEnd_u}");
                         recConn.lastReceive._value = Util.TotalMilliseconds;
                         recConn.keepalive_attempt.Value = 10;
                     }

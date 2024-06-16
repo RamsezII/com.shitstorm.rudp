@@ -1,5 +1,6 @@
 ﻿using _UTIL_;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -48,9 +49,14 @@ namespace _RUDP_
         [SerializeField] byte id, attempt;
         public readonly ThreadSafe<double> lastSend = new();
         [SerializeField] bool sendFlag;
+        readonly Dictionary<EveCodes, Action> onAcks = new();
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"{nameof(EveComm)} {conn}";
+
+        readonly object
+            pushLock = new(),
+            recLock = new();
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -62,32 +68,6 @@ namespace _RUDP_
             eveWriter.Write(VERSION);
             eveWriter.Write(id);
             socketReader = conn.socket.recReader_u;
-        }
-
-        //----------------------------------------------------------------------------------------------------------
-
-        public void TriggerCommand(in EveCodes code)
-        {
-            lock (eveStream)
-            {
-                NewHeader();
-                switch (code)
-                {
-                    case EveCodes.GetPublicEndPoint:
-                        WriteRequest_PublicIP();
-                        break;
-                    case EveCodes.ListHosts:
-                        hostsOffset = 0;
-                        WriteRequest_ListHosts();
-                        break;
-                    case EveCodes.AddHost:
-                        break;
-                    case EveCodes.JoinHost:
-                        break;
-                    case EveCodes.Holepunch:
-                        break;
-                }
-            }
         }
 
         //----------------------------------------------------------------------------------------------------------
