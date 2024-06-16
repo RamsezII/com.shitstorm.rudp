@@ -6,7 +6,7 @@ using UnityEngine;
 namespace _RUDP_
 {
     [Serializable]
-    public class EveComm : IDisposable
+    public partial class EveComm : IDisposable
     {
         public const byte
             VERSION = 1,
