@@ -23,7 +23,6 @@ namespace _RUDP_
             conn.socket.selfConn.publicEnd = null;
 
             return ESendUntilAck(
-                 EveCodes.GetPublicEndPoint,
                  writer => eveWriter.Write((byte)EveCodes.GetPublicEndPoint),
                  reader =>
                  {

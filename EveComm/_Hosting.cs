@@ -8,19 +8,12 @@ namespace _RUDP_
     partial class EveComm
     {
         readonly ThreadSafe<bool> hosting = new();
-        string hostName;
-        int publicHash, privateHash;
 
         //--------------------------------------------------------------------------------------------------------------
 
         public IEnumerator EStartHosting(string hostName, int publicHash, int privateHash, Action<bool> onSuccess)
         {
-            this.hostName = hostName;
-            this.publicHash = publicHash;
-            this.privateHash = privateHash;
-
             var routine = ESendUntilAck(
-                EveCodes.AddHost,
                 writer =>
                 {
                     eveWriter.Write((byte)EveCodes.AddHost);
@@ -70,7 +63,6 @@ namespace _RUDP_
                     yield break;
 
                 routine = ESendUntilAck(
-                    EveCodes.MaintainHost,
                     writer => eveWriter.Write((byte)EveCodes.MaintainHost),
                     reader =>
                     {
@@ -97,18 +89,6 @@ namespace _RUDP_
                 while (routine.MoveNext())
                     yield return null;
             }
-        }
-
-        void ReceiveHolepunch()
-        {
-            if (hosting.Value)
-            {
-                RudpConnection hostConn = conn.socket.ReadConnection(socketReader);
-                hostConn.keepAlive = true;
-                Debug.Log($"Joining host confirmed ({hostConn})");
-            }
-            else
-                Debug.LogWarning("Received holepunch without hosting");
         }
     }
 }

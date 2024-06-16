@@ -13,7 +13,7 @@ namespace _RUDP_
             ushort hostsOffset = 0;
             List<string> list = new();
 
-            var eSend = ESendUntilAck(EveCodes.ListHosts, OnWriter, OnAck, onFailure);
+            var eSend = ESendUntilAck(OnWriter, OnAck, onFailure);
             while (eSend.MoveNext())
                 yield return null;
             onListFinal?.Invoke(list);
@@ -49,7 +49,7 @@ namespace _RUDP_
                 }
 
                 if (hostsOffset < hostsCount)
-                    eSend = ESendUntilAck(EveCodes.ListHosts, OnWriter, OnAck, onFailure);
+                    eSend = ESendUntilAck(OnWriter, OnAck, onFailure);
             }
         }
     }

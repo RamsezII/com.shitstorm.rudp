@@ -7,7 +7,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator ESendUntilAck(EveCodes code, Action<BinaryWriter> onWrite, Action<BinaryReader> onAck, Action onFailure)
+        public IEnumerator ESendUntilAck(Action<BinaryWriter> onWrite, Action<BinaryReader> onAck, Action onFailure)
         {
             bool done = false;
 
@@ -60,7 +60,7 @@ namespace _RUDP_
                         if (done)
                             yield break;
 
-                    Debug.LogWarning($"Eve failure: \"{code}\"");
+                    Debug.LogWarning($"/!\\ Eve failure /!\\");
                     onFailure?.Invoke();
                     yield break;
                 }
