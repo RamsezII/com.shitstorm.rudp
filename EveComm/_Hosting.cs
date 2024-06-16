@@ -27,5 +27,12 @@ namespace _RUDP_
             eveWriter.WriteText(hostName);
             eveWriter.Write(publicHash);
         }
+
+        void ReceiveHolepunch()
+        {
+            RudpConnection hostConn = conn.socket.ReadConnection(socketReader);
+            hostConn.keepAlive = true;
+            Debug.Log($"Joining host confirmed ({hostConn})");
+        }
     }
 }
