@@ -25,7 +25,7 @@ namespace _RUDP_
                     if (done)
                         yield break;
 
-                if (++attempt < 6)
+                if (attempt++ < 6)
                 {
                     lock (eveWriter)
                     {
@@ -52,7 +52,7 @@ namespace _RUDP_
                 }
                 else
                 {
-                    WaitForSecondsRealtime wait = new(1.5f);
+                    WaitForSecondsRealtime wait = new(1);
                     while (wait.MoveNext())
                         yield return null;
 
