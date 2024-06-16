@@ -6,10 +6,9 @@ namespace _RUDP_
     {
         public bool TryAcceptEvePaquet()
         {
-            lock (recLock)
+            lock (mainLock)
             {
-                lock (lastSend)
-                    Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend._value).MillisecondsLog()}".ToSubLog());
+                Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend.Value).MillisecondsLog()}".ToSubLog());
 
                 byte version = socketReader.ReadByte();
                 byte id = socketReader.ReadByte();
@@ -38,14 +37,16 @@ namespace _RUDP_
                 }
 
                 // then its an ack
-                lock (onAcks)
-                    if (onAcks.TryGetValue(recCode, out var onAck))
-                        onAck?.Invoke();
-                    else
-                    {
-                        Debug.LogWarning($"Received unexpected {nameof(recCode)}: \"{recCode}\"");
-                        return false;
-                    }
+                if (onAck != null)
+                {
+                    onAck();
+                    onAck = null;
+                }
+                else
+                {
+                    Debug.LogWarning($"Received unexpected ack: \"{recCode}\"");
+                    return false;
+                }
 
                 return true;
             }

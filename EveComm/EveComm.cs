@@ -12,6 +12,7 @@ namespace _RUDP_
         GetPublicEndPoint,
         ListHosts,
         AddHost,
+        MaintainHost,
         JoinHost,
         Holepunch,
         _last_,
@@ -48,15 +49,12 @@ namespace _RUDP_
 
         [SerializeField] byte id, attempt;
         public readonly ThreadSafe<double> lastSend = new();
-        [SerializeField] bool sendFlag;
-        readonly Dictionary<EveCodes, Action> onAcks = new();
+        Action onAck;
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"{nameof(EveComm)} {conn}";
 
-        readonly object
-            pushLock = new(),
-            recLock = new();
+        readonly object mainLock = new();
 
         //----------------------------------------------------------------------------------------------------------
 

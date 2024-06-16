@@ -13,7 +13,6 @@ namespace _RUDP_
             }
 
             if (conns_set.Count > 0)
-            {
                 foreach (RudpConnection conn in conns_set)
                     lock (conn.disposed)
                         if (conn.disposed._value)
@@ -21,11 +20,6 @@ namespace _RUDP_
                                 conns_dic.Remove(conn.endPoint);
                         else
                             conn.Push();
-
-                lock (eveComm.conn.disposed)
-                    if (!eveComm.conn.disposed._value)
-                        eveComm.Push();
-            }
         }
     }
 }
