@@ -1,6 +1,6 @@
 {
     "name": "_RUDP_",
-    "rootNamespace": "",
+    "rootNamespace": "_RUDP_",
     "references": [
         "GUID:ec96f6dc48fee4244bcebc247464e471"
     ],
