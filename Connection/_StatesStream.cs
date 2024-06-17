@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using UnityEngine;
 
 namespace _RUDP_
 {
@@ -26,7 +27,15 @@ namespace _RUDP_
                     }
 
                     length += (ushort)states_recStream.Position;
-                    onReader(states_recReader, length);
+
+                    try
+                    {
+                        onReader(states_recReader, length);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
 
                     states_recStream.Position = 0;
                     byte[] buffer = states_recStream.GetBuffer();
