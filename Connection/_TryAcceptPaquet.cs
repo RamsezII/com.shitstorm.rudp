@@ -54,11 +54,11 @@ namespace _RUDP_
             if (socket.HasNext())
             {
                 byte[] recData = socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u];
-                lock (socket.states_recStream)
+                lock (states_recStream)
                     switch (header.mask)
                     {
                         case RudpHeaderM.States:
-                            socket.states_recStream.Write(recData);
+                            states_recStream.Write(recData);
                             break;
                         case RudpHeaderM.Flux:
                             socket.flux_recStream.Write(recData);

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace _RUDP_
 {
-    partial class RudpSocket
+    partial class RudpConnection
     {
         public bool HasStates()
         {

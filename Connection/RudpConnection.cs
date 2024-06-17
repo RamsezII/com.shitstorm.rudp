@@ -21,6 +21,9 @@ namespace _RUDP_
             channel_flux,
             channel_audio;
 
+        public readonly MemoryStream states_recStream;
+        public readonly BinaryReader states_recReader;
+
         public override string ToString() => $"conn({socket.localPort}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
@@ -29,10 +32,14 @@ namespace _RUDP_
         {
             this.socket = socket;
             this.endPoint = endPoint;
+
             channel_files = new(this, RudpHeaderM.Files);
             channel_states = new(this, RudpHeaderM.States);
             channel_flux = new(this, RudpHeaderM.Flux);
             channel_audio = new(this, RudpHeaderM.Audio);
+
+            states_recStream = new();
+            states_recReader = new(states_recStream, Util_rudp.ENCODING, false);
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -48,10 +55,14 @@ namespace _RUDP_
         protected override void OnDispose()
         {
             base.OnDispose();
+
             channel_files.Dispose();
             channel_states.Dispose();
             channel_flux.Dispose();
             channel_audio.Dispose();
+
+            states_recStream.Dispose();
+            states_recReader.Dispose();
         }
     }
 }

@@ -23,8 +23,8 @@ namespace _RUDP_
         public readonly RudpConnection selfConn;
         public EveComm eveComm;
 
-        public readonly MemoryStream recStream_u, states_recStream, flux_recStream;
-        public readonly BinaryReader recReader_u, states_recReader, flux_recReader;
+        public readonly MemoryStream recStream_u, flux_recStream;
+        public readonly BinaryReader recReader_u, flux_recReader;
         public bool HasNext() => recStream_u.Position < recLength_u;
 
 #if UNITY_EDITOR
@@ -39,8 +39,6 @@ namespace _RUDP_
         {
             recStream_u = new(recBuffer_u);
             recReader_u = new(recStream_u, Util_rudp.ENCODING, false);
-            states_recStream = new();
-            states_recReader = new(states_recStream, Util_rudp.ENCODING, false);
             flux_recStream = new();
             flux_recReader = new(flux_recStream, Util_rudp.ENCODING, false);
 
@@ -87,8 +85,6 @@ namespace _RUDP_
 
             recStream_u.Dispose();
             recReader_u.Dispose();
-            states_recStream.Dispose();
-            states_recReader.Dispose();
             flux_recStream.Dispose();
             flux_recReader.Dispose();
             eveComm.Dispose();
