@@ -18,7 +18,8 @@ namespace _RUDP_
         readonly GZipStream gzip;
         readonly BinaryWriter writer_raw, writer_gzip;
         readonly BinaryReader reader_raw;
-        public bool HasData => stream.Position > RudpHeader.HEADER_length;
+        public bool HasData => stream.Length > RudpHeader.HEADER_length;
+        public string LogBytes() => GetPaquetBuffer()[RudpHeader.HEADER_length..].LogBytes();
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -68,17 +69,17 @@ namespace _RUDP_
         public byte[] GetPaquetBuffer()
         {
             lock (this)
-                return stream.GetBuffer()[..(int)stream.Position];
+                return stream.GetBuffer()[..(int)stream.Length];
         }
 
-        public void OnCleanAfterAck(in ushort offset)
+        public void OnCleanAfterAck(in ushort paquetSize)
         {
             lock (this)
             {
                 byte[] buffer = stream.GetBuffer();
                 stream.Position = 0;
-                Buffer.BlockCopy(buffer, offset, buffer, RudpHeader.HEADER_length, (int)stream.Length - offset);
-                stream.SetLength(stream.Length - offset + RudpHeader.HEADER_length);
+                Buffer.BlockCopy(buffer, paquetSize, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquetSize);
+                stream.SetLength(stream.Length - paquetSize + RudpHeader.HEADER_length);
                 stream.Position = stream.Length;
             }
         }

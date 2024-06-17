@@ -8,7 +8,8 @@ namespace _RUDP_
         {
             lock (mainLock)
             {
-                Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend.Value).MillisecondsLog()}".ToSubLog());
+                if (logEvePaquets)
+                    Debug.Log($"Eve ping: {(Util.TotalMilliseconds - lastSend.Value).MillisecondsLog()}".ToSubLog());
 
                 byte version = socketReader.ReadByte();
                 byte id = socketReader.ReadByte();
@@ -58,7 +59,7 @@ namespace _RUDP_
             {
                 RudpConnection hostConn = conn.socket.ReadConnection(socketReader);
                 hostConn.keepAlive = true;
-                Debug.Log($"Holepunch success: {hostConn}");
+                Debug.Log($"{this} Holepunch success: {hostConn}");
             }
             else
                 Debug.LogWarning("Received holepunch without hosting");

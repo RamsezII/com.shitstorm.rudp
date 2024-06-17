@@ -17,9 +17,7 @@ namespace _RUDP_
                 if (HasStates())
                 {
                     states_recStream.Position = 0;
-
-                    // tenter une lecture groupée au lieu de décaler fragment par fragment
-                    long length = states_recReader.ReadUInt16();
+                    ushort length = states_recReader.ReadUInt16();
 
                     if (states_recStream.Length < states_recStream.Position + length)
                     {
@@ -27,13 +25,14 @@ namespace _RUDP_
                         return false;
                     }
 
-                    length += states_recStream.Position;
+                    length += (ushort)states_recStream.Position;
                     onReader(states_recReader, length);
 
                     states_recStream.Position = 0;
                     byte[] buffer = states_recStream.GetBuffer();
-                    Buffer.BlockCopy(buffer, (int)length, buffer, 0, (int)(states_recStream.Length - length));
+                    Buffer.BlockCopy(buffer, length, buffer, 0, (int)(states_recStream.Length - length));
                     states_recStream.SetLength(states_recStream.Length - length);
+                    states_recStream.Position = states_recStream.Length;
 
                     return true;
                 }

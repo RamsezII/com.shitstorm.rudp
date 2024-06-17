@@ -58,7 +58,6 @@ namespace _RUDP_
                     switch (header.mask)
                     {
                         case RudpHeaderM.States:
-                            Debug.Log($"Received states paquet (size:{recData.Length})");
                             socket.states_recStream.Write(recData);
                             break;
                         case RudpHeaderM.Flux:

@@ -21,7 +21,7 @@ namespace _RUDP_
             channel_flux,
             channel_audio;
 
-        public override string ToString() => $"conn({socket}->{endPoint})";
+        public override string ToString() => $"conn({socket.localPort}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
 

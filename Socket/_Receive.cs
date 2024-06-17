@@ -51,7 +51,7 @@ namespace _RUDP_
                     lock (recConn.lastReceive)
                     {
                         if (Util_rudp.logConnections && recConn.lastReceive._value == 0)
-                            Debug.Log($"{this} holepunch: {recEnd_u}");
+                            Debug.Log($"{this} holepunch: {recEnd_u}".ToSubLog());
                         recConn.lastReceive._value = Util.TotalMilliseconds;
                         recConn.keepalive_attempt.Value = 10;
                     }

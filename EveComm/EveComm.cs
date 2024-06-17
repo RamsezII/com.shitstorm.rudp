@@ -1,6 +1,5 @@
 ﻿using _UTIL_;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -38,7 +37,7 @@ namespace _RUDP_
             HEADER_LENGTH = 2;
 
         public static readonly bool
-            logEvePaquets = true;
+            logEvePaquets = false;
 
         public readonly RudpConnection conn;
 
@@ -52,7 +51,7 @@ namespace _RUDP_
         Action onAck;
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
-        public override string ToString() => $"{nameof(EveComm)} {conn}";
+        public override string ToString() => $"EVE_{conn}";
 
         readonly object mainLock = new();
 
