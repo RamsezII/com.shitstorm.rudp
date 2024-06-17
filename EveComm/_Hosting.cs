@@ -55,7 +55,7 @@ namespace _RUDP_
 
             while (true)
             {
-                var wait = new WaitForSecondsRealtime(2);
+                var wait = new WaitForSecondsRealtime(4);
                 while (wait.MoveNext())
                     yield return null;
 
@@ -86,7 +86,7 @@ namespace _RUDP_
                         hosting.Value = false;
                     });
 
-                while (routine.MoveNext())
+                while (hosting.Value && routine.MoveNext())
                     yield return null;
             }
         }

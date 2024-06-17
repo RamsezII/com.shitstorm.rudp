@@ -8,7 +8,7 @@ namespace _RUDP_
         [Header("~@ Push @~")]
         public bool keepAlive;
         public readonly ThreadSafe<byte> keepalive_attempt = new();
-        public bool IsAlive(in double delay) => lastReceive.Value + delay > Util.TotalMilliseconds;
+        public bool IsAlive(in double milliseconds) => lastReceive.Value + milliseconds > Util.TotalMilliseconds;
 
         //----------------------------------------------------------------------------------------------------------
 

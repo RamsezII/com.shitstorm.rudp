@@ -1,5 +1,6 @@
 using _UTIL_;
 using System;
+using System.IO;
 using System.Net;
 
 namespace _RUDP_
@@ -32,6 +33,14 @@ namespace _RUDP_
             channel_states = new(this, RudpHeaderM.States);
             channel_flux = new(this, RudpHeaderM.Flux);
             channel_audio = new(this, RudpHeaderM.Audio);
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+
+        public void WriteConnection(in BinaryWriter writer)
+        {
+            writer.Write(publicEnd);
+            writer.Write(localEnd);
         }
 
         //----------------------------------------------------------------------------------------------------------

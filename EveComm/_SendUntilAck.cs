@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _UTIL_;
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -17,6 +18,15 @@ namespace _RUDP_
                     done = true;
                     onAck(socketReader);
                 };
+
+            using Disposable disposable = new()
+            {
+                onDispose = () =>
+                {
+                    lock (mainLock)
+                        onAck = null;
+                },
+            };
 
             byte attempt = 0;
             while (true)

@@ -51,5 +51,17 @@ namespace _RUDP_
                 return true;
             }
         }
+
+        void ReceiveHolepunch()
+        {
+            if (hosting.Value)
+            {
+                RudpConnection hostConn = conn.socket.ReadConnection(socketReader);
+                hostConn.keepAlive = true;
+                Debug.Log($"Holepunch success: {hostConn}");
+            }
+            else
+                Debug.LogWarning("Received holepunch without hosting");
+        }
     }
 }

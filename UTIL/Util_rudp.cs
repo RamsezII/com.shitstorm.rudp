@@ -50,4 +50,6 @@ public static partial class Util_rudp
         for (byte i = 0; i < RudpHeader.HEADER_length; i++)
             stream.WriteByte(0);
     }
+
+    public static int ToPassHash(this string pass) => string.IsNullOrWhiteSpace(pass) ? 0 : pass.GetHashCode();
 }

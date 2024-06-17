@@ -31,7 +31,7 @@ namespace _RUDP_
         [SerializeField] RudpConnection _selfConn;
 #endif
 
-        public override string ToString() => $"(socket {selfConn.endPoint.Port})";
+        public override string ToString() => $"sock{{{localPort}}}";
 
         //----------------------------------------------------------------------------------------------------------
 
