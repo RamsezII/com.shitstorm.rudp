@@ -6,7 +6,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator EStartJoining(string hostName, int publicHash, int privateHash, Action<RudpConnection> onSuccess, Action onFailure)
+        public IEnumerator EJoinPublicHost(string hostName, int publicHash, int privateHash, Action<RudpConnection> onSuccess, Action onFailure)
         {
             bool failure = false;
             RudpConnection hostConn = null;

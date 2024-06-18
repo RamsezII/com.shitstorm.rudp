@@ -2,16 +2,22 @@ using _UTIL_;
 using System;
 using System.IO;
 using System.Net;
+using UnityEngine;
 
 namespace _RUDP_
 {
     [Serializable]
     public partial class RudpConnection : Disposable
     {
+#if UNITY_EDITOR
+        [Header("~@ Conn @~")]
+        [SerializeField] string _endPoint;
+#endif
+
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
 
-        public ThreadSafe<double>
+        public readonly ThreadSafe<double>
             lastSend = new(),
             lastReceive = new();
 
@@ -32,6 +38,10 @@ namespace _RUDP_
         {
             this.socket = socket;
             this.endPoint = endPoint;
+
+#if UNITY_EDITOR
+            _endPoint = endPoint.ToString();
+#endif
 
             channel_files = new(this, RudpHeaderM.Files);
             channel_states = new(this, RudpHeaderM.States);
