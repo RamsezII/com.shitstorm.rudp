@@ -14,7 +14,7 @@ namespace _RUDP_
                         if (mask == RudpHeaderM.States)
                             states_stream.OnCleanAfterAck((ushort)paquet.Length);
                         paquet = null;
-                        Push();
+                        PushStates();
                         return true;
                     }
                     else if (Util_rudp.logIncidents)

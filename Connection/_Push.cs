@@ -14,8 +14,7 @@ namespace _RUDP_
 
         public void Push()
         {
-            channel_files.Push();
-            channel_states.Push();
+            channel_states.PushStates();
 
             if (keepAlive)
             {

@@ -7,7 +7,6 @@ namespace _RUDP_
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
         public readonly RudpStream states_stream;
-        public readonly RudpStreamFlux flux_stream;
 
         public byte[] paquet;
         public bool IsPending => paquet != null && paquet.Length > RudpHeader.HEADER_length;
@@ -23,15 +22,8 @@ namespace _RUDP_
         {
             this.conn = conn;
             this.mask = mask;
-            switch (mask)
-            {
-                case RudpHeaderM.States:
-                    states_stream = new();
-                    break;
-                case RudpHeaderM.Flux:
-                    flux_stream = new();
-                    break;
-            }
+            if (mask == RudpHeaderM.States)
+                states_stream = new();
         }
 
         //----------------------------------------------------------------------------------------------------------

@@ -4,33 +4,17 @@ namespace _RUDP_
 {
     partial class RudpChannel
     {
-        public void Push()
+        public void PushStates()
         {
             lock (this)
-                switch (mask)
+                if (states_stream.HasData)
                 {
-                    case RudpHeaderM.States:
-                        if (states_stream.HasData)
-                        {
-                            if (!IsPending)
-                            {
-                                this.paquet = states_stream.GetPaquetBuffer();
-                                NextPaquet();
-                            }
-                            TrySendReliable();
-                        }
-                        break;
-
-                    case RudpHeaderM.Flux:
-                        if (flux_stream.TryPullPaquet(out byte[] paquet))
-                        {
-                            this.paquet = paquet;
-                            NextPaquet();
-                            SendUnreliable();
-                            this.paquet = null;
-                            flux_stream.CleanOldData();
-                        }
-                        break;
+                    if (!IsPending)
+                    {
+                        paquet = states_stream.GetPaquetBuffer();
+                        NextPaquet();
+                    }
+                    TrySendReliable();
                 }
         }
 
@@ -50,10 +34,11 @@ namespace _RUDP_
             }
         }
 
-        public void SendUnreliable()
+        public void SendUnreliable(in byte[] data)
         {
             lock (this)
             {
+                paquet = data;
                 NextPaquet();
                 SendPaquet();
                 paquet = null;
