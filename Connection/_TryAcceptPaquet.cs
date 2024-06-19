@@ -7,10 +7,12 @@ namespace _RUDP_
         public bool TryAcceptPaquet(in RudpHeader header)
         {
             RudpChannel channel = null;
-            if (header.mask.HasFlag(channel_files.mask))
+            if (header.mask.HasFlag(RudpHeaderM.Files))
                 channel = channel_files;
-            else if (header.mask.HasFlag(channel_states.mask))
+            else if (header.mask.HasFlag(RudpHeaderM.States))
                 channel = channel_states;
+            else if (header.mask.HasFlag(RudpHeaderM.Flux))
+                channel = channel_flux;
 
             if (Util_rudp.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.recLength_u})".ToSubLog());
