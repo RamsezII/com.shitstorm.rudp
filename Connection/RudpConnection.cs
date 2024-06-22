@@ -12,6 +12,7 @@ namespace _RUDP_
 #if UNITY_EDITOR
         [Header("~@ Conn @~")]
         [SerializeField] string _endPoint;
+        [SerializeField] bool _initiated;
 #endif
 
         public readonly RudpSocket socket;
@@ -40,6 +41,7 @@ namespace _RUDP_
             this.endPoint = endPoint;
 
 #if UNITY_EDITOR
+            _initiated = true;
             _endPoint = endPoint.ToString();
 #endif
 
