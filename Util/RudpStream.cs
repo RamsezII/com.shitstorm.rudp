@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using UnityEngine;
 
 namespace _RUDP_
 {
@@ -69,7 +70,7 @@ namespace _RUDP_
         public byte[] GetPaquetBuffer()
         {
             lock (this)
-                return stream.GetBuffer()[..(int)stream.Length];
+                return stream.GetBuffer()[..Mathf.Min((int)stream.Length, Util_rudp.PAQUET_SIZE)];
         }
 
         public void OnCleanAfterAck(in ushort paquetSize)
