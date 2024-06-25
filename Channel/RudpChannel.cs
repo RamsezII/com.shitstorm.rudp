@@ -1,4 +1,5 @@
 using _UTIL_;
+using System.Text;
 
 namespace _RUDP_
 {
@@ -11,7 +12,7 @@ namespace _RUDP_
         public byte[] paquet;
         public bool IsPending => paquet != null && paquet.Length > RudpHeader.HEADER_length;
 
-        public double lastSend;
+        public double lastSend, ping;
         byte sendID, attempt;
         public byte recID;
         public override string ToString() => $"{conn}[{mask}]";
@@ -24,6 +25,15 @@ namespace _RUDP_
             this.mask = mask;
             if (mask == RudpHeaderM.States)
                 states_stream = new();
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+
+        public void AppendStatesStatus(in StringBuilder log)
+        {
+            lock (this)
+                log.Append($"ping: {ping:0.00}ms, ");
+            states_stream.AppendStatus(log);
         }
 
         //----------------------------------------------------------------------------------------------------------

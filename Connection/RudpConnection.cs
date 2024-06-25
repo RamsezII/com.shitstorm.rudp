@@ -2,6 +2,7 @@ using _UTIL_;
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using UnityEngine;
 
 namespace _RUDP_
@@ -60,6 +61,12 @@ namespace _RUDP_
         {
             writer.Write(publicEnd);
             writer.Write(localEnd);
+        }
+
+        public void AppendStatus(in StringBuilder log)
+        {
+            lock (this)
+                channel_states.AppendStatesStatus(log);
         }
 
         //----------------------------------------------------------------------------------------------------------

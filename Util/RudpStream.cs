@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using UnityEngine;
 
 namespace _RUDP_
@@ -83,6 +84,12 @@ namespace _RUDP_
                 stream.SetLength(stream.Length - paquetSize + RudpHeader.HEADER_length);
                 stream.Position = stream.Length;
             }
+        }
+
+        public void AppendStatus(in StringBuilder log)
+        {
+            lock (this)
+                log.Append($"pending: {stream.Length - RudpHeader.HEADER_length} bytes");
         }
 
         //----------------------------------------------------------------------------------------------------------

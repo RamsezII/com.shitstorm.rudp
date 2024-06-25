@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Codice.Client.Common;
+using UnityEngine;
 
 namespace _RUDP_
 {
@@ -27,6 +28,7 @@ namespace _RUDP_
 
         void SendPaquet()
         {
+            lastSend = Util.TotalMilliseconds;
             lock (paquet)
             {
                 RudpHeader.Write(paquet, mask, sendID, attempt);
@@ -68,7 +70,6 @@ namespace _RUDP_
                 double time = Util.TotalMilliseconds;
                 if (time - lastSend < delay)
                     return;
-                lastSend = time;
 
                 SendPaquet();
 
