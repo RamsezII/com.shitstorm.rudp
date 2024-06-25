@@ -32,7 +32,7 @@ namespace _RUDP_
         public void AppendStatesStatus(in StringBuilder log)
         {
             lock (this)
-                log.Append($"ping: {ping:0.00}ms, ");
+                log.Append($"ping: {ping:0.0} ms, ");
             states_stream.AppendStatus(log);
         }
 
