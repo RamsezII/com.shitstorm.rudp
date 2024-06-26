@@ -20,6 +20,7 @@ public static partial class Util_rudp
         logConnections = true,
         logIncidents = true,
         logEmptyPaquets = false,
+        logKeepAlives = false,
         logAllPaquets = false;
 
     public const ushort

@@ -53,7 +53,7 @@ namespace _RUDP_
                         if (Util_rudp.logConnections && recConn.lastReceive._value == 0)
                             Debug.Log($"{this} holepunch: {recEnd_u}".ToSubLog());
                         recConn.lastReceive._value = Util.TotalMilliseconds;
-                        recConn.keepalive_attempt.Value = 10;
+                        recConn.keepalive_attempt.Value = 0;
                     }
 
                     if (recConn == eveComm.conn)

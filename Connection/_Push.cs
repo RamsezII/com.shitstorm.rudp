@@ -8,7 +8,7 @@ namespace _RUDP_
         [Header("~@ Push @~")]
         public bool keepAlive;
         public readonly ThreadSafe<byte> keepalive_attempt = new();
-        public bool IsAlive(in double milliseconds) => lastReceive.Value + milliseconds > Util.TotalMilliseconds;
+        public bool IsAlive(in double milliseconds) => Util.TotalMilliseconds < lastReceive.Value + milliseconds;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -17,28 +17,26 @@ namespace _RUDP_
             channel_states.PushStates();
 
             if (keepAlive)
-            {
-                double time = Util.TotalMilliseconds;
-                lock (lastSend)
-                    lock (keepalive_attempt)
+                lock (keepalive_attempt)
+                {
+                    int freq = keepalive_attempt._value switch
                     {
-                        int freq = keepalive_attempt._value switch
-                        {
-                            0 => 50,
-                            1 => 500,
-                            2 => 1000,
-                            3 => 2500,
-                            _ => 5000,
-                        };
+                        0 => 1500,
+                        1 => 2000,
+                        2 => 3500,
+                        _ => 4500,
+                    };
 
-                        if (time > lastSend._value + freq)
-                        {
-                            if (keepalive_attempt._value < 10)
-                                ++keepalive_attempt._value;
-                            Send(Util_rudp.EMPTY_BUFFER, 0, 0);
-                        }
+                    double time = Util.TotalMilliseconds;
+                    if (time > lastSend.Value + freq)
+                    {
+                        if (Util_rudp.logKeepAlives)
+                            Debug.Log($"{this} keepalive attempt {keepalive_attempt._value}".ToSubLog());
+                        if (keepalive_attempt._value < 10)
+                            ++keepalive_attempt._value;
+                        Send(Util_rudp.EMPTY_BUFFER, 0, 0);
                     }
-            }
+                }
         }
 
         public void Send(in byte[] buffer, in ushort offset, in ushort length)
