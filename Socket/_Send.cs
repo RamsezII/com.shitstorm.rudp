@@ -16,7 +16,7 @@ namespace _RUDP_
         {
             lock (ACK_BUFFER)
             {
-                header.WriteToBuffer(ACK_BUFFER);
+                header.Write(ACK_BUFFER);
                 SendTo(ACK_BUFFER, 0, RudpHeader.HEADER_length, targetEnd);
             }
         }

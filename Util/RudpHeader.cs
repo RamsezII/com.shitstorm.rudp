@@ -17,6 +17,7 @@ namespace _RUDP_
         direct,
         reliable,
         ack,
+        compressed,
         _last_,
     }
 
@@ -26,6 +27,7 @@ namespace _RUDP_
         Direct = 1 << RudpHeaderB.direct,
         Reliable = 1 << RudpHeaderB.reliable,
         Ack = 1 << RudpHeaderB.ack,
+        Compressed = 1 << RudpHeaderB.compressed,
 
         Files = Reliable | Direct,
         Audio = Direct,
@@ -41,6 +43,10 @@ namespace _RUDP_
         public readonly byte version;
         public readonly byte id, attempt;
         public override string ToString() => $"{{{nameof(version)}:{version}, {nameof(mask)}:{{{mask}}}, {nameof(id)}:{id}, {nameof(attempt)}:{attempt}}}";
+
+        //----------------------------------------------------------------------------------------------------------
+
+        public static void Prefixe(in BinaryWriter writer) => ((RudpHeader)default).Write(writer);
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -61,12 +67,20 @@ namespace _RUDP_
         public static RudpHeader FromBuffer(in byte[] buffer) => new(buffer[0], (RudpHeaderM)buffer[1], buffer[2], buffer[3]);
         public static RudpHeader FromReader(in BinaryReader reader) => new(reader.ReadByte(), (RudpHeaderM)reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
 
-        public void WriteToBuffer(in byte[] buffer)
+        public void Write(in byte[] buffer)
         {
             buffer[(int)RudpHeaderI.Version] = version;
             buffer[(int)RudpHeaderI.Mask] = (byte)mask;
             buffer[(int)RudpHeaderI.ID] = id;
             buffer[(int)RudpHeaderI.Attempt] = attempt;
+        }
+
+        public void Write(in BinaryWriter writer)
+        {
+            writer.Write(version);
+            writer.Write((byte)mask);
+            writer.Write(id);
+            writer.Write(attempt);
         }
 
         public static void Write(in byte[] buffer, in RudpHeaderM mask, in byte id, in byte attempt)
