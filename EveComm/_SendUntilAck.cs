@@ -24,7 +24,7 @@ namespace _RUDP_
                 onDispose = () =>
                 {
                     lock (mainLock)
-                        onAck = null;
+                        this.onAck = null;
                 },
             };
 
@@ -39,6 +39,9 @@ namespace _RUDP_
                 {
                     lock (eveWriter)
                     {
+                        if (conn.Disposed)
+                            yield break;
+
                         eveStream.Position = HEADER_LENGTH;
                         eveBuffer[1] = ++id == 0 ? (byte)1 : id;
                         onWrite(eveWriter);
