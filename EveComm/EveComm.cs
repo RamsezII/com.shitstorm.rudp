@@ -41,7 +41,7 @@ namespace _RUDP_
 
         public readonly RudpConnection conn;
 
-        readonly byte[] eveBuffer = new byte[Util_rudp.PAQUET_SIZE];
+        readonly byte[] eveBuffer = new byte[Util_rudp.PAQUET_SIZE_BIG];
         readonly MemoryStream eveStream;
         readonly BinaryWriter eveWriter;
         readonly BinaryReader socketReader;

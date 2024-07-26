@@ -24,8 +24,9 @@ public static partial class Util_rudp
         logAllPaquets = false;
 
     public const ushort
-        PAQUET_SIZE = 1472,
-        DATA_SIZE = PAQUET_SIZE - RudpHeader.HEADER_length;
+        PAQUET_SIZE_SMALL = 1472,
+        PAQUET_SIZE_BIG = PAQUET_SIZE_SMALL,
+        DATA_SIZE_BIG = PAQUET_SIZE_BIG - RudpHeader.HEADER_length;
 
     public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
     public static readonly Encoding ENCODING = Encoding.UTF8;

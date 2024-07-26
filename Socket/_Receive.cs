@@ -101,7 +101,7 @@ namespace _RUDP_
         void BeginReceive()
         {
             EndPoint receiveEnd = endIP_any;
-            try { BeginReceiveFrom(recBuffer_u, 0, Util_rudp.PAQUET_SIZE, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
+            try { BeginReceiveFrom(recBuffer_u, 0, Util_rudp.PAQUET_SIZE_BIG, SocketFlags.None, ref receiveEnd, ReceiveFrom, null); }
             catch (Exception e) { Debug.LogException(e); }
         }
     }

@@ -11,7 +11,7 @@ namespace _RUDP_
     [Serializable]
     public partial class RudpSocket : Socket, IDisposable
     {
-        public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE];
+        public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE_BIG];
         public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
 
         public readonly ushort localPort;

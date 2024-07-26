@@ -71,7 +71,7 @@ namespace _RUDP_
         public byte[] GetPaquetBuffer()
         {
             lock (this)
-                return stream.GetBuffer()[..Mathf.Min((int)stream.Length, Util_rudp.PAQUET_SIZE)];
+                return stream.GetBuffer()[..Mathf.Min((int)stream.Length, Util_rudp.PAQUET_SIZE_BIG)];
         }
 
         public void OnCleanAfterAck(in ushort paquetSize)

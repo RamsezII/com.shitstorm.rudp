@@ -22,8 +22,8 @@ static partial class Util_rudp
         log.AppendLine($"VERSION = {EveComm.VERSION}");
         log.AppendLine($"PORT_RUDP = {PORT_RUDP}");
         log.AppendLine($"HEADER_SIZE = {EveComm.HEADER_LENGTH}");
-        log.AppendLine($"PAQUET_SIZE = {PAQUET_SIZE}");
-        log.AppendLine($"DATA_SIZE = {PAQUET_SIZE - EveComm.HEADER_LENGTH}");
+        log.AppendLine($"PAQUET_SIZE = {PAQUET_SIZE_BIG}");
+        log.AppendLine($"DATA_SIZE = {PAQUET_SIZE_BIG - EveComm.HEADER_LENGTH}");
 
         string _log = log.ToString();
         _log.WriteToClipboard();

@@ -1,9 +1,19 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 namespace _RUDP_
 {
+    public interface IAudioReceiver
+    {
+        void OnAudioPaquet(in BinaryReader reader, in RudpConnection recConn);
+    }
+
     partial class RudpConnection
     {
+        public IAudioReceiver iAudioReceiver;
+
+        //----------------------------------------------------------------------------------------------------------
+
         public bool TryAcceptPaquet(in RudpHeader header)
         {
             RudpChannel channel = null;
@@ -11,6 +21,8 @@ namespace _RUDP_
                 channel = channel_files;
             else if (header.mask.HasFlag(RudpHeaderM.States))
                 channel = channel_states;
+            else if (header.mask.HasFlag(RudpHeaderM.Audio))
+                channel = channel_audio;
             else if (header.mask.HasFlag(RudpHeaderM.Flux))
                 channel = channel_flux;
 
@@ -62,9 +74,24 @@ namespace _RUDP_
                         case RudpHeaderM.States:
                             states_recStream.Write(recData);
                             break;
+
                         case RudpHeaderM.Flux:
                             socket.flux_recStream.Write(recData);
                             break;
+
+                        case RudpHeaderM.Audio:
+                            if (iAudioReceiver == null)
+                            {
+                                Debug.LogWarning($"{this} Received audio paquet but no {nameof(iAudioReceiver)} is set");
+                                return false;
+                            }
+                            else
+                                iAudioReceiver.OnAudioPaquet(socket.recReader_u, this);
+                            break;
+
+                        default:
+                            Debug.LogWarning($"{this} Received paquet with unimplemented mask \"{header.mask}\"");
+                            return false;
                     }
             }
 

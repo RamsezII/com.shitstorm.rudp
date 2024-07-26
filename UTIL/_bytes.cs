@@ -40,7 +40,7 @@ public static partial class Util_rudp
         writer.Write((ushort)0);
     }
 
-    public static void EndWriteRUDP(this BinaryWriter writer, in ushort prefixePos) => EndWrite(writer, prefixePos, DATA_SIZE);
+    public static void EndWriteRUDP(this BinaryWriter writer, in ushort prefixePos) => EndWrite(writer, prefixePos, DATA_SIZE_BIG);
     public static void EndWrite(this BinaryWriter writer, in ushort prefixePos, in ushort limitError)
     {
         ushort length = (ushort)(writer.BaseStream.Position - prefixePos - sizeof(ushort));

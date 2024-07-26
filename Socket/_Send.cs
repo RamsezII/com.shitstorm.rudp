@@ -46,14 +46,26 @@ namespace _RUDP_
                 send_size += length;
             }
 
-            if (Util_rudp.logAllPaquets || Util_rudp.logEmptyPaquets && length == 0)
+            if (length == 0)
+            {
+                if (Util_rudp.logEmptyPaquets || Util_rudp.logAllPaquets)
+                    Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (size:{length})".ToSubLog());
+            }
+            else
+            {
                 if (length >= RudpHeader.HEADER_length)
+                {
+                    RudpHeader header = RudpHeader.FromBuffer(buffer);
+                    if (header.mask.HasFlag(RudpHeaderM.Audio))
+                        Debug.Log($"{this} SENDING AUDIO -- header:{header} size:{length}");
+                    if (Util_rudp.logAllPaquets)
+                        Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{header}, size:{length})".ToSubLog());
+                }
+
+                if (Util_rudp.logAllPaquets)
                     if (targetEnd.Equals(eveComm.conn.endPoint))
                         Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
-                    else
-                        Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{RudpHeader.FromBuffer(buffer)}, size:{length})".ToSubLog());
-                else
-                    Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (size:{length})".ToSubLog());
+            }
 
             SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
         }

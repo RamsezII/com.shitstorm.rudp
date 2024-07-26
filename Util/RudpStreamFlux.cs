@@ -33,9 +33,9 @@ namespace _RUDP_
                 ushort pos2 = (ushort)stream.Position;
                 ushort length = (ushort)(pos2 - pos1 - 2);
 
-                if (length > Util_rudp.DATA_SIZE)
+                if (length > Util_rudp.DATA_SIZE_BIG)
                 {
-                    Debug.LogError($"Flux fragment too long: {length} > {Util_rudp.DATA_SIZE}");
+                    Debug.LogError($"Flux fragment too long: {length} > {Util_rudp.DATA_SIZE_BIG}");
                     stream.Position = pos1;
                     stream.SetLength(pos1);
                 }
@@ -55,10 +55,10 @@ namespace _RUDP_
                 {
                     stream.Position = RudpHeader.HEADER_length;
 
-                    while (stream.Position < Util_rudp.PAQUET_SIZE && stream.Length - stream.Position > 2)
+                    while (stream.Position < Util_rudp.PAQUET_SIZE_BIG && stream.Length - stream.Position > 2)
                     {
                         ushort length = reader.ReadUInt16();
-                        if (stream.Position + length <= Util_rudp.PAQUET_SIZE)
+                        if (stream.Position + length <= Util_rudp.PAQUET_SIZE_BIG)
                             stream.Position += length;
                         else
                         {
