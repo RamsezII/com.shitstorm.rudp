@@ -56,8 +56,6 @@ namespace _RUDP_
                 if (length >= RudpHeader.HEADER_length)
                 {
                     RudpHeader header = RudpHeader.FromBuffer(buffer);
-                    if (header.mask.HasFlag(RudpHeaderM.Audio))
-                        Debug.Log($"{this} SENDING AUDIO -- header:{header} size:{length}");
                     if (Util_rudp.logAllPaquets)
                         Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{header}, size:{length})".ToSubLog());
                 }
