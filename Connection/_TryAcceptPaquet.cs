@@ -68,31 +68,32 @@ namespace _RUDP_
             if (socket.HasNext())
             {
                 byte[] recData = socket.recBuffer_u[(int)socket.recStream_u.Position..socket.recLength_u];
-                lock (states_recStream)
-                    switch (header.mask)
-                    {
-                        case RudpHeaderM.States:
+                switch (header.mask)
+                {
+                    case RudpHeaderM.States:
+                        lock (states_recStream)
                             states_recStream.Write(recData);
-                            break;
+                        break;
 
-                        case RudpHeaderM.Flux:
+                    case RudpHeaderM.Flux:
+                        lock (socket.flux_recStream)
                             socket.flux_recStream.Write(recData);
-                            break;
+                        break;
 
-                        case RudpHeaderM.Audio:
-                            if (iAudioReceiver == null)
-                            {
-                                Debug.LogWarning($"{this} Received audio paquet but no {nameof(iAudioReceiver)} is set");
-                                return false;
-                            }
-                            else
-                                iAudioReceiver.OnAudioPaquet(socket.recReader_u, this);
-                            break;
-
-                        default:
-                            Debug.LogWarning($"{this} Received paquet with unimplemented mask \"{header.mask}\"");
+                    case RudpHeaderM.Audio:
+                        if (iAudioReceiver == null)
+                        {
+                            Debug.LogWarning($"{this} Received audio paquet but no {nameof(iAudioReceiver)} is set");
                             return false;
-                    }
+                        }
+                        else
+                            iAudioReceiver.OnAudioPaquet(socket.recReader_u, this);
+                        break;
+
+                    default:
+                        Debug.LogWarning($"{this} Received paquet with unimplemented mask \"{header.mask}\"");
+                        return false;
+                }
             }
 
             return true;
