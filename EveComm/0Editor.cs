@@ -1,4 +1,5 @@
-﻿using _RUDP_;
+﻿#if UNITY_EDITOR
+using _RUDP_;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,3 +31,4 @@ static partial class Util_rudp
         Debug.Log(_log);
     }
 }
+#endif
