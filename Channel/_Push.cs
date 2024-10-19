@@ -22,7 +22,7 @@ namespace _RUDP_
         {
             lastSend = 0;
             attempt = 0;
-            sendID = ++sendID == 0 ? (byte)1 : sendID;
+            ++sendID;
         }
 
         void SendPaquet()
