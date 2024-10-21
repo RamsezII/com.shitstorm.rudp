@@ -40,10 +40,17 @@ namespace _RUDP_
                 lock (channel)
                     if (header.id == channel.recID)
                         redundant = true;
-                    else if (header.id == channel.recID + 1)
-                        ++channel.recID;
                     else
-                        return false;
+                    {
+                        byte expectedID = (byte)(channel.recID + 1);
+                        if (header.id == expectedID)
+                            ++channel.recID;
+                        else
+                        {
+                            Debug.LogWarning($"{this} Received paquet with wrong id \"{header.id}\" (expected:{expectedID})");
+                            return false;
+                        }
+                    }
 
                 socket.SendAckTo(new(header.id, channel.mask | RudpHeaderM.Ack, header.attempt), endPoint);
 
