@@ -35,6 +35,8 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        ~RudpSocket() => Debug.Log($"~{this}");
+
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
             recStream_u = new(recBuffer_u);
