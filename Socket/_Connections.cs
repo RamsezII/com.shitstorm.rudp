@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using _ARK_;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using UnityEngine;
@@ -22,8 +23,13 @@ namespace _RUDP_
                 {
                     conn = new RudpConnection(this, remoteEnd);
                     conns_dic[remoteEnd] = conn;
-                    lock (conns_set)
-                        conns_set.Add(conn);
+
+                    lock (NUCLEOR.instance.mainThreadLock)
+                        NUCLEOR.onEndOfFrame += () =>
+                        {
+                            lock (conns_set)
+                                conns_set.Add(conn);
+                        };
 
                     if (remoteEnd.Address.Equals(IPAddress.Loopback))
                         conns_dic[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
@@ -53,7 +59,10 @@ namespace _RUDP_
             else
                 endPoint = publicEnd;
 
-            return ToConnection(endPoint, out isNew);
+            RudpConnection conn = ToConnection(endPoint, out isNew);
+            conn.localEnd = localEnd;
+            conn.publicEnd = publicEnd;
+            return conn;
         }
     }
 }
