@@ -57,7 +57,7 @@ namespace _RUDP_
         {
             if (hosting.Value)
             {
-                RudpConnection hostConn = conn.socket.ReadConnection(socketReader);
+                RudpConnection hostConn = conn.socket.ReadConnection(socketReader, out _);
                 hostConn.keepAlive = true;
                 Debug.Log($"{this} Holepunch success: {hostConn}");
             }

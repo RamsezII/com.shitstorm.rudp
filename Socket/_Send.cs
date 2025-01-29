@@ -33,9 +33,9 @@ namespace _RUDP_
                 return;
             }
 
-            if (targetEnd.Port == localPort)
+            if (targetEnd.Equals(selfConn.endPoint))
             {
-                Debug.LogError($"{this} will not send to self on {{{targetEnd}}}");
+                Debug.LogWarning($"{this} will not send to self on {{{targetEnd}}}");
                 return;
             }
 

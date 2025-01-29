@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using UnityEngine;
 
 namespace _RUDP_
 {
     public partial class RudpSocket
     {
-        readonly Dictionary<IPEndPoint, RudpConnection> conns_dic = new();
-        readonly HashSet<RudpConnection> conns_set = new();
-        public readonly IEnumerable<RudpConnection> ebroadcast;
+        public readonly Dictionary<IPEndPoint, RudpConnection> conns_dic = new();
+        public readonly HashSet<RudpConnection> conns_set = new();
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpConnection ToConnection(in IPEndPoint remoteEnd) => ToConnection(remoteEnd, out _);
-        public RudpConnection ToConnection(in IPEndPoint remoteEnd, out bool isnew)
+        public RudpConnection ToConnection(in IPEndPoint remoteEnd, out bool isNew)
         {
             lock (conns_dic)
             {
                 if (conns_dic.TryGetValue(remoteEnd, out RudpConnection conn))
-                    isnew = false;
+                    isNew = false;
                 else
                 {
                     conn = new RudpConnection(this, remoteEnd);
@@ -32,13 +31,14 @@ namespace _RUDP_
                     if (remoteEnd.Address.Equals(IPAddress.Any))
                         conns_dic[new IPEndPoint(IPAddress.Loopback, remoteEnd.Port)] = conn;
 
-                    isnew = true;
+                    isNew = true;
+                    Debug.Log($"new conn {conn}");
                 }
                 return conn;
             }
         }
 
-        public RudpConnection ReadConnection(in BinaryReader reader)
+        public RudpConnection ReadConnection(in BinaryReader reader, out bool isNew)
         {
             IPEndPoint
                 publicEnd = reader.ReadIPEndPoint(),
@@ -53,7 +53,7 @@ namespace _RUDP_
             else
                 endPoint = publicEnd;
 
-            return ToConnection(endPoint);
+            return ToConnection(endPoint, out isNew);
         }
     }
 }

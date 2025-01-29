@@ -1,7 +1,6 @@
 using _UTIL_;
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -53,7 +52,7 @@ namespace _RUDP_
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
 
-            selfConn = ToConnection((IPEndPoint)endIP_any);
+            selfConn = ToConnection((IPEndPoint)endIP_any, out _);
             selfConn.localEnd = new(Util_rudp.localIP, localPort);
             lock (conns_dic)
                 conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;
@@ -62,10 +61,7 @@ namespace _RUDP_
             _selfConn = selfConn;
 #endif
 
-            eveComm = new(ToConnection(Util_rudp.END_RUDP));
-
-
-            ebroadcast = conns_set.Where(conn => conn != selfConn && conn != eveComm.conn);
+            eveComm = new(ToConnection(Util_rudp.END_RUDP, out _));
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
@@ -91,16 +87,16 @@ namespace _RUDP_
             flux_recReader.Dispose();
             eveComm.Dispose();
 
-            if (conns_set.Count > 0)
-            {
-                foreach (RudpConnection conn in conns_set)
-                    conn.Dispose();
-                lock (conns_set)
+            lock (conns_set)
+                if (conns_set.Count > 0)
+                {
+                    foreach (RudpConnection conn in conns_set)
+                        conn.Dispose();
                     conns_set.Clear();
-            }
+                }
 
-            if (conns_dic.Count > 0)
-                lock (conns_dic)
+            lock (conns_dic)
+                if (conns_dic.Count > 0)
                     conns_dic.Clear();
         }
     }
