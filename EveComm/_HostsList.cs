@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -8,14 +7,14 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator EListHosts(Action<List<string>> onListChange, Action<List<string>> onListFinal, Action onFailure)
+        public IEnumerator<float> EListHosts(Action<List<string>> onListChange, Action<List<string>> onListFinal, Action onFailure)
         {
             ushort hostsOffset = 0;
             List<string> list = new();
 
             var eSend = ESendUntilAck(OnWriter, OnAck, onFailure);
             while (eSend.MoveNext())
-                yield return null;
+                yield return eSend.Current;
             onListFinal?.Invoke(list);
 
             void OnWriter(BinaryWriter writer)

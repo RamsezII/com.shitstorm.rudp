@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator EJoinPublicHost(string hostName, int publicHash, int privateHash, Action<RudpConnection> onSuccess, Action onFailure)
+        public IEnumerator<float> EJoinPublicHost(string hostName, int publicHash, int privateHash, Action<RudpConnection> onSuccess, Action onFailure)
         {
             bool failure = false;
             RudpConnection hostConn = null;
@@ -67,7 +67,7 @@ namespace _RUDP_
                     });
 
                 while (eSend.MoveNext())
-                    yield return null;
+                    yield return eSend.Current;
 
                 lock (mainLock)
                     if (failure)
@@ -83,7 +83,7 @@ namespace _RUDP_
                     }
 
                     if (wait.MoveNext())
-                        yield return null;
+                        yield return 0;
                     else
                         break;
                 }

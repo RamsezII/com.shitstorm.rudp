@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ namespace _RUDP_
             Util_rudp.publicIP = publicEnd.Address;
         }
 
-        public IEnumerator EGetPublicEnd(Action<bool> onSuccess = null)
+        public IEnumerator<float> EGetPublicEnd(Action<bool> onSuccess = null)
         {
             Debug.Log($"Querying public IP...".ToSubLog());
             conn.socket.selfConn.publicEnd = null;

@@ -1,6 +1,6 @@
 ﻿using _UTIL_;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _RUDP_
@@ -11,7 +11,7 @@ namespace _RUDP_
 
         //--------------------------------------------------------------------------------------------------------------
 
-        public IEnumerator EStartHosting(string hostName, int publicHash, int privateHash, Action<bool> onSuccess) => ESendUntilAck(
+        public IEnumerator<float> EStartHosting(string hostName, int publicHash, int privateHash, Action<bool> onSuccess) => ESendUntilAck(
             writer =>
             {
                 eveWriter.Write((byte)EveCodes.AddHost);
@@ -47,7 +47,7 @@ namespace _RUDP_
                 onSuccess?.Invoke(false);
             });
 
-        public IEnumerator EMaintainHosting()
+        public IEnumerator<float> EMaintainHosting()
         {
             Debug.Log("Maintaining host...".ToSubLog());
             hosting.Value = true;
@@ -55,7 +55,7 @@ namespace _RUDP_
             {
                 var wait = new WaitForSecondsRealtime(4);
                 while (wait.MoveNext())
-                    yield return null;
+                    yield return 0;
 
                 if (!hosting.Value)
                     yield break;
@@ -85,7 +85,7 @@ namespace _RUDP_
                      });
 
                 while (hosting.Value && routine.MoveNext())
-                    yield return null;
+                    yield return routine.Current;
             }
         }
     }

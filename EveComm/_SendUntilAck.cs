@@ -1,6 +1,6 @@
 ﻿using _UTIL_;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator ESendUntilAck(Action<BinaryWriter> onWrite, Action<BinaryReader> onAck, Action onFailure)
+        public IEnumerator<float> ESendUntilAck(Action<BinaryWriter> onWrite, Action<BinaryReader> onAck, Action onFailure)
         {
             bool done = false;
 
@@ -61,13 +61,13 @@ namespace _RUDP_
 
                     WaitForSecondsRealtime wait = new(delay);
                     while (wait.MoveNext())
-                        yield return null;
+                        yield return 0;
                 }
                 else
                 {
                     WaitForSecondsRealtime wait = new(1);
                     while (wait.MoveNext())
-                        yield return null;
+                        yield return 0;
 
                     lock (mainLock)
                         if (done)
