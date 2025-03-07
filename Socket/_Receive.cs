@@ -3,6 +3,8 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using UnityEngine.LightTransport;
+using UnityEngine.UIElements;
 
 namespace _RUDP_
 {
@@ -76,6 +78,10 @@ namespace _RUDP_
                         if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)
                             Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
                     }
+
+                    if (recLength_u >= 100)
+                        //if (Util_rudp.logIncomingBytes)
+                        Debug.Log($"{this} {nameof(ReceiveFrom)}: {recEnd_u} ({recBuffer_u.LogBytes(0, recLength_u)})".ToSubLog());
 
                     recEnd_u = null;
                     recConn = null;

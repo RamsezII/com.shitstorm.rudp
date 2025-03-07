@@ -18,10 +18,10 @@ namespace _RUDP_
                         paquet = null;
                         accepted = true;
                     }
-                    else if (Util_rudp.logIncidents)
+                    else if (Util_rudp.logWarnings)
                         Debug.LogWarning($"{this} Received ACK for unknown paquet: {header}");
                 }
-                else if (Util_rudp.logIncidents)
+                else if (Util_rudp.logWarnings)
                     Debug.LogWarning($"{this} Received unexpected ACK: {header}");
 
             if (accepted)

@@ -18,10 +18,13 @@ public static partial class Util_rudp
 
     public static readonly bool
         logConnections = true,
-        logIncidents = true,
+        logWarnings = false,
+        logErrors = true,
         logEmptyPaquets = false,
         logKeepAlives = false,
-        logAllPaquets = false;
+        logAllPaquets = false,
+        logOutcomingBytes = false,
+        logIncomingBytes = false;
 
     public const ushort
         PAQUET_SIZE_SMALL = 1472,

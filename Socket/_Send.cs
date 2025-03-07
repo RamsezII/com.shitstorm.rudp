@@ -23,7 +23,7 @@ namespace _RUDP_
 
 #if UNITY_EDITOR
         [Obsolete("Use SendTo <buffer> <offset> <size> <IPEndPoint> instead")]
-        public void SendTo(in byte[] buffer, in IPEndPoint targetEnd) => SendTo(buffer, 0, (ushort)buffer.Length, targetEnd);
+        private void SendTo(in byte[] buffer, in IPEndPoint targetEnd) => throw new NotImplementedException();
 #endif
         public void SendTo(in byte[] buffer, in ushort offset, in ushort length, in IPEndPoint targetEnd)
         {
@@ -64,6 +64,10 @@ namespace _RUDP_
                     if (targetEnd.Equals(eveComm.conn.endPoint))
                         Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
             }
+
+            if (length >= 100)
+                //if (Util_rudp.logOutcomingBytes)
+                Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} ({buffer.LogBytes(offset, offset + length)})".ToSubLog());
 
             SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
         }

@@ -21,7 +21,6 @@ namespace _RUDP_
         readonly BinaryWriter writer_raw, writer_gzip;
         readonly BinaryReader reader_raw;
         public bool HasData => stream.Length > RudpHeader.HEADER_length;
-        public string LogBytes() => GetPaquetBuffer()[RudpHeader.HEADER_length..].LogBytes();
 
         //----------------------------------------------------------------------------------------------------------
 
