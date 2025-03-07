@@ -65,8 +65,7 @@ namespace _RUDP_
                         Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
             }
 
-            if (length >= 100)
-                //if (Util_rudp.logOutcomingBytes)
+            if (Util_rudp.logOutcomingBytes)
                 Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} ({buffer.LogBytes(offset, offset + length)})".ToSubLog());
 
             SendTo(buffer, offset, length, SocketFlags.None, targetEnd);

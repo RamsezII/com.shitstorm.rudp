@@ -79,8 +79,7 @@ namespace _RUDP_
                             Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
                     }
 
-                    if (recLength_u >= 100)
-                        //if (Util_rudp.logIncomingBytes)
+                    if (Util_rudp.logIncomingBytes)
                         Debug.Log($"{this} {nameof(ReceiveFrom)}: {recEnd_u} ({recBuffer_u.LogBytes(0, recLength_u)})".ToSubLog());
 
                     recEnd_u = null;
