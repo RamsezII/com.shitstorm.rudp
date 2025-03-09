@@ -16,7 +16,7 @@ namespace _RUDP_
         {
             lock (ACK_BUFFER)
             {
-                header.Write(ACK_BUFFER);
+                header.Write(ACK_BUFFER, 0);
                 SendTo(ACK_BUFFER, 0, RudpHeader.HEADER_length, targetEnd);
             }
         }
@@ -54,11 +54,11 @@ namespace _RUDP_
             else
             {
                 if (length >= RudpHeader.HEADER_length)
-                {
-                    RudpHeader header = RudpHeader.FromBuffer(buffer);
                     if (Util_rudp.logAllPaquets)
+                    {
+                        RudpHeader header = RudpHeader.FromBuffer(buffer);
                         Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{header}, size:{length})".ToSubLog());
-                }
+                    }
 
                 if (Util_rudp.logAllPaquets)
                     if (targetEnd.Equals(eveComm.conn.endPoint))
@@ -68,7 +68,10 @@ namespace _RUDP_
             if (Util_rudp.logOutcomingBytes)
                 Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} ({buffer.LogBytes(offset, offset + length)})".ToSubLog());
 
-            SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
+            if (length > Util_rudp.PAQUET_SIZE_BIG)
+                Debug.LogWarning($"{nameof(SendTo)}->{targetEnd} ERROR: {nameof(offset)}:{offset}, {nameof(length)}: {length} (underlying buffer: {buffer.Length})");
+            else
+                SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
         }
     }
 }

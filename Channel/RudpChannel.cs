@@ -10,9 +10,9 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public PaquetBuffer(in byte[] bytes, in ushort offset, in ushort length)
+        public PaquetBuffer(in byte[] buffer, in ushort offset, in ushort length)
         {
-            this.buffer = bytes;
+            this.buffer = buffer;
             this.offset = offset;
             this.length = length;
         }

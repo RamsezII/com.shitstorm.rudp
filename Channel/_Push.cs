@@ -30,7 +30,7 @@ namespace _RUDP_
             lastSend = Util.TotalMilliseconds;
             lock (paquet.buffer)
             {
-                RudpHeader.Write(paquet.buffer, mask, sendID, attempt);
+                RudpHeader.Write(paquet.buffer, paquet.offset, mask, sendID, attempt);
                 conn.Send(paquet.buffer, paquet.offset, paquet.length);
             }
         }

@@ -5,7 +5,7 @@ namespace _RUDP_
 {
     public interface IAudioReceiver
     {
-        void OnAudioPaquet(in BinaryReader reader, in RudpConnection recConn);
+        void OnAudioPaquet(in BinaryReader reader, in ushort paquetSize, in RudpConnection recConn);
     }
 
     partial class RudpConnection
@@ -94,7 +94,7 @@ namespace _RUDP_
                             return false;
                         }
                         else
-                            iAudioReceiver.OnAudioPaquet(socket.recReader_u, this);
+                            iAudioReceiver.OnAudioPaquet(socket.recReader_u, socket.recLength_u, this);
                         break;
 
                     default:

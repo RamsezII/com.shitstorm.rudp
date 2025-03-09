@@ -67,12 +67,12 @@ namespace _RUDP_
         public static RudpHeader FromBuffer(in byte[] buffer) => new(buffer[0], (RudpHeaderM)buffer[1], buffer[2], buffer[3]);
         public static RudpHeader FromReader(in BinaryReader reader) => new(reader.ReadByte(), (RudpHeaderM)reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
 
-        public void Write(in byte[] buffer)
+        public void Write(in byte[] buffer, in ushort offset)
         {
-            buffer[(int)RudpHeaderI.Version] = version;
-            buffer[(int)RudpHeaderI.Mask] = (byte)mask;
-            buffer[(int)RudpHeaderI.ID] = id;
-            buffer[(int)RudpHeaderI.Attempt] = attempt;
+            buffer[(int)RudpHeaderI.Version + offset] = version;
+            buffer[(int)RudpHeaderI.Mask + offset] = (byte)mask;
+            buffer[(int)RudpHeaderI.ID + offset] = id;
+            buffer[(int)RudpHeaderI.Attempt + offset] = attempt;
         }
 
         public void Write(in BinaryWriter writer)
@@ -83,12 +83,12 @@ namespace _RUDP_
             writer.Write(attempt);
         }
 
-        public static void Write(in byte[] buffer, in RudpHeaderM mask, in byte id, in byte attempt)
+        public static void Write(in byte[] buffer, in ushort offset, in RudpHeaderM mask, in byte id, in byte attempt)
         {
-            buffer[(int)RudpHeaderI.Version] = Util_rudp.VERSION;
-            buffer[(int)RudpHeaderI.Mask] = (byte)mask;
-            buffer[(int)RudpHeaderI.ID] = id;
-            buffer[(int)RudpHeaderI.Attempt] = attempt;
+            buffer[(int)RudpHeaderI.Version + offset] = Util_rudp.VERSION;
+            buffer[(int)RudpHeaderI.Mask + offset] = (byte)mask;
+            buffer[(int)RudpHeaderI.ID + offset] = id;
+            buffer[(int)RudpHeaderI.Attempt + offset] = attempt;
         }
     }
 }
