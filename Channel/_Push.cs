@@ -35,7 +35,7 @@ namespace _RUDP_
             }
         }
 
-        public void SendUnreliable(in byte[] data)
+        public void SendUnreliable(in byte[] data, in ushort offset, in ushort length)
         {
             lock (this)
             {

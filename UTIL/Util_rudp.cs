@@ -28,7 +28,7 @@ public static partial class Util_rudp
 
     public const ushort
         PAQUET_SIZE_SMALL = 1472,
-        PAQUET_SIZE_BIG = PAQUET_SIZE_SMALL,
+        PAQUET_SIZE_BIG = 2 * PAQUET_SIZE_SMALL,
         DATA_SIZE_BIG = PAQUET_SIZE_BIG - RudpHeader.HEADER_length;
 
     public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
