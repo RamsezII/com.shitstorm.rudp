@@ -67,20 +67,20 @@ namespace _RUDP_
             }
         }
 
-        public byte[] GetPaquetBuffer()
+        public PaquetBuffer ToReliablePaquet()
         {
             lock (this)
-                return stream.GetBuffer()[..Mathf.Min((int)stream.Length, Util_rudp.PAQUET_SIZE_BIG)];
+                return new(stream.GetBuffer(), 0, (ushort)Mathf.Min((int)stream.Length, Util_rudp.PAQUET_SIZE_BIG));
         }
 
-        public void OnCleanAfterAck(in ushort paquetSize)
+        public void OnCleanAfterAck(in ushort paquet_size)
         {
             lock (this)
             {
                 byte[] buffer = stream.GetBuffer();
                 stream.Position = 0;
-                Buffer.BlockCopy(buffer, paquetSize, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquetSize);
-                stream.SetLength(stream.Length - paquetSize + RudpHeader.HEADER_length);
+                Buffer.BlockCopy(buffer, paquet_size, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquet_size);
+                stream.SetLength(stream.Length - paquet_size + RudpHeader.HEADER_length);
                 stream.Position = stream.Length;
             }
         }

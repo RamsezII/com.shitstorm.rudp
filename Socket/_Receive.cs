@@ -70,7 +70,8 @@ namespace _RUDP_
                         {
                             RudpHeader header = RudpHeader.FromReader(recReader_u);
                             if (!recConn.TryAcceptPaquet(header))
-                                Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
+                                if (Util_rudp.logIncidents)
+                                    Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
                         }
 
                         if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)

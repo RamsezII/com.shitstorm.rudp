@@ -8,20 +8,20 @@ namespace _RUDP_
         {
             bool accepted = false;
             lock (this)
-                if (paquet != null && paquet.Length > 0)
+                if (reliable_paquet.buffer != null)
                 {
                     if (header.id == sendID)
                     {
                         ping = Util.TotalMilliseconds - lastSend;
                         if (mask == RudpHeaderM.States)
-                            states_stream.OnCleanAfterAck((ushort)paquet.Length);
-                        paquet = null;
+                            states_stream.OnCleanAfterAck(reliable_paquet.length);
+                        reliable_paquet = default;
                         accepted = true;
                     }
-                    else if (Util_rudp.logWarnings)
+                    else if (Util_rudp.logIncidents)
                         Debug.LogWarning($"{this} Received ACK for unknown paquet: {header}");
                 }
-                else if (Util_rudp.logWarnings)
+                else if (Util_rudp.logIncidents)
                     Debug.LogWarning($"{this} Received unexpected ACK: {header}");
 
             if (accepted)

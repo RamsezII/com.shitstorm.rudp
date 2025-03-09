@@ -18,8 +18,7 @@ public static partial class Util_rudp
 
     public static readonly bool
         logConnections = true,
-        logWarnings = false,
-        logErrors = true,
+        logIncidents = false,
         logEmptyPaquets = false,
         logKeepAlives = false,
         logAllPaquets = false,

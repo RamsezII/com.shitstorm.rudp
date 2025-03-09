@@ -3,14 +3,29 @@ using System.Text;
 
 namespace _RUDP_
 {
+    public readonly struct PaquetBuffer
+    {
+        public readonly byte[] buffer;
+        public readonly ushort offset, length;
+
+        //----------------------------------------------------------------------------------------------------------
+
+        public PaquetBuffer(in byte[] bytes, in ushort offset, in ushort length)
+        {
+            this.buffer = bytes;
+            this.offset = offset;
+            this.length = length;
+        }
+    }
+
     public partial class RudpChannel : Disposable
     {
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
         public readonly RudpStream states_stream;
 
-        public byte[] paquet;
-        public bool IsPending => paquet != null && paquet.Length > RudpHeader.HEADER_length;
+        public PaquetBuffer reliable_paquet;
+        public bool IsPending => reliable_paquet.buffer != null && reliable_paquet.length > RudpHeader.HEADER_length;
 
         public double lastSend, ping;
         byte sendID, attempt;

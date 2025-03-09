@@ -11,7 +11,7 @@ namespace _RUDP_
                 {
                     if (!IsPending)
                     {
-                        paquet = states_stream.GetPaquetBuffer();
+                        reliable_paquet = states_stream.ToReliablePaquet();
                         NextPaquet();
                     }
                     TrySendReliable();
@@ -25,24 +25,22 @@ namespace _RUDP_
             ++sendID;
         }
 
-        void SendPaquet()
+        void SendPaquet(in PaquetBuffer paquet)
         {
             lastSend = Util.TotalMilliseconds;
-            lock (paquet)
+            lock (paquet.buffer)
             {
-                RudpHeader.Write(paquet, mask, sendID, attempt);
-                conn.Send(paquet, 0, (ushort)paquet.Length);
+                RudpHeader.Write(paquet.buffer, mask, sendID, attempt);
+                conn.Send(paquet.buffer, paquet.offset, paquet.length);
             }
         }
 
-        public void SendUnreliable(in byte[] data, in ushort offset, in ushort length)
+        public void SendUnreliable(in PaquetBuffer paquet)
         {
             lock (this)
             {
-                paquet = data;
                 NextPaquet();
-                SendPaquet();
-                paquet = null;
+                SendPaquet(paquet);
             }
         }
 
@@ -70,7 +68,7 @@ namespace _RUDP_
                 if (time - lastSend < delay)
                     return;
 
-                SendPaquet();
+                SendPaquet(reliable_paquet);
 
                 if (attempt < byte.MaxValue)
                     ++attempt;
