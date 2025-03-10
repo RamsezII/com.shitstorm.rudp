@@ -88,7 +88,7 @@ namespace _RUDP_
         public void AppendStatus(in StringBuilder log)
         {
             lock (this)
-                log.Append($"pending: {stream.Length - RudpHeader.HEADER_length} bytes");
+                log.Append($"pending: {(stream.Length - RudpHeader.HEADER_length).LogDataSize()}");
         }
 
         //----------------------------------------------------------------------------------------------------------
