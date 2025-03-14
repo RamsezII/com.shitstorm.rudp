@@ -13,7 +13,7 @@ namespace _RUDP_
 
             while (true)
             {
-                var eSend = ESendUntilAck(
+                IEnumerator<float> eSend = ESendUntilAck(
                     writer =>
                     {
                         eveWriter.Write((byte)EveCodes.JoinHost);
