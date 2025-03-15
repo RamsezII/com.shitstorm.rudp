@@ -41,48 +41,74 @@ namespace _RUDP_
                     receive_size += recLength_u;
 
                     recEnd_u = (IPEndPoint)remoteEnd;
-                    RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
-                    if (Util_rudp.logAllPaquets)
-                        Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
-                    else if (Util_rudp.logEmptyPaquets && recLength_u == 0)
-                        Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
-
-                    lock (recConn.lastReceive)
+                    bool skip = false;
+                    if (recLength_u > 0)
                     {
-                        if (Util_rudp.logConnections && recConn.lastReceive._value == 0)
-                            Debug.Log($"{this} holepunch: {recEnd_u}".ToSubLog());
-                        recConn.lastReceive._value = Util.TotalMilliseconds;
-                        recConn.keepalive_attempt.Value = 0;
-                    }
-
-                    if (recConn == eveComm.conn)
-                        eveComm.TryAcceptEvePaquet();
-                    else
-                    {
-                        if (newConn)
+                        byte version_byte = recBuffer_u[0];
+                        if (recEnd_u.Equals(Util_rudp.END_RUDP))
                         {
-                            Debug.Log($"incoming connection: {recConn}".ToSubLog());
-                            recConn.keepAlive = true;
+                            if (version_byte != EveComm.VERSION)
+                            {
+                                Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a server whose network is not the same version (received: {version_byte}, expected: {EveComm.VERSION}).");
+                                skip = true;
+                            }
+                        }
+                        else if (version_byte != version.VERSION)
+                        {
+                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a build whose network is not the same version (received: {version_byte}, expected: {version.VERSION}).");
+                            skip = true;
                         }
 
-                        if (recLength_u >= RudpHeader.HEADER_length)
-                        {
-                            RudpHeader header = RudpHeader.FromReader(recReader_u);
-                            if (!recConn.TryAcceptPaquet(header))
-                                if (Util_rudp.logIncidents)
-                                    Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
-                        }
-
-                        if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)
-                            Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
+                        if (skip)
+                            Debug.Log($"[SOCKET_LOG] Launch the SHITLAUNCHER (shitstorm.ovh) to update your local build.");
                     }
 
-                    if (Util_rudp.logIncomingBytes)
-                        Debug.Log($"{this} {nameof(ReceiveFrom)}: {recEnd_u} ({recBuffer_u.LogBytes(0, recLength_u)})".ToSubLog());
+                    if (!skip)
+                    {
+                        RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
 
+                        if (settings.logAllPaquets)
+                            Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
+                        else if (settings.logEmptyPaquets && recLength_u == 0)
+                            Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
+
+                        lock (recConn.lastReceive)
+                        {
+                            if (settings.logConnections && recConn.lastReceive._value == 0)
+                                Debug.Log($"{this} holepunch: {recEnd_u}".ToSubLog());
+                            recConn.lastReceive._value = Util.TotalMilliseconds;
+                            recConn.keepalive_attempt.Value = 0;
+                        }
+
+                        if (recConn == eveComm.conn)
+                            eveComm.TryAcceptEvePaquet();
+                        else
+                        {
+                            if (newConn)
+                            {
+                                Debug.Log($"incoming connection: {recConn}".ToSubLog());
+                                recConn.keepAlive = true;
+                            }
+
+                            if (recLength_u >= RudpHeader.HEADER_length)
+                            {
+                                RudpHeader header = RudpHeader.FromReader(recReader_u);
+                                if (!recConn.TryAcceptPaquet(header))
+                                    if (settings.logIncidents)
+                                        Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
+                            }
+
+                            if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)
+                                Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
+                        }
+
+                        if (settings.logIncomingBytes)
+                            Debug.Log($"{this} {nameof(ReceiveFrom)}: {recEnd_u} ({recBuffer_u.LogBytes(0, recLength_u)})".ToSubLog());
+
+                        recConn = null;
+                    }
                     recEnd_u = null;
-                    recConn = null;
                 }
             }
             catch (SocketException e)

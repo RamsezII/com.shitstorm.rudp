@@ -26,7 +26,7 @@ namespace _RUDP_
             else if (header.mask.HasFlag(RudpHeaderM.Flux))
                 channel = channel_flux;
 
-            if (Util_rudp.logAllPaquets)
+            if (socket.settings.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.recLength_u})".ToSubLog());
 
             if (header.mask.HasFlag(RudpHeaderM.Ack))

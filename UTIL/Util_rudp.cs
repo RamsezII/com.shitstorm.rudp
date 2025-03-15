@@ -8,22 +8,12 @@ using UnityEngine;
 
 public static partial class Util_rudp
 {
-    public const byte VERSION = 0;
     public const string DOMAIN_3VE = "www.shitstorm.ovh";
     public const ushort PORT_RUDP = 12345;
     public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
     public static readonly IPEndPoint END_RUDP = new(IP_3VE, PORT_RUDP);
     public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_RUDP);
     public static IPAddress localIP, publicIP;
-
-    public static readonly bool
-        logConnections = true,
-        logIncidents = false,
-        logEmptyPaquets = false,
-        logKeepAlives = false,
-        logAllPaquets = false,
-        logOutcomingBytes = false,
-        logIncomingBytes = false;
 
     public const ushort
         PAQUET_SIZE_SMALL = 1472,
@@ -36,9 +26,8 @@ public static partial class Util_rudp
     //----------------------------------------------------------------------------------------------------------
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void Init()
+    static void OnBeforeSceneLoad()
     {
-        netSingletons.Clear();
         using Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Connect(new IPEndPoint(IPAddress.Parse("8.8.8.8"), 1234));
         localIP = ((IPEndPoint)socket.LocalEndPoint).Address;
@@ -46,7 +35,7 @@ public static partial class Util_rudp
 
     //----------------------------------------------------------------------------------------------------------
 
-    public static bool CheckFlags(this RudpHeaderM mask, in RudpHeaderM flags, in RudpHeaderM ignore = 0) => (mask | ignore) == (flags | ignore);
+    public static int ToPassHash(this string pass) => string.IsNullOrWhiteSpace(pass) ? 0 : pass.GetHashCode();
 
 
     public static void WriteHeader(this MemoryStream stream)
@@ -55,5 +44,16 @@ public static partial class Util_rudp
             stream.WriteByte(0);
     }
 
-    public static int ToPassHash(this string pass) => string.IsNullOrWhiteSpace(pass) ? 0 : pass.GetHashCode();
+    public static void WriteIPEnd(this BinaryWriter writer, in IPEndPoint value)
+    {
+        writer.Write((uint)value.Address.Address);
+        writer.Write((ushort)value.Port);
+    }
+
+    public static IPEndPoint ReadIPEndPoint(this BinaryReader reader)
+    {
+        uint address = reader.ReadUInt32();
+        ushort port = reader.ReadUInt16();
+        return new IPEndPoint(address, port);
+    }
 }

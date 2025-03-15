@@ -1,3 +1,4 @@
+using _ARK_;
 using _UTIL_;
 using System;
 using System.IO;
@@ -34,6 +35,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        static RudpSocket() => LoadVersion();
         ~RudpSocket() => Debug.Log($"~{this}");
 
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
@@ -65,12 +67,18 @@ namespace _RUDP_
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
+
+            LoadSettings();
+            NUCLEOR.delegates.onApplicationFocus -= LoadSettings;
+            NUCLEOR.delegates.onApplicationFocus += LoadSettings;
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public new void Dispose()
         {
+            NUCLEOR.delegates.onApplicationFocus -= LoadSettings;
+
             if (disposed.Value)
                 return;
             disposed.Value = true;

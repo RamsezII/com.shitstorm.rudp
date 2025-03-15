@@ -30,7 +30,7 @@ namespace _RUDP_
                     double time = Util.TotalMilliseconds;
                     if (time > lastSend.Value + freq)
                     {
-                        if (Util_rudp.logKeepAlives)
+                        if (socket.settings.logKeepAlives)
                             Debug.Log($"{this} keepalive attempt {keepalive_attempt._value}".ToSubLog());
                         if (keepalive_attempt._value < 10)
                             ++keepalive_attempt._value;
