@@ -74,7 +74,7 @@ namespace _RUDP_
             }
 #endif
 
-            TextAsset text = Resources.Load<TextAsset>(Version.version_file);
+            TextAsset text = Resources.Load<TextAsset>(Version.version_file[..^".txt".Length]);
             version = JsonUtility.FromJson<Version>(text.text);
             version.OnRead();
         }
