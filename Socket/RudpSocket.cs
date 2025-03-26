@@ -68,16 +68,15 @@ namespace _RUDP_
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
 
-            LoadSettings();
-            NUCLEOR.delegates.onApplicationFocus -= LoadSettings;
-            NUCLEOR.delegates.onApplicationFocus += LoadSettings;
+            LoadSettings(true);
+            NUCLEOR.delegates.onApplicationFocus += LoadSettingsNoLog;
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public new void Dispose()
         {
-            NUCLEOR.delegates.onApplicationFocus -= LoadSettings;
+            NUCLEOR.delegates.onApplicationFocus -= LoadSettingsNoLog;
 
             if (disposed.Value)
                 return;

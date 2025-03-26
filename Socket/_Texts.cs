@@ -80,10 +80,12 @@ namespace _RUDP_
         }
 
         [ContextMenu(nameof(LoadSettings))]
-        public void LoadSettings()
+        void LoadSettings_logged() => LoadSettings(true);
+        public void LoadSettingsNoLog() => LoadSettings(false);
+        public void LoadSettings(in bool log)
         {
             settings ??= new();
-            JSon.Read(ref settings, Settings.FilePath, true, true);
+            JSon.Read(ref settings, Settings.FilePath, true, log);
         }
 
         [ContextMenu(nameof(SaveSettings))]
