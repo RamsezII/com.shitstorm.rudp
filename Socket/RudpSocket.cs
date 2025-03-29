@@ -18,7 +18,7 @@ namespace _RUDP_
         readonly EndPoint endIP_any;
         public readonly IPEndPoint endIP_loopback;
 
-        public readonly ThreadSafe<bool> disposed = new();
+        public readonly ThreadSafe_struct<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
         public EveComm eveComm;

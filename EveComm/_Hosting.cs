@@ -7,7 +7,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        readonly ThreadSafe<bool> hosting = new();
+        readonly ThreadSafe_struct<bool> hosting = new();
 
         //--------------------------------------------------------------------------------------------------------------
 

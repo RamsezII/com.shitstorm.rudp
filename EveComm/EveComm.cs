@@ -47,7 +47,7 @@ namespace _RUDP_
         readonly BinaryReader socketReader;
 
         [SerializeField] byte id, attempt;
-        public readonly ThreadSafe<double> lastSend = new();
+        public readonly ThreadSafe_struct<double> lastSend = new();
         Action onAck;
 
         public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];

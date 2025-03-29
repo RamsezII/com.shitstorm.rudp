@@ -19,7 +19,7 @@ namespace _RUDP_
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
 
-        public readonly ThreadSafe<double>
+        public readonly ThreadSafe_struct<double>
             lastSend = new(),
             lastReceive = new();
 

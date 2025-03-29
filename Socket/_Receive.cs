@@ -10,7 +10,7 @@ namespace _RUDP_
     {
         public double lastReceive;
         public uint receive_count, receive_size;
-        readonly ThreadSafe<bool> skipNextSocketException = new(true);
+        readonly ThreadSafe_struct<bool> skipNextSocketException = new(true);
 
         public IPEndPoint recEnd_u;
         public ushort recLength_u;
