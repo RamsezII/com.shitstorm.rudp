@@ -33,7 +33,7 @@ namespace _RUDP_
     public partial class EveComm : IDisposable
     {
         public const byte
-            VERSION = 1,
+            ARMA_VERSION = 1,
             HEADER_LENGTH = 2;
 
         public static readonly bool
@@ -50,7 +50,6 @@ namespace _RUDP_
         public readonly ThreadSafe_struct<double> lastSend = new();
         Action onAck;
 
-        public byte[] GetSubPaquet() => eveBuffer[..(int)eveStream.Position];
         public override string ToString() => $"EVE_{conn}";
 
         readonly object mainLock = new();
@@ -62,7 +61,7 @@ namespace _RUDP_
             conn = eveConn;
             eveStream = new(eveBuffer);
             eveWriter = new(eveStream, Util_rudp.ENCODING, false);
-            eveWriter.Write(VERSION);
+            eveWriter.Write(ARMA_VERSION);
             eveWriter.Write(id);
             socketReader = conn.socket.recReader_u;
         }

@@ -48,9 +48,9 @@ namespace _RUDP_
                         byte version_byte = recBuffer_u[0];
                         if (recEnd_u.Equals(Util_rudp.END_ARMA))
                         {
-                            if (version_byte != EveComm.VERSION)
+                            if (version_byte != EveComm.ARMA_VERSION)
                             {
-                                Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a server whose network is not the same version (received: {version_byte}, expected: {EveComm.VERSION}).");
+                                Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a server whose network is not the same version (received: {version_byte}, expected: {EveComm.ARMA_VERSION}).");
                                 skip = true;
                             }
                         }

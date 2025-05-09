@@ -34,8 +34,10 @@ namespace _RUDP_
         public override string ToString() => $"sock{{{localPort}}}";
 
         //----------------------------------------------------------------------------------------------------------
-
+        
         ~RudpSocket() => Debug.Log($"~{this}");
+
+        //----------------------------------------------------------------------------------------------------------
 
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {

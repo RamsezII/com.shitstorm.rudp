@@ -20,7 +20,7 @@ static partial class Util_rudp
             if (code > AckCodes._none_ && code != AckCodes._last_)
                 log.AppendLine($"    {code} = {(int)code}");
 
-        log.AppendLine($"VERSION = {EveComm.VERSION}");
+        log.AppendLine($"VERSION = {EveComm.ARMA_VERSION}");
         log.AppendLine($"PORT_RUDP = {PORT_ARMA}");
         log.AppendLine($"HEADER_SIZE = {EveComm.HEADER_LENGTH}");
         log.AppendLine($"PAQUET_SIZE = {PAQUET_SIZE_BIG}");
