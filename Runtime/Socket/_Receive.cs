@@ -46,7 +46,7 @@ namespace _RUDP_
                     if (recLength_u > 0)
                     {
                         byte version_byte = recBuffer_u[0];
-                        if (recEnd_u.Equals(Util_rudp.END_RUDP))
+                        if (recEnd_u.Equals(Util_rudp.END_ARMA))
                         {
                             if (version_byte != EveComm.VERSION)
                             {

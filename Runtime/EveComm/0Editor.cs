@@ -21,7 +21,7 @@ static partial class Util_rudp
                 log.AppendLine($"    {code} = {(int)code}");
 
         log.AppendLine($"VERSION = {EveComm.VERSION}");
-        log.AppendLine($"PORT_RUDP = {PORT_RUDP}");
+        log.AppendLine($"PORT_RUDP = {PORT_ARMA}");
         log.AppendLine($"HEADER_SIZE = {EveComm.HEADER_LENGTH}");
         log.AppendLine($"PAQUET_SIZE = {PAQUET_SIZE_BIG}");
         log.AppendLine($"DATA_SIZE = {PAQUET_SIZE_BIG - EveComm.HEADER_LENGTH}");

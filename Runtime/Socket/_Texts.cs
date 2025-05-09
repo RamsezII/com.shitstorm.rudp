@@ -43,6 +43,12 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LogVersion))]
+        public static void LogVersion()
+        {
+            Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
+        }
+
 #if UNITY_EDITOR
         [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(IncrementVersion))]
         public static void IncrementVersion()
@@ -66,17 +72,20 @@ namespace _RUDP_
         {
             version ??= new();
 
-#if UNITY_EDITOR
             if (Application.isEditor)
             {
+#if UNITY_EDITOR
                 JSon.Read(ref version, Version.file_editor, true, false);
-                return;
-            }
 #endif
+            }
+            else
+            {
+                TextAsset text = Resources.Load<TextAsset>(Version.version_file[..^".txt".Length]);
+                version = JsonUtility.FromJson<Version>(text.text);
+                version.OnRead();
+            }
 
-            TextAsset text = Resources.Load<TextAsset>(Version.version_file[..^".txt".Length]);
-            version = JsonUtility.FromJson<Version>(text.text);
-            version.OnRead();
+            LogVersion();
         }
 
         [ContextMenu(nameof(LoadSettings))]

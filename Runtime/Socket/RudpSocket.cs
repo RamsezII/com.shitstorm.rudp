@@ -35,7 +35,6 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        static RudpSocket() => LoadVersion();
         ~RudpSocket() => Debug.Log($"~{this}");
 
         public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
@@ -63,7 +62,7 @@ namespace _RUDP_
             _selfConn = selfConn;
 #endif
 
-            eveComm = new(ToConnection(Util_rudp.END_RUDP, out _));
+            eveComm = new(ToConnection(Util_rudp.END_ARMA, out _));
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();

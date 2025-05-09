@@ -9,15 +9,19 @@ using UnityEngine;
 public static partial class Util_rudp
 {
     public const string DOMAIN_3VE = "www.shitstorm.ovh";
-    public const ushort PORT_RUDP = 12345;
+
+    public const ushort PORT_ARMA = 44000;
+
     public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
-    public static readonly IPEndPoint END_RUDP = new(IP_3VE, PORT_RUDP);
-    public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_RUDP);
+    public static readonly IPEndPoint END_ARMA = new(IP_3VE, PORT_ARMA);
+    public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_ARMA);
+
     public static IPAddress localIP, publicIP;
 
     public const ushort
         PAQUET_SIZE_SMALL = 1472,
         PAQUET_SIZE_BIG = 2 * PAQUET_SIZE_SMALL,
+        DATA_SIZE_SMALL = PAQUET_SIZE_SMALL - RudpHeader.HEADER_length,
         DATA_SIZE_BIG = PAQUET_SIZE_BIG - RudpHeader.HEADER_length;
 
     public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
