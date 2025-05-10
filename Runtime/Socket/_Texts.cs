@@ -43,13 +43,13 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+#if UNITY_EDITOR
         [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LogVersion))]
         public static void LogVersion()
         {
             Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
         }
 
-#if UNITY_EDITOR
         [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(IncrementVersion))]
         public static void IncrementVersion()
         {
@@ -85,7 +85,7 @@ namespace _RUDP_
                 version.OnRead();
             }
 
-            LogVersion();
+            Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
         }
 
         [ContextMenu(nameof(LoadSettings))]
