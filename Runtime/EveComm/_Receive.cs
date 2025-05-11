@@ -25,7 +25,7 @@ namespace _RUDP_
                             {
                                 RudpConnection hostConn = conn.socket.ReadConnection(socketReader, out _);
                                 hostConn.keepAlive = true;
-                                Debug.Log($"{this} Holepunch success: {hostConn}");
+                                Debug.Log($"{this} Received holepunch instruction: {hostConn}");
                             }
                             else
                                 Debug.LogWarning("Received holepunch without hosting");
