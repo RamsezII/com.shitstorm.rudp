@@ -16,7 +16,8 @@ namespace _RUDP_
             lock (mainLock)
                 this.onAck = () =>
                 {
-                    done = true;
+                    lock (mainLock)
+                        done = true;
                     onAck(socketReader);
                 };
 
@@ -25,7 +26,10 @@ namespace _RUDP_
                 onDispose = () =>
                 {
                     lock (mainLock)
+                    {
+                        done = true;
                         this.onAck = null;
+                    }
                 },
             };
 
