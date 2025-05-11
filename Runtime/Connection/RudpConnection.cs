@@ -12,7 +12,6 @@ namespace _RUDP_
     {
 #if UNITY_EDITOR
         [Header("~@ Conn @~")]
-        [SerializeField] string _endPoint;
         [SerializeField] bool _initiated;
 #endif
 
@@ -43,7 +42,6 @@ namespace _RUDP_
 
 #if UNITY_EDITOR
             _initiated = true;
-            _endPoint = endPoint.ToString();
 #endif
 
             channel_files = new(this, RudpHeaderM.Files);
