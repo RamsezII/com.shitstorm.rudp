@@ -51,7 +51,7 @@ namespace _RUDP_
                 localEnd = reader.ReadIPEndPoint(),
                 endPoint;
 
-            if (publicEnd.Address.Equals(Util_rudp.publicIP) && Util_rudp.IsSameSubnet24(Util_rudp.localIP, localEnd.Address))
+            if (publicEnd.Address.Equals(Util_rudp.publicIP) && Util_rudp.IsSameSubnet24(Util_rudp.localIP, localEnd.Address, true))
                 if (localEnd.Address.Equals(Util_rudp.localIP))
                     endPoint = new(IPAddress.Loopback, localEnd.Port);
                 else

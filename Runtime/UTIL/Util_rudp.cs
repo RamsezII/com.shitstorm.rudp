@@ -72,11 +72,14 @@ public static partial class Util_rudp
             (parts[0] == 172 && parts[1] >= 16 && parts[1] <= 31);
     }
 
-    public static bool IsSameSubnet24(in IPAddress ipA, in IPAddress ipB) => IsSameSubnet24(ipA.ToString(), ipB.ToString());
-    public static bool IsSameSubnet24(in string ipA, in string ipB)
+    public static bool IsSameSubnet24(in IPAddress ipA, in IPAddress ipB, in bool log) => IsSameSubnet24(ipA.ToString(), ipB.ToString(), log);
+    public static bool IsSameSubnet24(in string ipA, in string ipB, in bool log)
     {
         var a = ipA.Split('.');
         var b = ipB.Split('.');
-        return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
+        bool res = a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
+        if (log)
+            Debug.Log($"IsSameSubnet24({ipA}, {ipB}) = {res}");
+        return res;
     }
 }
