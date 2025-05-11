@@ -10,7 +10,6 @@ namespace _RUDP_
     {
         public IEnumerator<float> ESendUntilAck(Action<BinaryWriter> onWrite, Action<BinaryReader> onAck, Action onFailure)
         {
-            Debug.Log("STOP");
             bool done = false;
 
             lock (mainLock)

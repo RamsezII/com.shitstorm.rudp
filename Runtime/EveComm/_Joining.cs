@@ -50,7 +50,7 @@ namespace _RUDP_
 
                             default:
                                 Debug.LogWarning($"Unexpected ack: \"{ack}\"");
-                                return;
+                                break;
                         }
 
                         if (ack != AckCodes.Confirm)
