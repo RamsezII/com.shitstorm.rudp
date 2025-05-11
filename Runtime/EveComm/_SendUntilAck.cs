@@ -30,56 +30,55 @@ namespace _RUDP_
             };
 
             byte attempt = 0;
-            lock (mainLock)
-                while (!done)
+            while (true)
+            {
+                lock (mainLock)
+                    if (done)
+                        yield break;
+
+                if (attempt++ < 6)
                 {
+                    lock (eveWriter)
+                    {
+                        if (conn.Disposed)
+                            yield break;
+
+                        eveStream.Position = HEADER_LENGTH;
+                        eveBuffer[1] = ++id == 0 ? (byte)1 : id;
+                        onWrite(eveWriter);
+                        lastSend._value = Util.TotalMilliseconds;
+                        conn.Send(eveBuffer, 0, (ushort)eveStream.Position);
+                    }
+
+                    float delay = attempt switch
+                    {
+                        0 => 0,
+                        1 => .1f,
+                        2 => .2f,
+                        3 => .35f,
+                        4 => .5f,
+                        _ => .8f,
+                    };
+
+                    WaitForSecondsRealtime wait = new(delay);
+                    while (wait.MoveNext())
+                        yield return 0;
+                }
+                else
+                {
+                    WaitForSecondsRealtime wait = new(1);
+                    while (wait.MoveNext())
+                        yield return 0;
+
                     lock (mainLock)
                         if (done)
                             yield break;
 
-                    if (attempt++ < 6)
-                    {
-                        lock (eveWriter)
-                        {
-                            if (conn.Disposed)
-                                yield break;
-
-                            eveStream.Position = HEADER_LENGTH;
-                            eveBuffer[1] = ++id == 0 ? (byte)1 : id;
-                            onWrite(eveWriter);
-                            lastSend._value = Util.TotalMilliseconds;
-                            conn.Send(eveBuffer, 0, (ushort)eveStream.Position);
-                        }
-
-                        float delay = attempt switch
-                        {
-                            0 => 0,
-                            1 => .1f,
-                            2 => .2f,
-                            3 => .35f,
-                            4 => .5f,
-                            _ => .8f,
-                        };
-
-                        WaitForSecondsRealtime wait = new(delay);
-                        while (wait.MoveNext())
-                            yield return 0;
-                    }
-                    else
-                    {
-                        WaitForSecondsRealtime wait = new(1);
-                        while (wait.MoveNext())
-                            yield return 0;
-
-                        lock (mainLock)
-                            if (done)
-                                yield break;
-
-                        Debug.LogWarning($"/!\\ Eve failure /!\\");
-                        onFailure?.Invoke();
-                        yield break;
-                    }
+                    Debug.LogWarning($"/!\\ Eve failure /!\\");
+                    onFailure?.Invoke();
+                    yield break;
                 }
+            }
         }
     }
 }
