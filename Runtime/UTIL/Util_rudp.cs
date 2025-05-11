@@ -1,6 +1,7 @@
 using _RUDP_;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -59,5 +60,23 @@ public static partial class Util_rudp
         uint address = reader.ReadUInt32();
         ushort port = reader.ReadUInt16();
         return new IPEndPoint(address, port);
+    }
+
+    public static bool IsPrivateIP(this IPAddress ip) => IsPrivateIP(ip.ToString());
+    public static bool IsPrivateIP(this string ip)
+    {
+        var parts = ip.Split('.').Select(int.Parse).ToArray();
+        return
+            parts[0] == 10 ||
+            (parts[0] == 192 && parts[1] == 168) ||
+            (parts[0] == 172 && parts[1] >= 16 && parts[1] <= 31);
+    }
+
+    public static bool IsSameSubnet24(in IPAddress ipA, in IPAddress ipB) => IsSameSubnet24(ipA.ToString(), ipB.ToString());
+    public static bool IsSameSubnet24(in string ipA, in string ipB)
+    {
+        var a = ipA.Split('.');
+        var b = ipB.Split('.');
+        return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
     }
 }
