@@ -25,7 +25,7 @@ namespace _RUDP_
         public class Settings : JSon
         {
             public static readonly string file_name = typeof(Settings).TypeToFileName() + json;
-            public static string FileDir => NUCLEOR.home_path.ForceDir().FullName;
+            public static string FileDir => NUCLEOR.home_path.GetDir(true).FullName;
             public static string FilePath => Path.Combine(FileDir, file_name);
 
             public bool
