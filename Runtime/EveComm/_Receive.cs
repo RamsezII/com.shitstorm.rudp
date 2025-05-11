@@ -21,8 +21,16 @@ namespace _RUDP_
                     switch (recCode)
                     {
                         case EveCodes.Holepunch:
-                            ReceiveHolepunch();
+                            if (hosting.Value)
+                            {
+                                RudpConnection hostConn = conn.socket.ReadConnection(socketReader, out _);
+                                hostConn.keepAlive = true;
+                                Debug.Log($"{this} Holepunch success: {hostConn}");
+                            }
+                            else
+                                Debug.LogWarning("Received holepunch without hosting");
                             break;
+
                         default:
                             Debug.LogWarning($"Received wrong {nameof(recCode)}: \"{recCode}\"");
                             return false;
@@ -51,18 +59,6 @@ namespace _RUDP_
 
                 return true;
             }
-        }
-
-        void ReceiveHolepunch()
-        {
-            if (hosting.Value)
-            {
-                RudpConnection hostConn = conn.socket.ReadConnection(socketReader, out _);
-                hostConn.keepAlive = true;
-                Debug.Log($"{this} Holepunch success: {hostConn}");
-            }
-            else
-                Debug.LogWarning("Received holepunch without hosting");
         }
     }
 }
