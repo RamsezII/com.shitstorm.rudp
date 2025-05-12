@@ -10,7 +10,7 @@ namespace _RUDP_
         [Serializable]
         public class Version : JSon
         {
-            public static readonly string version_file = typeof(Version).TypeToFileName() + json;
+            public static readonly string version_file = typeof(Version).FullName + json;
 
 #if UNITY_EDITOR
             public static readonly string
@@ -24,7 +24,7 @@ namespace _RUDP_
         [Serializable]
         public class Settings : JSon
         {
-            public static readonly string file_name = typeof(Settings).TypeToFileName() + json;
+            public static readonly string file_name = typeof(Settings).FullName + json;
             public static string FileDir => NUCLEOR.home_path.GetDir(true).FullName;
             public static string FilePath => Path.Combine(FileDir, file_name);
 
