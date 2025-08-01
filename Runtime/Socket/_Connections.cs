@@ -25,7 +25,7 @@ namespace _RUDP_
                     conns_dic[remoteEnd] = conn;
 
                     lock (NUCLEOR.instance.mainThreadLock)
-                        NUCLEOR.delegates.onEndOfFrame_once += () =>
+                        NUCLEOR.delegates.LateUpdate_onEndOfFrame_once += () =>
                         {
                             lock (conns_set)
                                 conns_set.Add(conn);

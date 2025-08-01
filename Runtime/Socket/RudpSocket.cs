@@ -70,14 +70,14 @@ namespace _RUDP_
             BeginReceive();
 
             LoadSettings(true);
-            NUCLEOR.delegates.onApplicationFocus += LoadSettingsNoLog;
+            NUCLEOR.delegates.OnApplicationFocus += LoadSettingsNoLog;
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public new void Dispose()
         {
-            NUCLEOR.delegates.onApplicationFocus -= LoadSettingsNoLog;
+            NUCLEOR.delegates.OnApplicationFocus -= LoadSettingsNoLog;
 
             if (disposed.Value)
                 return;
