@@ -13,6 +13,8 @@ namespace _RUDP_
 
             while (true)
             {
+                float max_delay = 3;
+
                 IEnumerator<float> eSend = ESendUntilAck(
                     writer =>
                     {
@@ -67,7 +69,17 @@ namespace _RUDP_
                     });
 
                 while (eSend.MoveNext())
+                {
                     yield return eSend.Current;
+
+                    max_delay -= Time.unscaledDeltaTime;
+                    if (max_delay < 0)
+                    {
+                        onFailure?.Invoke();
+                        failure = true;
+                        yield break;
+                    }
+                }
 
                 lock (mainLock)
                     if (failure)

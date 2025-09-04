@@ -67,7 +67,7 @@ namespace _RUDP_
 #if UNITY_EDITOR
         [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LoadVersion))]
 #endif
-        static void LoadVersion()
+        public static void LoadVersion()
         {
             version ??= new();
 
