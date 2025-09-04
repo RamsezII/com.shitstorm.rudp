@@ -22,12 +22,8 @@ namespace _RUDP_
         }
 
         [Serializable]
-        public class Settings : JSon
+        public class Settings : MachineJSon
         {
-            public static readonly string file_name = typeof(Settings).FullName + json;
-            public static string FileDir => NUCLEOR.home_path.GetDir(true).FullName;
-            public static string FilePath => Path.Combine(FileDir, file_name);
-
             public bool
                 logConnections = true,
                 logIncidents = false,
@@ -39,7 +35,7 @@ namespace _RUDP_
         }
 
         public static Version version;
-        [SerializeField] public Settings settings;
+        public Settings settings;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -85,20 +81,20 @@ namespace _RUDP_
             Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
         }
 
-        [ContextMenu(nameof(LoadSettings))]
-        void LoadSettings_logged() => LoadSettings(true);
-        public void LoadSettingsNoLog() => LoadSettings(false);
-        public void LoadSettings(in bool log)
+        [ContextMenu(nameof(SaveSettings_log))]
+        public void SaveSettings_log() => OnSaveSettings(true);
+        public void SaveSettings_nolog() => OnSaveSettings(false);
+        protected virtual void OnSaveSettings(in bool log)
         {
-            settings ??= new();
-            JSon.Read(ref settings, Settings.FilePath, true, log);
+            settings.SaveStaticJSon(log);
         }
 
-        [ContextMenu(nameof(SaveSettings))]
-        public void SaveSettings()
+        [ContextMenu(nameof(LoadSettings_log))]
+        public void LoadSettings_log() => OnLoadSettings(true);
+        public void LoadSettings_nolog() => OnLoadSettings(false);
+        protected virtual void OnLoadSettings(in bool log)
         {
-            settings ??= new();
-            settings.Save(Settings.FilePath, true);
+            StaticJSon.ReadStaticJSon(ref settings, true, log);
         }
     }
 }

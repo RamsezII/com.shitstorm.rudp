@@ -34,7 +34,7 @@ namespace _RUDP_
         public override string ToString() => $"sock{{{localPort}}}";
 
         //----------------------------------------------------------------------------------------------------------
-        
+
         ~RudpSocket() => Debug.Log($"~{this}");
 
         //----------------------------------------------------------------------------------------------------------
@@ -69,15 +69,17 @@ namespace _RUDP_
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
 
-            LoadSettings(true);
-            NUCLEOR.delegates.OnApplicationFocus += LoadSettingsNoLog;
+            LoadSettings_log();
+            NUCLEOR.delegates.OnApplicationUnfocus += SaveSettings_nolog;
+            NUCLEOR.delegates.OnApplicationFocus += LoadSettings_nolog;
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public new void Dispose()
         {
-            NUCLEOR.delegates.OnApplicationFocus -= LoadSettingsNoLog;
+            NUCLEOR.delegates.OnApplicationUnfocus -= SaveSettings_nolog;
+            NUCLEOR.delegates.OnApplicationFocus -= LoadSettings_nolog;
 
             if (disposed.Value)
                 return;
