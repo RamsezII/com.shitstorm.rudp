@@ -21,7 +21,8 @@ namespace _RUDP_
         public readonly ThreadSafe_struct<bool> disposed = new();
 
         public readonly RudpConnection selfConn;
-        public EveComm eveComm;
+        public RudpConnection relayConn;
+        public EveComm armaComm;
 
         public readonly MemoryStream recStream_u, flux_recStream;
         public readonly BinaryReader recReader_u, flux_recReader;
@@ -64,7 +65,8 @@ namespace _RUDP_
             _selfConn = selfConn;
 #endif
 
-            eveComm = new(ToConnection(Util_rudp.END_ARMA, out _));
+            armaComm = new(ToConnection(Util_rudp.END_ARMA, out _));
+            relayConn = ToConnection(Util_rudp.END_RELAY, out _);
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
@@ -95,7 +97,7 @@ namespace _RUDP_
             recReader_u.Dispose();
             flux_recStream.Dispose();
             flux_recReader.Dispose();
-            eveComm.Dispose();
+            armaComm.Dispose();
 
             lock (conns_set)
                 if (conns_set.Count > 0)

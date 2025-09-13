@@ -14,6 +14,8 @@ namespace _RUDP_
         [Header("~@ Conn @~")]
         [SerializeField] bool _initiated;
 #endif
+        public bool relayed;
+        public byte header_length = RudpHeader.HEADER_length;
 
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
@@ -54,6 +56,14 @@ namespace _RUDP_
         }
 
         //----------------------------------------------------------------------------------------------------------
+
+        public void ToggleRelay(in bool value)
+        {
+            relayed = value;
+            header_length = RudpHeader.HEADER_length;
+            if (value)
+                header_length += 4 + 2;
+        }
 
         public void WriteConnection(in BinaryWriter writer)
         {

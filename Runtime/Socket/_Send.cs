@@ -61,7 +61,7 @@ namespace _RUDP_
                     }
 
                 if (settings.logAllPaquets)
-                    if (targetEnd.Equals(eveComm.conn.endPoint))
+                    if (targetEnd.Equals(armaComm.conn.endPoint))
                         Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
             }
 

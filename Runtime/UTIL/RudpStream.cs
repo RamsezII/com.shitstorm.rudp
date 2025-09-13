@@ -16,6 +16,7 @@ namespace _RUDP_
         public enum Compressions { None, Gzip }
         const Compressions COMPRESSION = 0;
 
+        readonly RudpConnection conn;
         readonly MemoryStream stream;
         readonly GZipStream gzip;
         readonly BinaryWriter writer_raw, writer_gzip;
@@ -34,8 +35,8 @@ namespace _RUDP_
             gzip = new(stream, CompressionMode.Compress, true);
             writer_gzip = new(gzip, Util_rudp.ENCODING, false);
 
-            // header
-            stream.WriteHeader();
+            stream.SetLength(RudpHeader.HEADER_length);
+            stream.Position = stream.Length;
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ namespace _RUDP_
         public void AppendStatus(in StringBuilder log)
         {
             lock (this)
-                log.Append($"pending: {(stream.Length - RudpHeader.HEADER_length).LogDataSize()}");
+                log.Append($"pending data: {(stream.Length - RudpHeader.HEADER_length).LogDataSize()}");
         }
 
         //----------------------------------------------------------------------------------------------------------

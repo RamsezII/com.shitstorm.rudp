@@ -12,6 +12,7 @@ namespace _RUDP_
         public uint receive_count, receive_size;
         readonly ThreadSafe_struct<bool> skipNextSocketException = new(true);
 
+        public bool rec_isRelay_u;
         public IPEndPoint recEnd_u;
         public ushort recLength_u;
 
@@ -35,8 +36,11 @@ namespace _RUDP_
                 {
                     lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
+
+                    rec_isRelay_u = false;
                     EndPoint remoteEnd = endIP_any;
                     recStream_u.Position = 0;
+
                     recLength_u = (ushort)EndReceiveFrom(aResult, ref remoteEnd);
                     receive_size += recLength_u;
 
@@ -56,17 +60,27 @@ namespace _RUDP_
                         }
                         else if (version_byte != version.VERSION)
                         {
-                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a build whose network is not the same version (received: {version_byte}, expected: {version.VERSION}).");
+                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a peer whose network is not the same version (received: {version_byte}, expected: {version.VERSION}).");
                             skip = true;
                         }
 
                         if (skip)
-                            Debug.Log($"[SOCKET_LOG] Launch the SHITLAUNCHER (shitstorm.ovh) to update your local build.");
+                            Debug.Log($"[SOCKET_LOG] Launch the SHITLAUNCHER (go to https://shitstorm.ovh) to update your local build.");
                     }
 
                     if (!skip)
                     {
                         RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
+
+                        if (recConn == relayConn)
+                        {
+                            rec_isRelay_u = true;
+                            remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
+                            recConn = ToConnection(recEnd_u, out newConn);
+                            recConn.ToggleRelay(true);
+                        }
+                        else
+                            recConn.ToggleRelay(false);
 
                         if (settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
@@ -81,8 +95,8 @@ namespace _RUDP_
                             recConn.keepalive_attempt.Value = 0;
                         }
 
-                        if (recConn == eveComm.conn)
-                            eveComm.TryAcceptEvePaquet();
+                        if (recConn == armaComm.conn)
+                            armaComm.TryAcceptEvePaquet();
                         else
                         {
                             if (newConn)

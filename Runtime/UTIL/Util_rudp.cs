@@ -11,11 +11,16 @@ public static partial class Util_rudp
 {
     public const string DOMAIN_3VE = "www.shitstorm.ovh";
 
-    public const ushort PORT_ARMA = 40000;
+    public const ushort
+        PORT_ARMA = 40000,
+        PORT_RELAY = 44000;
 
     public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
-    public static readonly IPEndPoint END_ARMA = new(IP_3VE, PORT_ARMA);
-    public static readonly IPEndPoint END_LOOPBACK = new(IPAddress.Loopback, PORT_ARMA);
+
+    public static readonly IPEndPoint
+        END_ARMA = new(IP_3VE, PORT_ARMA),
+        END_RELAY = new(IP_3VE, PORT_RELAY),
+        END_LOOPBACK = new(IPAddress.Loopback, PORT_ARMA);
 
     public static IPAddress localIP, publicIP;
 
@@ -41,13 +46,6 @@ public static partial class Util_rudp
     //----------------------------------------------------------------------------------------------------------
 
     public static int ToPassHash(this string pass) => string.IsNullOrWhiteSpace(pass) ? 0 : pass.GetHashCode();
-
-
-    public static void WriteHeader(this MemoryStream stream)
-    {
-        for (byte i = 0; i < RudpHeader.HEADER_length; i++)
-            stream.WriteByte(0);
-    }
 
     public static void WriteIPEnd(this BinaryWriter writer, in IPEndPoint value)
     {
