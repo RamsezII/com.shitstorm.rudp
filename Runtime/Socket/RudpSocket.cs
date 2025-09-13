@@ -14,6 +14,7 @@ namespace _RUDP_
         public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE_BIG];
         public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADLEN_B];
 
+        public readonly bool use_relay;
         public readonly ushort localPort;
         readonly EndPoint endIP_any;
         public readonly IPEndPoint endIP_loopback;
@@ -42,6 +43,8 @@ namespace _RUDP_
 
         public RudpSocket(in bool use_relay, in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
+            this.use_relay = use_relay;
+
             recStream_u = new(recBuffer_u);
             recReader_u = new(recStream_u, Util_rudp.ENCODING, false);
             flux_recStream = new();
@@ -56,7 +59,7 @@ namespace _RUDP_
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
 
-            selfConn = ToConnection((IPEndPoint)endIP_any, use_relay, out _);
+            selfConn = ToConnection((IPEndPoint)endIP_any, false, out _);
             selfConn.localEnd = new(Util_rudp.localIP, localPort);
             lock (conns_dic)
                 conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;

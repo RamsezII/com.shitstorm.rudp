@@ -19,10 +19,11 @@ public static partial class Util_rudp
 
     public static readonly IPEndPoint
         END_ARMA = new(IP_3VE, PORT_ARMA),
-        END_RELAY = new(IP_3VE, PORT_RELAY),
+        //END_RELAY = new(IP_3VE, PORT_RELAY),
         END_LOOPBACK = new(IPAddress.Loopback, PORT_ARMA);
 
     //public static IPEndPoint END_ARMA => new(localIP, PORT_ARMA);
+    public static IPEndPoint END_RELAY => new(localIP, PORT_RELAY);
 
     public static IPAddress localIP, publicIP;
 
@@ -32,7 +33,7 @@ public static partial class Util_rudp
         DATA_SIZE_SMALL = PAQUET_SIZE_SMALL - RudpHeader.HEADLEN_B,
         DATA_SIZE_BIG = PAQUET_SIZE_BIG - RudpHeader.HEADLEN_B;
 
-    public static readonly byte[] EMPTY_BUFFER = Array.Empty<byte>();
+    public static readonly byte[] EMPTY_BUFFER = new byte[RudpHeader.HEADLEN_B];
     public static readonly Encoding ENCODING = Encoding.UTF8;
 
     //----------------------------------------------------------------------------------------------------------

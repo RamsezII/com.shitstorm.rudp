@@ -20,7 +20,7 @@ namespace _RUDP_
                         eveWriter.WriteText(host_name);
                         eveWriter.Write(public_hash);
                         eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
-                        eveWriter.Write(conn.socket.selfConn.is_relayed);
+                        eveWriter.Write(conn.socket.use_relay);
                     },
                     reader =>
                     {
@@ -33,7 +33,7 @@ namespace _RUDP_
                                 {
                                     hostConn = conn.socket.ReadConnection(socketReader, out _);
                                     hostConn.keepAlive = true;
-                                    Debug.Log($"[EVE_CONFIRM] Start Holepunch-> {hostConn.endPoint}");
+                                    Debug.Log($"[EVE_CONFIRM] {conn.socket} Start Holepunch-> {hostConn.endPoint}");
                                 }
                                 break;
 

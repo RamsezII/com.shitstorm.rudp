@@ -20,6 +20,9 @@ namespace _RUDP_
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
 
+        [Range(0, uint.MaxValue)] public uint u32_ip;
+        [Range(0, ushort.MaxValue)] public ushort u16_port;
+
         public readonly ThreadSafe_struct<double>
             lastSend = new(),
             lastReceive = new();
@@ -42,6 +45,9 @@ namespace _RUDP_
             this.socket = socket;
             this.endPoint = endPoint;
             this.is_relayed = is_relayed;
+
+            u32_ip = (uint)endPoint.Address.Address;
+            u16_port = (ushort)endPoint.Port;
 
 #if UNITY_EDITOR
             _initiated = true;

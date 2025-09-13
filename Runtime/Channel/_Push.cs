@@ -31,7 +31,7 @@ namespace _RUDP_
             lock (paquet.buffer)
             {
                 RudpHeader.Write(paquet.buffer, paquet.offset, mask, sendID, attempt);
-                conn.Send(paquet.buffer, paquet.offset, paquet.length);
+                conn.Send(paquet.buffer, paquet.offset, paquet.length, false);
             }
         }
 

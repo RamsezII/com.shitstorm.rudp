@@ -34,15 +34,15 @@ namespace _RUDP_
                             Debug.Log($"{this} keepalive attempt {keepalive_attempt._value}".ToSubLog());
                         if (keepalive_attempt._value < 10)
                             ++keepalive_attempt._value;
-                        Send(Util_rudp.EMPTY_BUFFER, 0, 0);
+                        Send(Util_rudp.EMPTY_BUFFER, 0, RudpHeader.HEADLEN_B, false);
                     }
                 }
         }
 
-        public void Send(in byte[] buffer, in ushort offset, in ushort length)
+        public void Send(in byte[] buffer, in ushort offset, in ushort length, in bool force_no_relay)
         {
             lastSend.Value = Util.TotalMilliseconds;
-            socket.SendTo(buffer, offset, length, endPoint);
+            socket.SendTo(buffer, offset, length, is_relayed, force_no_relay, endPoint);
         }
     }
 }

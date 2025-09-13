@@ -70,16 +70,23 @@ namespace _RUDP_
 
                     if (!skip)
                     {
-                        bool is_relayed = recEnd_u.Equals(Util_rudp.END_RELAY);
-                        RudpConnection recConn = ToConnection(recEnd_u, false, out bool newConn);
+                        bool is_new;
+                        RudpConnection recConn;
 
-                        if (is_relayed)
+                        if (recEnd_u.Equals(Util_rudp.END_ARMA))
+                        {
+                            is_new = false;
+                            recConn = eveComm.conn;
+                        }
+                        else if (recEnd_u.Equals(Util_rudp.END_RELAY))
                         {
                             rec_isRelay_u = true;
                             recReader_u.BaseStream.Position = RudpHeader.HEADLEN_A;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
-                            recConn = ToConnection(recEnd_u, true, out newConn);
+                            recConn = ToConnection(recEnd_u, true, out is_new);
                         }
+                        else
+                            recConn = ToConnection(recEnd_u, false, out is_new);
 
                         if (settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
@@ -98,7 +105,7 @@ namespace _RUDP_
                             eveComm.TryAcceptEvePaquet();
                         else
                         {
-                            if (newConn)
+                            if (is_new)
                             {
                                 Debug.Log($"incoming connection: {recConn}".ToSubLog());
                                 recConn.keepAlive = true;

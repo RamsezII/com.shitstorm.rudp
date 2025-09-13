@@ -13,19 +13,19 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpConnection ToConnection(in IPEndPoint remoteEnd, in bool use_relay, out bool is_new)
+        public RudpConnection ToConnection(in IPEndPoint remoteEnd, in bool comes_from_relay, out bool is_new)
         {
             lock (conns_dic)
             {
                 if (conns_dic.TryGetValue(remoteEnd, out RudpConnection conn))
                 {
                     is_new = false;
-                    if (use_relay != conn.is_relayed)
-                        Debug.LogError($"relay conflict: {nameof(use_relay)}={use_relay} ; {nameof(conn)}.{nameof(conn.is_relayed)}={conn.is_relayed}");
+                    if (comes_from_relay != conn.is_relayed)
+                        Debug.LogError($"{this} {{ {remoteEnd} }} relay conflict: {nameof(comes_from_relay)}={comes_from_relay} ; {nameof(conn)}.{nameof(conn.is_relayed)}={conn.is_relayed}");
                 }
                 else
                 {
-                    conn = new RudpConnection(this, remoteEnd, use_relay);
+                    conn = new RudpConnection(this, remoteEnd, comes_from_relay);
                     conns_dic[remoteEnd] = conn;
 
                     lock (NUCLEOR.instance.mainThreadLock)
@@ -35,11 +35,14 @@ namespace _RUDP_
                                 conns_set.Add(conn);
                         };
 
-                    if (remoteEnd.Address.Equals(IPAddress.Loopback))
-                        conns_dic[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
+                    if (!comes_from_relay)
+                    {
+                        if (remoteEnd.Address.Equals(IPAddress.Loopback))
+                            conns_dic[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
 
-                    if (remoteEnd.Address.Equals(IPAddress.Any))
-                        conns_dic[new IPEndPoint(IPAddress.Loopback, remoteEnd.Port)] = conn;
+                        if (remoteEnd.Address.Equals(IPAddress.Any))
+                            conns_dic[new IPEndPoint(IPAddress.Loopback, remoteEnd.Port)] = conn;
+                    }
 
                     is_new = true;
                     Debug.Log($"new {conn}");
@@ -51,22 +54,23 @@ namespace _RUDP_
 
         public RudpConnection ReadConnection(in BinaryReader reader, out bool is_new)
         {
-            bool is_relayed = reader.ReadBoolean();
+            bool use_relay = reader.ReadBoolean();
 
             IPEndPoint
                 publicEnd = reader.ReadIPEndPoint(),
                 localEnd = reader.ReadIPEndPoint(),
                 endPoint;
 
-            if (publicEnd.Address.Equals(Util_rudp.publicIP) && Util_rudp.IsSameSubnet24(Util_rudp.localIP, localEnd.Address, true))
-                if (localEnd.Address.Equals(Util_rudp.localIP))
-                    endPoint = new(IPAddress.Loopback, localEnd.Port);
-                else
-                    endPoint = localEnd;
-            else
+            if (use_relay)
+                endPoint = localEnd;
+            else if (!publicEnd.Address.Equals(Util_rudp.publicIP) || !Util_rudp.IsSameSubnet24(Util_rudp.localIP, localEnd.Address, true))
                 endPoint = publicEnd;
+            else if (localEnd.Address.Equals(Util_rudp.localIP))
+                endPoint = new(IPAddress.Loopback, localEnd.Port);
+            else
+                endPoint = localEnd;
 
-            RudpConnection conn = ToConnection(endPoint, is_relayed, out is_new);
+            RudpConnection conn = ToConnection(endPoint, use_relay, out is_new);
             conn.localEnd = localEnd;
             conn.publicEnd = publicEnd;
             return conn;
