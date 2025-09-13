@@ -21,7 +21,7 @@ namespace _RUDP_
         readonly GZipStream gzip;
         readonly BinaryWriter writer_raw, writer_gzip;
         readonly BinaryReader reader_raw;
-        public bool HasData => stream.Length > RudpHeader.HEADER_length;
+        public bool HasData => stream.Length > RudpHeader.HEADLEN_B;
 
         //----------------------------------------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ namespace _RUDP_
             gzip = new(stream, CompressionMode.Compress, true);
             writer_gzip = new(gzip, Util_rudp.ENCODING, false);
 
-            stream.SetLength(RudpHeader.HEADER_length);
+            stream.SetLength(RudpHeader.HEADLEN_B);
             stream.Position = stream.Length;
         }
 
@@ -80,8 +80,8 @@ namespace _RUDP_
             {
                 byte[] buffer = stream.GetBuffer();
                 stream.Position = 0;
-                Buffer.BlockCopy(buffer, paquet_size, buffer, RudpHeader.HEADER_length, (int)stream.Length - paquet_size);
-                stream.SetLength(stream.Length - paquet_size + RudpHeader.HEADER_length);
+                Buffer.BlockCopy(buffer, paquet_size, buffer, RudpHeader.HEADLEN_B, (int)stream.Length - paquet_size);
+                stream.SetLength(stream.Length - paquet_size + RudpHeader.HEADLEN_B);
                 stream.Position = stream.Length;
             }
         }
@@ -89,7 +89,7 @@ namespace _RUDP_
         public void AppendStatus(in StringBuilder log)
         {
             lock (this)
-                log.Append($"pending data: {(stream.Length - RudpHeader.HEADER_length).LogDataSize()}");
+                log.Append($"pending data: {(stream.Length - RudpHeader.HEADLEN_B).LogDataSize()}");
         }
 
         //----------------------------------------------------------------------------------------------------------

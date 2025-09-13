@@ -17,7 +17,7 @@ namespace _RUDP_
             lock (ACK_BUFFER)
             {
                 header.Write(ACK_BUFFER, 0);
-                SendTo(ACK_BUFFER, 0, RudpHeader.HEADER_length, targetEnd);
+                SendTo(ACK_BUFFER, 0, RudpHeader.HEADLEN_B, targetEnd);
             }
         }
 
@@ -53,7 +53,7 @@ namespace _RUDP_
             }
             else
             {
-                if (length >= RudpHeader.HEADER_length)
+                if (length >= RudpHeader.HEADLEN_B)
                     if (settings.logAllPaquets)
                     {
                         RudpHeader header = RudpHeader.FromBuffer(buffer);

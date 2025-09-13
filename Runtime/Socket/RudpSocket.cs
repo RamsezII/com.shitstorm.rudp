@@ -12,7 +12,7 @@ namespace _RUDP_
     public partial class RudpSocket : Socket, IDisposable
     {
         public readonly byte[] recBuffer_u = new byte[Util_rudp.PAQUET_SIZE_BIG];
-        public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADER_length];
+        public readonly byte[] ACK_BUFFER = new byte[RudpHeader.HEADLEN_B];
 
         public readonly ushort localPort;
         readonly EndPoint endIP_any;

@@ -98,7 +98,7 @@ namespace _RUDP_
                         break;
 
                     default:
-                        Debug.LogWarning($"{this} Received paquet with unimplemented mask \"{header.mask}\"");
+                        Debug.LogError($"{this} Received paquet with unimplemented mask \"{header.mask}\"");
                         return false;
                 }
             }

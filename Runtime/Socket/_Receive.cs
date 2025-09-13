@@ -76,6 +76,7 @@ namespace _RUDP_
                         if (is_relayed)
                         {
                             rec_isRelay_u = true;
+                            recReader_u.BaseStream.Position = RudpHeader.HEADLEN_A;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
                             recConn = ToConnection(recEnd_u, true, out newConn);
                         }
@@ -103,15 +104,18 @@ namespace _RUDP_
                                 recConn.keepAlive = true;
                             }
 
-                            if (recLength_u >= RudpHeader.HEADER_length)
+                            if (recLength_u >= RudpHeader.HEADLEN_B)
                             {
+                                recReader_u.BaseStream.Position = 0;
                                 RudpHeader header = RudpHeader.FromReader(recReader_u);
+                                recReader_u.BaseStream.Position = RudpHeader.HEADLEN_B;
+
                                 if (!recConn.TryAcceptPaquet(header))
                                     if (settings.logIncidents)
                                         Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
                             }
 
-                            if (recLength_u > 0 && recLength_u < RudpHeader.HEADER_length)
+                            if (recLength_u > 0 && recLength_u < RudpHeader.HEADLEN_B)
                                 Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
                         }
 

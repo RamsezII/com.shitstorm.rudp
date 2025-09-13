@@ -25,7 +25,7 @@ namespace _RUDP_
         public readonly RudpStream states_stream;
 
         public PaquetBuffer reliable_paquet;
-        public bool IsPending => reliable_paquet.buffer != null && reliable_paquet.length > RudpHeader.HEADER_length;
+        public bool IsPending => reliable_paquet.buffer != null && reliable_paquet.length > RudpHeader.HEADLEN_B;
 
         public double lastSend, ping;
         byte sendID, attempt;

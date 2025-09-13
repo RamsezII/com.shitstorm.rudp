@@ -39,7 +39,8 @@ namespace _RUDP_
 
     public readonly struct RudpHeader
     {
-        public const byte HEADER_length = (byte)RudpHeaderI._last_;
+        internal const byte HEADLEN_A = (byte)RudpHeaderI._last_;
+        public const byte HEADLEN_B = HEADLEN_A + 4 + 2;
 
         public readonly RudpHeaderM mask;
         public readonly byte version;

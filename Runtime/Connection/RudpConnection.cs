@@ -16,7 +16,6 @@ namespace _RUDP_
         [SerializeField] bool _is_relayed;
 #endif
         public readonly bool is_relayed;
-        public byte header_length = RudpHeader.HEADER_length;
 
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
