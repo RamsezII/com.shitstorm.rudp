@@ -16,6 +16,7 @@ namespace _RUDP_
             {
                 eveWriter.Write((byte)EveCodes.AddHost);
                 eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
+                eveWriter.Write(conn.socket.selfConn.is_relayed);
                 eveWriter.WriteText(hostName);
                 eveWriter.Write(publicHash);
             },

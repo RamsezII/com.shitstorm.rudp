@@ -22,7 +22,7 @@ namespace _RUDP_
 
         public readonly RudpConnection selfConn;
         public RudpConnection relayConn;
-        public EveComm armaComm;
+        public EveComm eveComm;
 
         public readonly MemoryStream recStream_u, flux_recStream;
         public readonly BinaryReader recReader_u, flux_recReader;
@@ -40,7 +40,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpSocket(in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+        public RudpSocket(in bool use_relay, in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
             recStream_u = new(recBuffer_u);
             recReader_u = new(recStream_u, Util_rudp.ENCODING, false);
@@ -56,7 +56,7 @@ namespace _RUDP_
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
 
-            selfConn = ToConnection((IPEndPoint)endIP_any, out _);
+            selfConn = ToConnection((IPEndPoint)endIP_any, use_relay, out _);
             selfConn.localEnd = new(Util_rudp.localIP, localPort);
             lock (conns_dic)
                 conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;
@@ -65,8 +65,9 @@ namespace _RUDP_
             _selfConn = selfConn;
 #endif
 
-            armaComm = new(ToConnection(Util_rudp.END_ARMA, out _));
-            relayConn = ToConnection(Util_rudp.END_RELAY, out _);
+            eveComm = new(ToConnection(Util_rudp.END_ARMA, false, out _));
+            relayConn = ToConnection(Util_rudp.END_RELAY, false, out _);
+            relayConn.keepAlive = true;
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
@@ -97,7 +98,7 @@ namespace _RUDP_
             recReader_u.Dispose();
             flux_recStream.Dispose();
             flux_recReader.Dispose();
-            armaComm.Dispose();
+            eveComm.Dispose();
 
             lock (conns_set)
                 if (conns_set.Count > 0)

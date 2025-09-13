@@ -70,17 +70,15 @@ namespace _RUDP_
 
                     if (!skip)
                     {
-                        RudpConnection recConn = ToConnection(recEnd_u, out bool newConn);
+                        bool is_relayed = recEnd_u.Equals(Util_rudp.END_RELAY);
+                        RudpConnection recConn = ToConnection(recEnd_u, false, out bool newConn);
 
-                        if (recConn == relayConn)
+                        if (is_relayed)
                         {
                             rec_isRelay_u = true;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
-                            recConn = ToConnection(recEnd_u, out newConn);
-                            recConn.ToggleRelay(true);
+                            recConn = ToConnection(recEnd_u, true, out newConn);
                         }
-                        else
-                            recConn.ToggleRelay(false);
 
                         if (settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
@@ -95,8 +93,8 @@ namespace _RUDP_
                             recConn.keepalive_attempt.Value = 0;
                         }
 
-                        if (recConn == armaComm.conn)
-                            armaComm.TryAcceptEvePaquet();
+                        if (recConn == eveComm.conn)
+                            eveComm.TryAcceptEvePaquet();
                         else
                         {
                             if (newConn)

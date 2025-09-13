@@ -6,7 +6,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator<float> EJoinPublicHost(string hostName, int publicHash, int privateHash, Action<RudpConnection> onSuccess, Action onFailure)
+        public IEnumerator<float> EJoinPublicHost(string host_name, int public_hash, int private_hash, Action<RudpConnection> onSuccess, Action onFailure)
         {
             bool failure = false;
             RudpConnection hostConn = null;
@@ -17,9 +17,10 @@ namespace _RUDP_
                     writer =>
                     {
                         eveWriter.Write((byte)EveCodes.JoinHost);
-                        eveWriter.WriteText(hostName);
-                        eveWriter.Write(publicHash);
+                        eveWriter.WriteText(host_name);
+                        eveWriter.Write(public_hash);
                         eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
+                        eveWriter.Write(conn.socket.selfConn.is_relayed);
                     },
                     reader =>
                     {

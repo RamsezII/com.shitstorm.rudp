@@ -33,7 +33,7 @@ namespace _RUDP_
     public partial class EveComm : IDisposable
     {
         public const byte
-            ARMA_VERSION = 1,
+            ARMA_VERSION = 2,
             HEADER_LENGTH = 2;
 
         public static readonly bool

@@ -12,7 +12,7 @@ public static partial class Util_rudp
     public const string DOMAIN_3VE = "www.shitstorm.ovh";
 
     public const ushort
-        PORT_ARMA = 40000,
+        PORT_ARMA = 40001,
         PORT_RELAY = 44000;
 
     public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
@@ -21,6 +21,8 @@ public static partial class Util_rudp
         END_ARMA = new(IP_3VE, PORT_ARMA),
         END_RELAY = new(IP_3VE, PORT_RELAY),
         END_LOOPBACK = new(IPAddress.Loopback, PORT_ARMA);
+
+    //public static IPEndPoint END_ARMA => new(localIP, PORT_ARMA);
 
     public static IPAddress localIP, publicIP;
 
