@@ -13,10 +13,9 @@ namespace _RUDP_
 #if UNITY_EDITOR
         [Header("~@ Conn @~")]
         [SerializeField] bool _initiated;
-        [SerializeField] bool _is_relayed;
         [SerializeField] bool _no_relay;
 #endif
-        public readonly bool is_relayed, no_relay;
+        public readonly bool no_relay;
 
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
@@ -37,15 +36,14 @@ namespace _RUDP_
         public readonly MemoryStream states_recStream;
         public readonly BinaryReader states_recReader;
 
-        public override string ToString() => $"conn({socket.localPort}->{endPoint}{(is_relayed ? "[relayed]" : string.Empty)})";
+        public override string ToString() => $"conn({socket.localPort}->{endPoint})";
 
         //----------------------------------------------------------------------------------------------------------
 
-        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool is_relayed, in bool no_relay)
+        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool no_relay)
         {
             this.socket = socket;
             this.endPoint = endPoint;
-            this.is_relayed = is_relayed;
             this.no_relay = no_relay;
 
             u32_ip = (uint)endPoint.Address.Address;
@@ -53,7 +51,6 @@ namespace _RUDP_
 
 #if UNITY_EDITOR
             _initiated = true;
-            _is_relayed = is_relayed;
             _no_relay = no_relay;
 #endif
 
@@ -70,7 +67,6 @@ namespace _RUDP_
 
         public void WriteConnection(in BinaryWriter writer)
         {
-            writer.Write(is_relayed);
             writer.Write(publicEnd);
             writer.Write(localEnd);
         }

@@ -70,7 +70,8 @@ namespace _RUDP_
 
                     if (!skip)
                     {
-                        RudpConnection recConn = ToConnection(recEnd_u, false, true, out bool is_new);
+                        bool is_new;
+                        RudpConnection recConn;
 
                         if (recEnd_u.Equals(Util_rudp.END_RELAY))
                         {
@@ -79,8 +80,15 @@ namespace _RUDP_
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
                             if (settings.logAllPaquets)
                                 Debug.Log($"reçu relay: {recEnd_u}");
-                            recConn = ToConnection(recEnd_u, true, false, out is_new);
+                            recConn = ToConnection(recEnd_u, false, out is_new);
                         }
+                        else if (recEnd_u.Equals(Util_rudp.END_ARMA))
+                        {
+                            recConn = eveComm.conn;
+                            is_new = false;
+                        }
+                        else
+                            recConn = ToConnection(recEnd_u, true, out is_new);
 
                         if (settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());

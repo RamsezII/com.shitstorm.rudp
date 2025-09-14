@@ -12,16 +12,16 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void SendAckTo(in RudpHeader header, in IPEndPoint relayEnd, in IPEndPoint targetEnd)
+        public void SendAckTo(in RudpHeader header, in bool no_relay, in IPEndPoint targetEnd)
         {
             lock (ACK_BUFFER)
             {
                 header.Write(ACK_BUFFER, 0);
-                SendTo(ACK_BUFFER, 0, RudpHeader.HEADLEN_B, relayEnd, targetEnd);
+                SendTo(ACK_BUFFER, 0, RudpHeader.HEADLEN_B, no_relay, targetEnd);
             }
         }
 
-        public void SendTo(in byte[] buffer, in ushort offset, in ushort length, in IPEndPoint relayEnd, in IPEndPoint targetEnd)
+        public void SendTo(in byte[] buffer, in ushort offset, in ushort length, in bool no_relay, IPEndPoint targetEnd)
         {
             if (disposed.Value)
             {
@@ -68,10 +68,10 @@ namespace _RUDP_
                 Debug.LogWarning($"{nameof(SendTo)}->{targetEnd} ERROR: {nameof(offset)}={offset}, {nameof(length)}={length} (underlying buffer: {buffer.Length})");
             else
             {
+                bool relay = use_relay && !no_relay;
+
                 if (length > 0)
-                    if (targetEnd.Equals(Util_rudp.END_RELAY))
-                        Array.Clear(buffer, 4, 6);
-                    else if (relayEnd.Equals(Util_rudp.END_RELAY))
+                    if (relay)
                     {
                         uint ip = (uint)targetEnd.Address.Address;
                         ushort port = (ushort)targetEnd.Port;
@@ -86,8 +86,10 @@ namespace _RUDP_
                         buffer[offset + 8] = (byte)port;
                         buffer[offset + 9] = (byte)(port >> 8);
                     }
+                    else
+                        Array.Clear(buffer, 4, 6);
 
-                SendTo(buffer, offset, length, SocketFlags.None, relayEnd);
+                SendTo(buffer, offset, length, SocketFlags.None, relay ? Util_rudp.END_RELAY : targetEnd);
             }
         }
     }

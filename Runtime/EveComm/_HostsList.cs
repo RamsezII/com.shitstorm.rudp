@@ -7,10 +7,10 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator<float> EListHosts(Action<List<string>> onListChange, Action<List<string>> onListFinal, Action onFailure)
+        public IEnumerator<float> EListHosts(Action<List<HostInfos>> onListChange, Action<List<HostInfos>> onListFinal, Action onFailure)
         {
             ushort hostsOffset = 0;
-            List<string> list = new();
+            List<HostInfos> list = new();
 
             var eSend = ESendUntilAck(OnWriter, OnAck, onFailure);
             while (eSend.MoveNext())
@@ -23,11 +23,11 @@ namespace _RUDP_
                 writer.Write(hostsOffset);
             }
 
-            void OnAck(BinaryReader socketReader)
+            void OnAck(BinaryReader reader)
             {
                 ushort
-                    recOffset = socketReader.ReadUInt16(),
-                    hostsCount = socketReader.ReadUInt16();
+                    recOffset = reader.ReadUInt16(),
+                    hostsCount = reader.ReadUInt16();
 
                 if (hostsCount == 0)
                 {
@@ -39,10 +39,12 @@ namespace _RUDP_
                 {
                     while (conn.socket.HasNext())
                     {
-                        string hostName = socketReader.ReadText();
-                        list.Add(hostName);
+                        string name = reader.ReadText();
+                        bool relayed = reader.ReadBoolean();
+                        HostInfos infos = new(name, relayed);
+                        list.Add(infos);
                         ++hostsOffset;
-                        Debug.Log(hostName);
+                        Debug.Log(infos);
                     }
                     onListChange?.Invoke(list);
                 }

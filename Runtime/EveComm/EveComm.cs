@@ -26,6 +26,7 @@ namespace _RUDP_
         HostAlreadyExists,
         HostNotFound,
         HostPassMismatch,
+        RelayMismatch,
         _last_,
     }
 

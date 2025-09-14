@@ -11,14 +11,14 @@ namespace _RUDP_
 
         //--------------------------------------------------------------------------------------------------------------
 
-        public IEnumerator<float> EStartHosting(string hostName, int publicHash, int privateHash, Action<bool> onSuccess) => ESendUntilAck(
+        public IEnumerator<float> EStartHosting(string host_name, int public_hash, Action<bool> onSuccess) => ESendUntilAck(
             writer =>
             {
                 eveWriter.Write((byte)EveCodes.AddHost);
                 eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
                 eveWriter.Write(conn.socket.use_relay);
-                eveWriter.WriteText(hostName);
-                eveWriter.Write(publicHash);
+                eveWriter.WriteText(host_name);
+                eveWriter.Write(public_hash);
             },
             reader =>
             {

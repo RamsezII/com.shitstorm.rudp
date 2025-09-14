@@ -13,19 +13,15 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpConnection ToConnection(in IPEndPoint remoteEnd, in bool went_through_relay, in bool no_relay, out bool is_new)
+        public RudpConnection ToConnection(in IPEndPoint remoteEnd, in bool no_relay, out bool is_new)
         {
             lock (conns_dic)
             {
                 if (conns_dic.TryGetValue(remoteEnd, out RudpConnection conn))
-                {
                     is_new = false;
-                    if (went_through_relay != conn.is_relayed)
-                        Debug.LogError($"{this} {{ {remoteEnd} }} relay conflict: {nameof(went_through_relay)}={went_through_relay} ; {nameof(conn)}.{nameof(conn.is_relayed)}={conn.is_relayed}");
-                }
                 else
                 {
-                    conn = new RudpConnection(this, remoteEnd, went_through_relay, no_relay);
+                    conn = new RudpConnection(this, remoteEnd, no_relay);
                     conns_dic[remoteEnd] = conn;
 
                     lock (NUCLEOR.instance.mainThreadLock)
@@ -35,7 +31,7 @@ namespace _RUDP_
                                 conns_set.Add(conn);
                         };
 
-                    if (!went_through_relay)
+                    if (!use_relay)
                     {
                         if (remoteEnd.Address.Equals(IPAddress.Loopback))
                             conns_dic[new IPEndPoint(IPAddress.Any, remoteEnd.Port)] = conn;
@@ -54,10 +50,6 @@ namespace _RUDP_
 
         public RudpConnection ReadConnection(in BinaryReader reader, out bool is_new)
         {
-            bool use_relay = reader.ReadBoolean();
-            if (this.use_relay)
-                use_relay = true;
-
             IPEndPoint
                 publicEnd = reader.ReadIPEndPoint(),
                 localEnd = reader.ReadIPEndPoint(),
@@ -72,7 +64,7 @@ namespace _RUDP_
             else
                 endPoint = localEnd;
 
-            RudpConnection conn = ToConnection(endPoint, use_relay, false, out is_new);
+            RudpConnection conn = ToConnection(endPoint, false, out is_new);
             conn.localEnd = localEnd;
             conn.publicEnd = publicEnd;
             return conn;

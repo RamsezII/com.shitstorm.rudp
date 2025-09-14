@@ -6,7 +6,7 @@ namespace _RUDP_
 {
     partial class EveComm
     {
-        public IEnumerator<float> EJoinPublicHost(string host_name, int public_hash, int private_hash, Action<RudpConnection> onSuccess, Action onFailure)
+        public IEnumerator<float> EJoinPublicHost(string host_name, int public_hash, Action<RudpConnection> onSuccess, Action onFailure)
         {
             bool failure = false;
             RudpConnection hostConn = null;
@@ -19,8 +19,8 @@ namespace _RUDP_
                         eveWriter.Write((byte)EveCodes.JoinHost);
                         eveWriter.WriteText(host_name);
                         eveWriter.Write(public_hash);
-                        eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
                         eveWriter.Write(conn.socket.use_relay);
+                        eveWriter.WriteIPEnd(conn.socket.selfConn.localEnd);
                     },
                     reader =>
                     {
@@ -47,6 +47,10 @@ namespace _RUDP_
 
                             case AckCodes.HostPassMismatch:
                                 Debug.LogWarning("Host password mismatch");
+                                break;
+
+                            case AckCodes.RelayMismatch:
+                                Debug.LogWarning($"Relay mismatch: {host_name} (you expected relay={conn.socket.use_relay})");
                                 break;
 
                             default:
