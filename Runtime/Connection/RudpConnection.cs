@@ -14,8 +14,9 @@ namespace _RUDP_
         [Header("~@ Conn @~")]
         [SerializeField] bool _initiated;
         [SerializeField] bool _is_relayed;
+        [SerializeField] bool _no_relay;
 #endif
-        public readonly bool is_relayed;
+        public readonly bool is_relayed, no_relay;
 
         public readonly RudpSocket socket;
         public IPEndPoint endPoint, localEnd, publicEnd;
@@ -40,11 +41,12 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool is_relayed)
+        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool is_relayed, in bool no_relay)
         {
             this.socket = socket;
             this.endPoint = endPoint;
             this.is_relayed = is_relayed;
+            this.no_relay = no_relay;
 
             u32_ip = (uint)endPoint.Address.Address;
             u16_port = (ushort)endPoint.Port;
@@ -52,6 +54,7 @@ namespace _RUDP_
 #if UNITY_EDITOR
             _initiated = true;
             _is_relayed = is_relayed;
+            _no_relay = no_relay;
 #endif
 
             channel_files = new(this, RudpHeaderM.Files);

@@ -12,7 +12,7 @@ namespace _RUDP_
         public uint receive_count, receive_size;
         readonly ThreadSafe_struct<bool> skipNextSocketException = new(true);
 
-        public bool rec_isRelay_u;
+        public bool rec_fromRelay_u;
         public IPEndPoint recEnd_u;
         public ushort recLength_u;
 
@@ -37,7 +37,7 @@ namespace _RUDP_
                     lastReceive = Util.TotalMilliseconds;
                     ++receive_count;
 
-                    rec_isRelay_u = false;
+                    rec_fromRelay_u = false;
                     EndPoint remoteEnd = endIP_any;
                     recStream_u.Position = 0;
 
@@ -70,23 +70,15 @@ namespace _RUDP_
 
                     if (!skip)
                     {
-                        bool is_new;
-                        RudpConnection recConn;
+                        RudpConnection recConn = ToConnection(recEnd_u, false, true, out bool is_new);
 
-                        if (recEnd_u.Equals(Util_rudp.END_ARMA))
+                        if (recEnd_u.Equals(Util_rudp.END_RELAY))
                         {
-                            is_new = false;
-                            recConn = eveComm.conn;
-                        }
-                        else if (recEnd_u.Equals(Util_rudp.END_RELAY))
-                        {
-                            rec_isRelay_u = true;
+                            rec_fromRelay_u = true;
                             recReader_u.BaseStream.Position = RudpHeader.HEADLEN_A;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
-                            recConn = ToConnection(recEnd_u, true, out is_new);
+                            recConn = ToConnection(recEnd_u, true, false, out is_new);
                         }
-                        else
-                            recConn = ToConnection(recEnd_u, false, out is_new);
 
                         if (settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());

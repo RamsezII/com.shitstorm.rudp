@@ -1,4 +1,5 @@
 ﻿using _UTIL_;
+using System.Net.Sockets;
 using UnityEngine;
 
 namespace _RUDP_
@@ -32,17 +33,28 @@ namespace _RUDP_
                     {
                         if (socket.settings.logKeepAlives)
                             Debug.Log($"{this} keepalive attempt {keepalive_attempt._value}".ToSubLog());
+
                         if (keepalive_attempt._value < 10)
                             ++keepalive_attempt._value;
-                        Send(Util_rudp.EMPTY_BUFFER, 0, RudpHeader.HEADLEN_B, false);
+
+                        if (this == socket.eveComm.conn || this == socket.relayConn)
+                            Send(Util_rudp.EMPTY_ZERO, 0, 0);
+                        else
+                            Send(Util_rudp.EMPTY_LONG, 0, RudpHeader.HEADLEN_B);
                     }
                 }
         }
 
-        public void Send(in byte[] buffer, in ushort offset, in ushort length, in bool force_no_relay)
+        public void Send(in byte[] buffer, in ushort offset, in ushort length)
         {
             lastSend.Value = Util.TotalMilliseconds;
-            socket.SendTo(buffer, offset, length, is_relayed, force_no_relay, endPoint);
+            socket.SendTo(buffer, offset, length, is_relayed, no_relay, endPoint);
+        }
+
+        public void Send_direct(in byte[] buffer, in ushort offset, in ushort length)
+        {
+            lastSend.Value = Util.TotalMilliseconds;
+            socket.SendTo(buffer, offset, length, SocketFlags.None, endPoint);
         }
     }
 }

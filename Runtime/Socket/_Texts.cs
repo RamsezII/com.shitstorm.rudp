@@ -78,7 +78,7 @@ namespace _RUDP_
                 JSon.Read(ref version, Version.file_editor, true, false);
 #endif
 
-            Util_rudp.EMPTY_BUFFER[0] = version.VERSION;
+            Util_rudp.EMPTY_LONG[0] = version.VERSION;
             Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
 
             return version.VERSION;

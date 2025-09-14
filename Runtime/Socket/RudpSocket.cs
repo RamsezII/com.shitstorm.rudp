@@ -59,7 +59,7 @@ namespace _RUDP_
             localPort = (ushort)((IPEndPoint)endIP_any).Port;
             endIP_loopback = new(IPAddress.Loopback, localPort);
 
-            selfConn = ToConnection((IPEndPoint)endIP_any, false, out _);
+            selfConn = ToConnection((IPEndPoint)endIP_any, false, true, out _);
             selfConn.localEnd = new(Util_rudp.localIP, localPort);
             lock (conns_dic)
                 conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;
@@ -68,8 +68,8 @@ namespace _RUDP_
             _selfConn = selfConn;
 #endif
 
-            eveComm = new(ToConnection(Util_rudp.END_ARMA, false, out _));
-            relayConn = ToConnection(Util_rudp.END_RELAY, false, out _);
+            eveComm = new(ToConnection(Util_rudp.END_ARMA, false, true, out _));
+            relayConn = ToConnection(Util_rudp.END_RELAY, false, true, out _);
             relayConn.keepAlive = true;
 
             Debug.Log($"opened UDP: {this}".ToSubLog());

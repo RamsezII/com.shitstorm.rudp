@@ -88,7 +88,11 @@ namespace _RUDP_
                 SendTo(buffer, offset, length, SocketFlags.None, Util_rudp.END_RELAY);
             }
             else
+            {
+                if (length > 0)
+                    Array.Clear(buffer, RudpHeader.HEADLEN_A, RudpHeader.HEADLEN_B - RudpHeader.HEADLEN_A);
                 SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
+            }
         }
     }
 }
