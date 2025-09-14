@@ -55,13 +55,15 @@ namespace _RUDP_
         public RudpConnection ReadConnection(in BinaryReader reader, out bool is_new)
         {
             bool use_relay = reader.ReadBoolean();
+            if (this.use_relay)
+                use_relay = true;
 
             IPEndPoint
                 publicEnd = reader.ReadIPEndPoint(),
                 localEnd = reader.ReadIPEndPoint(),
                 endPoint;
 
-            if (use_relay || this.use_relay)
+            if (use_relay)
                 endPoint = publicEnd;
             else if (!publicEnd.Address.Equals(Util_rudp.publicIP) || !Util_rudp.IsSameSubnet24(Util_rudp.localIP, localEnd.Address, true))
                 endPoint = publicEnd;

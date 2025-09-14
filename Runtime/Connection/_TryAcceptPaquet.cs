@@ -52,7 +52,7 @@ namespace _RUDP_
                         }
                     }
 
-                socket.SendAckTo(new(header.id, channel.mask | RudpHeaderM.Ack, header.attempt), is_relayed, endPoint);
+                socket.SendAckTo(new(header.id, channel.mask | RudpHeaderM.Ack, header.attempt), is_relayed ? Util_rudp.END_RELAY : endPoint, endPoint);
 
                 if (redundant || !socket.HasNext())
                     return true;

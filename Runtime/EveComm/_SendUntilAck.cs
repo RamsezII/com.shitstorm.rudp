@@ -50,7 +50,7 @@ namespace _RUDP_
                         eveBuffer[1] = ++id == 0 ? (byte)1 : id;
                         onWrite(eveWriter);
                         lastSend._value = Util.TotalMilliseconds;
-                        conn.Send_direct(eveBuffer, 0, (ushort)eveStream.Position);
+                        conn.Send_direct(eveBuffer, 0, (ushort)eveStream.Position, Util_rudp.END_ARMA);
                     }
 
                     float delay = attempt switch

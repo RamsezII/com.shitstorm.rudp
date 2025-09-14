@@ -12,20 +12,16 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public void SendAckTo(in RudpHeader header, in bool use_relay, in IPEndPoint targetEnd)
+        public void SendAckTo(in RudpHeader header, in IPEndPoint relayEnd, in IPEndPoint targetEnd)
         {
             lock (ACK_BUFFER)
             {
                 header.Write(ACK_BUFFER, 0);
-                SendTo(ACK_BUFFER, 0, RudpHeader.HEADLEN_B, use_relay, false, targetEnd);
+                SendTo(ACK_BUFFER, 0, RudpHeader.HEADLEN_B, relayEnd, targetEnd);
             }
         }
 
-#if UNITY_EDITOR
-        [Obsolete("Use SendTo <buffer> <offset> <size> <IPEndPoint> instead")]
-        private void SendTo(in byte[] buffer, in IPEndPoint targetEnd) => throw new NotImplementedException();
-#endif
-        public void SendTo(in byte[] buffer, in ushort offset, in ushort length, in bool request_relay, in bool force_no_relay, in IPEndPoint targetEnd)
+        public void SendTo(in byte[] buffer, in ushort offset, in ushort length, in IPEndPoint relayEnd, in IPEndPoint targetEnd)
         {
             if (disposed.Value)
             {
@@ -73,25 +69,25 @@ namespace _RUDP_
             else
             {
                 if (length > 0)
-                {
-                    uint ip = (uint)targetEnd.Address.Address;
-                    ushort port = (ushort)targetEnd.Port;
+                    if (targetEnd.Equals(Util_rudp.END_RELAY))
+                        Array.Clear(buffer, 4, 6);
+                    else if (relayEnd.Equals(Util_rudp.END_RELAY))
+                    {
+                        uint ip = (uint)targetEnd.Address.Address;
+                        ushort port = (ushort)targetEnd.Port;
 
-                    // little endian
-                    buffer[offset + 4] = (byte)ip;
-                    buffer[offset + 5] = (byte)(ip >> 8);
-                    buffer[offset + 6] = (byte)(ip >> 16);
-                    buffer[offset + 7] = (byte)(ip >> 24);
+                        // little endian
+                        buffer[offset + 4] = (byte)ip;
+                        buffer[offset + 5] = (byte)(ip >> 8);
+                        buffer[offset + 6] = (byte)(ip >> 16);
+                        buffer[offset + 7] = (byte)(ip >> 24);
 
-                    // little endian
-                    buffer[offset + 8] = (byte)port;
-                    buffer[offset + 9] = (byte)(port >> 8);
-                }
+                        // little endian
+                        buffer[offset + 8] = (byte)port;
+                        buffer[offset + 9] = (byte)(port >> 8);
+                    }
 
-                if ((request_relay || use_relay) && !force_no_relay)
-                    SendTo(buffer, offset, length, SocketFlags.None, Util_rudp.END_RELAY);
-                else
-                    SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
+                SendTo(buffer, offset, length, SocketFlags.None, relayEnd);
             }
         }
     }

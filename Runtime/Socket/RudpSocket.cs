@@ -30,6 +30,7 @@ namespace _RUDP_
         public bool HasNext() => recStream_u.Position < recLength_u;
 
 #if UNITY_EDITOR
+        [SerializeField] bool _use_relay;
         [SerializeField] RudpConnection _selfConn;
 #endif
 
@@ -65,12 +66,12 @@ namespace _RUDP_
                 conns_dic[endIP_loopback] = conns_dic[selfConn.localEnd] = selfConn;
 
 #if UNITY_EDITOR
+            _use_relay = use_relay;
             _selfConn = selfConn;
 #endif
 
             eveComm = new(ToConnection(Util_rudp.END_ARMA, false, true, out _));
             relayConn = ToConnection(Util_rudp.END_RELAY, false, true, out _);
-            relayConn.keepAlive = true;
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();

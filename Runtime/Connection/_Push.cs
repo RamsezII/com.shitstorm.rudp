@@ -1,4 +1,5 @@
 ﻿using _UTIL_;
+using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
@@ -48,10 +49,10 @@ namespace _RUDP_
         public void Send(in byte[] buffer, in ushort offset, in ushort length)
         {
             lastSend.Value = Util.TotalMilliseconds;
-            socket.SendTo(buffer, offset, length, is_relayed, no_relay, endPoint);
+            socket.SendTo(buffer, offset, length, is_relayed ? Util_rudp.END_RELAY : endPoint, endPoint);
         }
 
-        public void Send_direct(in byte[] buffer, in ushort offset, in ushort length)
+        public void Send_direct(in byte[] buffer, in ushort offset, in ushort length, in IPEndPoint endPoint)
         {
             lastSend.Value = Util.TotalMilliseconds;
             socket.SendTo(buffer, offset, length, SocketFlags.None, endPoint);

@@ -77,6 +77,8 @@ namespace _RUDP_
                             rec_fromRelay_u = true;
                             recReader_u.BaseStream.Position = RudpHeader.HEADLEN_A;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
+                            if (settings.logAllPaquets)
+                                Debug.Log($"reçu relay: {recEnd_u}");
                             recConn = ToConnection(recEnd_u, true, false, out is_new);
                         }
 

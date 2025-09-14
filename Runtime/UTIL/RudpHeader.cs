@@ -18,7 +18,7 @@ namespace _RUDP_
         reliable,
         ack,
         compressed,
-        relayed,
+        broadcast,
         _last_,
     }
 
@@ -29,7 +29,7 @@ namespace _RUDP_
         Reliable = 1 << RudpHeaderB.reliable,
         Ack = 1 << RudpHeaderB.ack,
         Compressed = 1 << RudpHeaderB.compressed,
-        Relayed = 1 << RudpHeaderB.relayed,
+        Broadcast = 1 << RudpHeaderB.broadcast,
 
         Files = Reliable | Direct,
         Audio = Direct,
