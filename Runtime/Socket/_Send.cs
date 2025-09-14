@@ -70,28 +70,28 @@ namespace _RUDP_
 
             if (length > Util_rudp.PAQUET_SIZE_BIG)
                 Debug.LogWarning($"{nameof(SendTo)}->{targetEnd} ERROR: {nameof(offset)}={offset}, {nameof(length)}={length} (underlying buffer: {buffer.Length})");
-            else if ((request_relay || use_relay) && !force_no_relay)
-            {
-                uint ip = (uint)targetEnd.Address.Address;
-                ushort port = (ushort)targetEnd.Port;
-
-                // little endian
-                buffer[offset + 4] = (byte)ip;
-                buffer[offset + 5] = (byte)(ip >> 8);
-                buffer[offset + 6] = (byte)(ip >> 16);
-                buffer[offset + 7] = (byte)(ip >> 24);
-
-                // little endian
-                buffer[offset + 8] = (byte)port;
-                buffer[offset + 9] = (byte)(port >> 8);
-
-                SendTo(buffer, offset, length, SocketFlags.None, Util_rudp.END_RELAY);
-            }
             else
             {
                 if (length > 0)
-                    Array.Clear(buffer, RudpHeader.HEADLEN_A, RudpHeader.HEADLEN_B - RudpHeader.HEADLEN_A);
-                SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
+                {
+                    uint ip = (uint)targetEnd.Address.Address;
+                    ushort port = (ushort)targetEnd.Port;
+
+                    // little endian
+                    buffer[offset + 4] = (byte)ip;
+                    buffer[offset + 5] = (byte)(ip >> 8);
+                    buffer[offset + 6] = (byte)(ip >> 16);
+                    buffer[offset + 7] = (byte)(ip >> 24);
+
+                    // little endian
+                    buffer[offset + 8] = (byte)port;
+                    buffer[offset + 9] = (byte)(port >> 8);
+                }
+
+                if ((request_relay || use_relay) && !force_no_relay)
+                    SendTo(buffer, offset, length, SocketFlags.None, Util_rudp.END_RELAY);
+                else
+                    SendTo(buffer, offset, length, SocketFlags.None, targetEnd);
             }
         }
     }
