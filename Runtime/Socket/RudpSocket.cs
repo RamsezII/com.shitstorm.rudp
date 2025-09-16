@@ -73,6 +73,8 @@ namespace _RUDP_
             eveComm = new(ToConnection(Util_rudp.END_ARMA, true, out _));
             relayConn = ToConnection(Util_rudp.END_RELAY, true, out _);
 
+            eveComm.conn.keepAlive = true;
+
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
 
