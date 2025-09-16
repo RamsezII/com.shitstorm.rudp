@@ -63,7 +63,7 @@ namespace _RUDP_
 #if UNITY_EDITOR
         [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LoadVersion))]
 #endif
-        public static byte LoadVersion()
+        public static void LoadVersion()
         {
             version ??= new();
 
@@ -80,8 +80,6 @@ namespace _RUDP_
 
             Util_rudp.EMPTY_LONG[0] = version.VERSION;
             Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
-
-            return version.VERSION;
         }
 
         [ContextMenu(nameof(SaveSettings_log))]
