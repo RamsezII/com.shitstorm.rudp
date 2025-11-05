@@ -22,7 +22,7 @@ namespace _RUDP_
         }
 
         [Serializable]
-        public class Settings : MachineJSon
+        public class Settings : HomeJSon
         {
             public bool
                 logConnections = true,
