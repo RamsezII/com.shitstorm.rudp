@@ -53,7 +53,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpHeader(in byte id, in RudpHeaderM mask, in byte attempt) : this(RudpSocket.version.VERSION, mask, id, attempt)
+        public RudpHeader(in byte id, in RudpHeaderM mask, in byte attempt) : this(RudpSocket.version._value.VERSION, mask, id, attempt)
         {
         }
 
@@ -88,7 +88,7 @@ namespace _RUDP_
 
         public static void Write(in byte[] buffer, in ushort offset, in RudpHeaderM mask, in byte id, in byte attempt)
         {
-            buffer[(int)RudpHeaderI.Version + offset] = RudpSocket.version.VERSION;
+            buffer[(int)RudpHeaderI.Version + offset] = RudpSocket.version._value.VERSION;
             buffer[(int)RudpHeaderI.Mask + offset] = (byte)mask;
             buffer[(int)RudpHeaderI.ID + offset] = id;
             buffer[(int)RudpHeaderI.Attempt + offset] = attempt;

@@ -1,6 +1,6 @@
 ﻿using _ARK_;
+using _UTIL_;
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace _RUDP_
@@ -8,16 +8,8 @@ namespace _RUDP_
     partial class RudpSocket
     {
         [Serializable]
-        public class Version : JSon
+        public class Version : ResourcesJSon
         {
-            public static readonly string version_file = typeof(Version).FullName + json;
-
-#if UNITY_EDITOR
-            public static readonly string
-                dir_editor = Path.Combine(Application.dataPath, "Resources"),
-                file_editor = Path.Combine(dir_editor, version_file);
-#endif
-
             public byte VERSION;
         }
 
@@ -34,7 +26,12 @@ namespace _RUDP_
                 logIncomingBytes = false;
         }
 
-        public static Version version;
+        public static readonly LazyValue<Version> version = new(() =>
+        {
+            ResourcesJSon.TryReadResourcesJSon(true, out Version value);
+            return value;
+        });
+
         public Settings settings;
 
         //----------------------------------------------------------------------------------------------------------
@@ -44,8 +41,9 @@ namespace _RUDP_
         public static void IncrementVersion()
         {
             LoadVersion();
+            Version version = RudpSocket.version.GetValue();
             ++version.VERSION;
-            version.Save(Version.file_editor, true);
+            version.Save();
             Debug.Log($"{nameof(IncrementVersion)}: {version.VERSION}");
         }
 
@@ -53,8 +51,9 @@ namespace _RUDP_
         static void DecrementVersion()
         {
             LoadVersion();
+            Version version = RudpSocket.version.GetValue();
             --version.VERSION;
-            version.Save(Version.file_editor, true);
+            version.Save();
             Debug.Log($"{nameof(DecrementVersion)}: {version.VERSION}");
         }
 #endif
@@ -65,19 +64,7 @@ namespace _RUDP_
 #endif
         public static void LoadVersion()
         {
-            version ??= new();
-
-            if (!Application.isEditor)
-            {
-                TextAsset text = Resources.Load<TextAsset>(Version.version_file[..^".txt".Length]);
-                version = JsonUtility.FromJson<Version>(text.text);
-                version.OnRead();
-            }
-#if UNITY_EDITOR
-            else
-                JSon.Read(ref version, Version.file_editor, true, false);
-#endif
-
+            Version version = RudpSocket.version.GetValue();
             Util_rudp.EMPTY_LONG[0] = version.VERSION;
             Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
         }

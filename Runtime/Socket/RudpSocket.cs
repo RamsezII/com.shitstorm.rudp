@@ -42,6 +42,14 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            version.Reset();
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+
         public RudpSocket(in bool use_relay, in ushort port = 0) : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
             this.use_relay = use_relay;
