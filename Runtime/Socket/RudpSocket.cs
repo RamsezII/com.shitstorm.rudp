@@ -45,7 +45,15 @@ namespace _RUDP_
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
         {
-            version.Reset();
+            r_settings.Reset();
+            LoadSettings(true);
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        static void OnAfterSceneLoad()
+        {
+            NUCLEOR.delegates.OnApplicationFocus += () => LoadSettings(false);
+            NUCLEOR.delegates.OnApplicationUnfocus += () => h_settings.SaveStaticJSon(false);
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -85,19 +93,12 @@ namespace _RUDP_
 
             Debug.Log($"opened UDP: {this}".ToSubLog());
             BeginReceive();
-
-            LoadSettings_log();
-            NUCLEOR.delegates.OnApplicationUnfocus += SaveSettings_nolog;
-            NUCLEOR.delegates.OnApplicationFocus += LoadSettings_nolog;
         }
 
         //----------------------------------------------------------------------------------------------------------
 
         public new void Dispose()
         {
-            NUCLEOR.delegates.OnApplicationUnfocus -= SaveSettings_nolog;
-            NUCLEOR.delegates.OnApplicationFocus -= LoadSettings_nolog;
-
             if (disposed.Value)
                 return;
             disposed.Value = true;

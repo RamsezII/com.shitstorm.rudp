@@ -32,11 +32,11 @@ namespace _RUDP_
                     double time = Util.TotalMilliseconds;
                     if (time > lastSend.Value + freq)
                     {
-                        if (socket.settings.logKeepAlives)
-                            Debug.Log($"{this} keepalive attempt {keepalive_attempt._value}".ToSubLog());
+                        if (RudpSocket.h_settings.logKeepAlives)
+                            Debug.Log($"{this} keepalive attempt {keepalive_attempt.Value}".ToSubLog());
 
-                        if (keepalive_attempt._value < 10)
-                            ++keepalive_attempt._value;
+                        if (keepalive_attempt.Value < 10)
+                            ++keepalive_attempt.Value;
 
                         if (this == socket.eveComm.conn || this == socket.relayConn)
                             Send(Util_rudp.EMPTY_ZERO, 0, 0);

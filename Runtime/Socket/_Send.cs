@@ -42,26 +42,27 @@ namespace _RUDP_
                 send_size += length;
             }
 
+            HSettings h_settings = RudpSocket.h_settings;
             if (length == 0)
             {
-                if (settings.logEmptyPaquets || settings.logAllPaquets)
+                if (h_settings.logEmptyPaquets || h_settings.logAllPaquets)
                     Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} (size:{length})".ToSubLog());
             }
             else
             {
                 if (length >= RudpHeader.HEADLEN_B)
-                    if (settings.logAllPaquets)
+                    if (h_settings.logAllPaquets)
                     {
                         RudpHeader header = RudpHeader.FromBuffer(buffer);
                         Debug.Log($"{this} {nameof(SendTo)}(rudp): {targetEnd} (header:{header}, size:{length})".ToSubLog());
                     }
 
-                if (settings.logAllPaquets)
+                if (h_settings.logAllPaquets)
                     if (targetEnd.Equals(eveComm.conn.endPoint))
                         Debug.Log($"{this} {nameof(SendTo)}(eve): {targetEnd} (version:{buffer[0]}, id:{buffer[1]}, size:{length})".ToSubLog());
             }
 
-            if (settings.logOutcomingBytes)
+            if (h_settings.logOutcomingBytes)
                 Debug.Log($"{this} {nameof(SendTo)}: {targetEnd} ({buffer.LogBytes(offset, offset + length)})".ToSubLog());
 
             if (length > Util_rudp.PAQUET_SIZE_BIG)

@@ -8,13 +8,13 @@ namespace _RUDP_
     partial class RudpSocket
     {
         [Serializable]
-        public class Version : ResourcesJSon
+        public class RSettings : ResourcesJSon
         {
             public byte VERSION;
         }
 
         [Serializable]
-        public class Settings : HomeJSon
+        public class HSettings : HomeJSon
         {
             public bool
                 logConnections = true,
@@ -26,63 +26,49 @@ namespace _RUDP_
                 logIncomingBytes = false;
         }
 
-        public static readonly LazyValue<Version> version = new(() =>
+        public static readonly LazyValue<RSettings> r_settings = new(() =>
         {
-            ResourcesJSon.TryReadResourcesJSon(true, out Version value);
+            ResourcesJSon.TryReadResourcesJSon(true, out RSettings value);
+            Util_rudp.EMPTY_LONG[0] = value.VERSION;
+            Debug.Log($"RUDP_VERSION: {value.VERSION}");
             return value;
         });
 
-        public Settings settings;
+        public static HSettings h_settings;
+
+#if UNITY_EDITOR
+        const string button_prefixe = "Assets/" + nameof(_RUDP_) + "/" + nameof(RudpSocket) + ".";
 
         //----------------------------------------------------------------------------------------------------------
 
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(IncrementVersion))]
+        [UnityEditor.MenuItem(button_prefixe + nameof(IncrementVersion))]
         public static void IncrementVersion()
         {
-            LoadVersion();
-            Version version = RudpSocket.version.GetValue();
-            ++version.VERSION;
-            version.Save();
-            Debug.Log($"{nameof(IncrementVersion)}: {version.VERSION}");
+            r_settings.GetValue(true);
+            ++r_settings._value.VERSION;
+            r_settings._value.SaveResourcesJSon();
+            r_settings.GetValue(true);
         }
 
-        [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(DecrementVersion))]
+        [UnityEditor.MenuItem(button_prefixe + nameof(DecrementVersion))]
         static void DecrementVersion()
         {
-            LoadVersion();
-            Version version = RudpSocket.version.GetValue();
-            --version.VERSION;
-            version.Save();
-            Debug.Log($"{nameof(DecrementVersion)}: {version.VERSION}");
+            r_settings.GetValue(true);
+            --r_settings._value.VERSION;
+            r_settings._value.SaveResourcesJSon();
+            r_settings.GetValue(true);
+        }
+
+        [UnityEditor.MenuItem(button_prefixe + nameof(LoadResourcesJSon))]
+        static void LoadResourcesJSon()
+        {
+            r_settings.GetValue(true);
         }
 #endif
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("Assets/" + nameof(_RUDP_) + "/" + nameof(LoadVersion))]
-#endif
-        public static void LoadVersion()
+        static void LoadSettings(in bool log)
         {
-            Version version = RudpSocket.version.GetValue();
-            Util_rudp.EMPTY_LONG[0] = version.VERSION;
-            Debug.Log($"{typeof(Version).FullName}: {version.VERSION}");
-        }
-
-        [ContextMenu(nameof(SaveSettings_log))]
-        public void SaveSettings_log() => OnSaveSettings(true);
-        public void SaveSettings_nolog() => OnSaveSettings(false);
-        protected virtual void OnSaveSettings(in bool log)
-        {
-            settings.SaveStaticJSon(log);
-        }
-
-        [ContextMenu(nameof(LoadSettings_log))]
-        public void LoadSettings_log() => OnLoadSettings(true);
-        public void LoadSettings_nolog() => OnLoadSettings(false);
-        protected virtual void OnLoadSettings(in bool log)
-        {
-            StaticJSon.ReadStaticJSon(ref settings, true, log);
+            StaticJSon.ReadStaticJSon(out h_settings, true, log);
         }
     }
 }

@@ -58,9 +58,9 @@ namespace _RUDP_
                                 skip = true;
                             }
                         }
-                        else if (version_byte != version._value.VERSION)
+                        else if (version_byte != r_settings._value.VERSION)
                         {
-                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a peer whose network is not the same version (received: {version_byte}, expected: {version._value.VERSION}).");
+                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a peer whose network is not the same version (received: {version_byte}, expected: {r_settings._value.VERSION}).");
                             skip = true;
                         }
 
@@ -78,7 +78,7 @@ namespace _RUDP_
                             rec_fromRelay_u = true;
                             recReader_u.BaseStream.Position = RudpHeader.HEADLEN_A;
                             remoteEnd = recEnd_u = recReader_u.ReadIPEndPoint();
-                            if (settings.logAllPaquets)
+                            if (RudpSocket.h_settings.logAllPaquets)
                                 Debug.Log($"reçu relay: {recEnd_u}");
                             recConn = ToConnection(recEnd_u, false, out is_new);
                         }
@@ -90,14 +90,14 @@ namespace _RUDP_
                         else
                             recConn = ToConnection(recEnd_u, true, out is_new);
 
-                        if (settings.logAllPaquets)
+                        if (RudpSocket.h_settings.logAllPaquets)
                             Debug.Log($"{this} ReceivedFrom: {remoteEnd} (size:{recLength_u})".ToSubLog());
-                        else if (settings.logEmptyPaquets && recLength_u == 0)
+                        else if (RudpSocket.h_settings.logEmptyPaquets && recLength_u == 0)
                             Debug.Log($"{this} Received empty paquet from {remoteEnd}".ToSubLog());
 
                         lock (recConn.lastReceive)
                         {
-                            if (settings.logConnections && recConn.lastReceive._value == 0)
+                            if (RudpSocket.h_settings.logConnections && recConn.lastReceive._value == 0)
                                 Debug.Log($"{this} holepunch: {recEnd_u}".ToSubLog());
                             recConn.lastReceive._value = Util.TotalMilliseconds;
                             recConn.keepalive_attempt.Value = 0;
@@ -120,7 +120,7 @@ namespace _RUDP_
                                 recReader_u.BaseStream.Position = RudpHeader.HEADLEN_B;
 
                                 if (!recConn.TryAcceptPaquet(header))
-                                    if (settings.logIncidents)
+                                    if (RudpSocket.h_settings.logIncidents)
                                         Debug.LogWarning($"{recConn} {nameof(recConn.TryAcceptPaquet)}: Failed to accept paquet (header:{header}, size:{recLength_u})");
                             }
 
@@ -128,7 +128,7 @@ namespace _RUDP_
                                 Debug.LogWarning($"{this} Received dubious paquet from {remoteEnd} (size:{recLength_u})");
                         }
 
-                        if (settings.logIncomingBytes)
+                        if (RudpSocket.h_settings.logIncomingBytes)
                             Debug.Log($"{this} {nameof(ReceiveFrom)}: {recEnd_u} ({recBuffer_u.LogBytes(0, recLength_u)})".ToSubLog());
 
                         recConn = null;

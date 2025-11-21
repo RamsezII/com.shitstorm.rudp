@@ -18,10 +18,10 @@ namespace _RUDP_
                         reliable_paquet = default;
                         accepted = true;
                     }
-                    else if (conn.socket.settings.logIncidents)
+                    else if (RudpSocket.h_settings.logIncidents)
                         Debug.LogWarning($"{this} Received ACK for unknown paquet: {header}");
                 }
-                else if (conn.socket.settings.logIncidents)
+                else if (RudpSocket.h_settings.logIncidents)
                     Debug.LogWarning($"{this} Received unexpected ACK: {header}");
 
             if (accepted)
