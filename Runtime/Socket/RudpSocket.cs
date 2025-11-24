@@ -46,6 +46,7 @@ namespace _RUDP_
         static void ResetStatics()
         {
             r_settings.Reset();
+            r_settings.GetValue(true);
             LoadSettings(true);
         }
 
