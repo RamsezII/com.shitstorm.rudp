@@ -8,7 +8,6 @@ namespace _RUDP_
     public partial class RudpSocket
     {
         public double lastSend;
-        public uint send_count, send_size;
 
         //----------------------------------------------------------------------------------------------------------
 

@@ -9,7 +9,6 @@ namespace _RUDP_
     public partial class RudpSocket
     {
         public double lastReceive;
-        public uint receive_count, receive_size;
         readonly ThreadSafe_struct<bool> skipNextSocketException = new(true);
 
         public bool rec_fromRelay_u;

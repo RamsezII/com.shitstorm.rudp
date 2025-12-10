@@ -33,7 +33,6 @@ namespace _RUDP_
         [SerializeField] bool _use_relay;
         [SerializeField] RudpConnection _selfConn;
 #endif
-
         public override string ToString() => $"sock{{{localPort}}}";
 
         //----------------------------------------------------------------------------------------------------------
