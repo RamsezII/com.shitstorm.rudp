@@ -36,11 +36,9 @@ namespace _RUDP_
         public readonly MemoryStream states_recStream;
         public readonly BinaryReader states_recReader;
 
-        public override string ToString() => $"conn({socket.localPort}->{endPoint})";
-
         //----------------------------------------------------------------------------------------------------------
 
-        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool no_relay)
+        internal RudpConnection(in RudpSocket socket, in IPEndPoint endPoint, in bool no_relay) : base($"rudp_conn({socket.localPort}->{endPoint})")
         {
             this.socket = socket;
             this.endPoint = endPoint;
@@ -54,10 +52,10 @@ namespace _RUDP_
             _no_relay = no_relay;
 #endif
 
-            channel_files = new(this, RudpHeaderM.Files);
-            channel_states = new(this, RudpHeaderM.States);
-            channel_flux = new(this, RudpHeaderM.Flux);
-            channel_audio = new(this, RudpHeaderM.Audio);
+            channel_files = new("rudp_files", this, RudpHeaderM.Files);
+            channel_states = new("rudp_states", this, RudpHeaderM.States);
+            channel_flux = new("rudp_flux", this, RudpHeaderM.Flux);
+            channel_audio = new("rudp_audio", this, RudpHeaderM.Audio);
 
             states_recStream = new();
             states_recReader = new(states_recStream, Util_rudp.ENCODING, false);

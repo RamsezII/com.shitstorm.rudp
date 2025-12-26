@@ -23,11 +23,10 @@ namespace _RUDP_
 
         IEnumerator ESendFile()
         {
-            using Disposable disposable = new()
+            using Disposable disposable = new("sending_file")
             {
                 onDispose = () =>
                 {
-                    Debug.Log("File sent");
                 },
             };
             yield break;
@@ -35,11 +34,10 @@ namespace _RUDP_
 
         IEnumerator EReceiveFile()
         {
-            using Disposable disposable = new()
+            using Disposable disposable = new("receiving_file")
             {
                 onDispose = () =>
                 {
-                    Debug.Log("File received");
                 },
             };
             yield break;

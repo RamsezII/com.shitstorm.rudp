@@ -34,12 +34,12 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpChannel(in RudpConnection conn, in RudpHeaderM mask)
+        public RudpChannel(in string name, in RudpConnection conn, in RudpHeaderM mask) : base(name)
         {
             this.conn = conn;
             this.mask = mask;
             if (mask == RudpHeaderM.States)
-                states_stream = new();
+                states_stream = new($"{name}->states_stream");
         }
 
         //----------------------------------------------------------------------------------------------------------

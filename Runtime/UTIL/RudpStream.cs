@@ -16,7 +16,6 @@ namespace _RUDP_
         public enum Compressions { None, Gzip }
         const Compressions COMPRESSION = 0;
 
-        readonly RudpConnection conn;
         readonly MemoryStream stream;
         readonly GZipStream gzip;
         readonly BinaryWriter writer_raw, writer_gzip;
@@ -25,7 +24,7 @@ namespace _RUDP_
 
         //----------------------------------------------------------------------------------------------------------
 
-        public RudpStream()
+        public RudpStream(in string name) : base(name)
         {
             stream = new();
 
