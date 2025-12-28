@@ -44,25 +44,25 @@ namespace _RUDP_
         [UnityEditor.MenuItem(button_prefixe + nameof(IncrementVersion))]
         public static void IncrementVersion()
         {
-            r_settings.GetValue(true);
+            r_settings.ForcedValue();
             ++r_settings._value.VERSION;
             r_settings._value.SaveResourcesJSon();
-            r_settings.GetValue(true);
+            r_settings.ForcedValue();
         }
 
         [UnityEditor.MenuItem(button_prefixe + nameof(DecrementVersion))]
         static void DecrementVersion()
         {
-            r_settings.GetValue(true);
+            r_settings.ForcedValue();
             --r_settings._value.VERSION;
             r_settings._value.SaveResourcesJSon();
-            r_settings.GetValue(true);
+            r_settings.ForcedValue();
         }
 
         [UnityEditor.MenuItem(button_prefixe + nameof(LoadResourcesJSon))]
         static void LoadResourcesJSon()
         {
-            r_settings.GetValue(true);
+            r_settings.ForcedValue();
         }
 #endif
 

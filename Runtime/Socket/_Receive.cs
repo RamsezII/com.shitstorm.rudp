@@ -57,9 +57,9 @@ namespace _RUDP_
                                 skip = true;
                             }
                         }
-                        else if (version_byte != r_settings.SafeValue.VERSION)
+                        else if (version_byte != r_settings.Value.VERSION)
                         {
-                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a peer whose network is not the same version (received: {version_byte}, expected: {r_settings._value.VERSION}).");
+                            Debug.LogWarning($"[SOCKET_WARNING] Skipped a paquet from a peer whose network is not the same version (received: {version_byte}, expected: {r_settings.Value.VERSION}).");
                             skip = true;
                         }
 
