@@ -22,7 +22,7 @@ namespace _RUDP_
     {
         public readonly RudpHeaderM mask;
         public readonly RudpConnection conn;
-        public readonly RudpStream states_stream;
+        public readonly RudpStream rudp_stream;
 
         public PaquetBuffer reliable_paquet;
         public bool IsPending => reliable_paquet.buffer != null && reliable_paquet.length > RudpHeader.HEADLEN_B;
@@ -39,7 +39,7 @@ namespace _RUDP_
             this.conn = conn;
             this.mask = mask;
             if (mask == RudpHeaderM.States)
-                states_stream = new($"{name}->states_stream");
+                rudp_stream = new($"{name}->{nameof(rudp_stream)}");
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ namespace _RUDP_
         {
             lock (this)
                 log.Append($"ping: {ping:0.0} ms, ");
-            states_stream.AppendStatus(log);
+            rudp_stream.AppendStatus(log);
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ namespace _RUDP_
         protected override void OnDispose()
         {
             base.OnDispose();
-            states_stream?.Dispose();
+            rudp_stream?.Dispose();
         }
     }
 }

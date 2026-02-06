@@ -16,7 +16,7 @@ namespace _RUDP_
 
         public void Push()
         {
-            channel_states.PushStates();
+            statesChannel.PushStates();
 
             if (keepAlive)
                 lock (keepalive_attempt)

@@ -18,13 +18,13 @@ namespace _RUDP_
         {
             RudpChannel channel = null;
             if (header.mask.HasFlag(RudpHeaderM.Files))
-                channel = channel_files;
+                channel = ftpChannel;
             else if (header.mask.HasFlag(RudpHeaderM.States))
-                channel = channel_states;
+                channel = statesChannel;
             else if (header.mask.HasFlag(RudpHeaderM.Audio))
-                channel = channel_audio;
+                channel = audioChannel;
             else if (header.mask.HasFlag(RudpHeaderM.Flux))
-                channel = channel_flux;
+                channel = fluxChannel;
 
             if (RudpSocket.h_settings.logAllPaquets)
                 Debug.Log($"{this} Received paquet (header:{header}, size:{socket.recLength_u})".ToSubLog());

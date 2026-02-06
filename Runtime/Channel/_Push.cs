@@ -7,11 +7,11 @@ namespace _RUDP_
         public void PushStates()
         {
             lock (this)
-                if (states_stream.HasData)
+                if (rudp_stream.HasData)
                 {
                     if (!IsPending)
                     {
-                        reliable_paquet = states_stream.ToReliablePaquet();
+                        reliable_paquet = rudp_stream.ToReliablePaquet();
                         NextPaquet();
                     }
                     TrySendReliable();

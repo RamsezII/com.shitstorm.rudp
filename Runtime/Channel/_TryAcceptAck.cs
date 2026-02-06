@@ -14,7 +14,7 @@ namespace _RUDP_
                     {
                         ping = Util.TotalMilliseconds - lastSend;
                         if (mask == RudpHeaderM.States)
-                            states_stream.OnCleanAfterAck(reliable_paquet.length);
+                            rudp_stream.OnCleanAfterAck(reliable_paquet.length);
                         reliable_paquet = default;
                         accepted = true;
                     }

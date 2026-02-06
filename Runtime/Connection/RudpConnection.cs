@@ -28,10 +28,10 @@ namespace _RUDP_
             lastReceive = new();
 
         public readonly RudpChannel
-            channel_files,
-            channel_states,
-            channel_flux,
-            channel_audio;
+            ftpChannel,
+            statesChannel,
+            fluxChannel,
+            audioChannel;
 
         public readonly MemoryStream states_recStream;
         public readonly BinaryReader states_recReader;
@@ -52,10 +52,10 @@ namespace _RUDP_
             _no_relay = no_relay;
 #endif
 
-            channel_files = new("rudp_files", this, RudpHeaderM.Files);
-            channel_states = new("rudp_states", this, RudpHeaderM.States);
-            channel_flux = new("rudp_flux", this, RudpHeaderM.Flux);
-            channel_audio = new("rudp_audio", this, RudpHeaderM.Audio);
+            ftpChannel = new("rudp_files", this, RudpHeaderM.Files);
+            statesChannel = new("rudp_states", this, RudpHeaderM.States);
+            fluxChannel = new("rudp_flux", this, RudpHeaderM.Flux);
+            audioChannel = new("rudp_audio", this, RudpHeaderM.Audio);
 
             states_recStream = new();
             states_recReader = new(states_recStream, Util_rudp.ENCODING, false);
@@ -72,7 +72,7 @@ namespace _RUDP_
         public void AppendStatus(in StringBuilder log)
         {
             lock (this)
-                channel_states.AppendStatesStatus(log);
+                statesChannel.AppendStatesStatus(log);
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -81,10 +81,10 @@ namespace _RUDP_
         {
             base.OnDispose();
 
-            channel_files.Dispose();
-            channel_states.Dispose();
-            channel_flux.Dispose();
-            channel_audio.Dispose();
+            ftpChannel.Dispose();
+            statesChannel.Dispose();
+            fluxChannel.Dispose();
+            audioChannel.Dispose();
 
             states_recStream.Dispose();
             states_recReader.Dispose();
