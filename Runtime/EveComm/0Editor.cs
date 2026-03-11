@@ -27,7 +27,7 @@ static partial class Util_rudp
         log.AppendLine($"DATA_SIZE = {PAQUET_SIZE_BIG - EveComm.HEADER_LENGTH}");
 
         string _log = log.ToString();
-        _log.WriteToClipboard();
+        GUIUtility.systemCopyBuffer = _log;
         Debug.Log(_log);
     }
 }
