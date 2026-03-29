@@ -27,6 +27,12 @@ namespace _RUDP_
         public PaquetBuffer reliable_paquet;
         public bool IsPending => reliable_paquet.buffer != null && reliable_paquet.length > RudpHeader.HEADLEN_B;
 
+        public float GetPing()
+        {
+            lock (this)
+                return (float)ping;
+        }
+
         public double lastSend, ping;
         byte sendID, attempt;
         public byte recID;
