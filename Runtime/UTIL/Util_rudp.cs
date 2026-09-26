@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 public static partial class Util_rudp
@@ -15,8 +16,9 @@ public static partial class Util_rudp
         PORT_ARMA = 40000,
         PORT_RELAY = 44000;
 
-    public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
+    [AutoStaticsCleanup] public static readonly IPAddress IP_3VE = IPAddress.Parse("141.94.223.114");
 
+    [AutoStaticsCleanup]
     public static readonly IPEndPoint
         END_ARMA = new(IP_3VE, PORT_ARMA),
         END_RELAY = new(IP_3VE, PORT_RELAY),
@@ -25,7 +27,7 @@ public static partial class Util_rudp
     //public static IPEndPoint END_ARMA => new(localIP, PORT_ARMA);
     //public static IPEndPoint END_RELAY => new(localIP, PORT_RELAY);
 
-    public static IPAddress localIP, publicIP;
+    [AutoStaticsCleanup] public static IPAddress localIP, publicIP;
 
     public const ushort
         PAQUET_SIZE_SMALL = 1472,
@@ -37,7 +39,7 @@ public static partial class Util_rudp
         EMPTY_ZERO = Array.Empty<byte>(),
         EMPTY_LONG = new byte[RudpHeader.HEADLEN_B];
 
-    public static readonly Encoding ENCODING = Encoding.UTF8;
+    [AutoStaticsCleanup] public static readonly Encoding ENCODING = Encoding.UTF8;
 
     //----------------------------------------------------------------------------------------------------------
 
