@@ -53,7 +53,20 @@ public static partial class Util_rudp
 
     //----------------------------------------------------------------------------------------------------------
 
-    public static int ToPassHash(this string pass) => string.IsNullOrWhiteSpace(pass) ? 0 : pass.GetHashCode();
+    public static int ToPassHash(this string pass)
+    {
+        if (string.IsNullOrWhiteSpace(pass))
+            return 0;
+
+        // GetHashCode() varies between runtimes and processes.
+        unchecked
+        {
+            uint hash = 2166136261;
+            foreach (char c in pass)
+                hash = (hash ^ c) * 16777619;
+            return (int)hash;
+        }
+    }
 
     public static void WriteIPEnd(this BinaryWriter writer, in IPEndPoint value)
     {
